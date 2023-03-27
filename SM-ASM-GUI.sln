@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32126.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SM-ASM-GUI", "SM-ASM-GUI\SM-ASM-GUI.csproj", "{38AE9C22-E241-4406-A584-6653B8679DE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Unsafe|Any CPU = Unsafe|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38AE9C22-E241-4406-A584-6653B8679DE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38AE9C22-E241-4406-A584-6653B8679DE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38AE9C22-E241-4406-A584-6653B8679DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38AE9C22-E241-4406-A584-6653B8679DE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38AE9C22-E241-4406-A584-6653B8679DE7}.Unsafe|Any CPU.ActiveCfg = Unsafe|Any CPU
+		{38AE9C22-E241-4406-A584-6653B8679DE7}.Unsafe|Any CPU.Build.0 = Unsafe|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {619F103D-AA48-40A3-8AF5-59E6104F41E9}
+	EndGlobalSection
+EndGlobal

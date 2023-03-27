@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{38AE9C22-E241-4406-A584-6653B8679DE7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SM_ASM_GUI</RootNamespace>
+    <AssemblyName>SM-ASM-GUI</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Unsafe|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Unsafe\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AddStateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddStateDialog.Designer.cs">
+      <DependentUpon>AddStateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="asmFCN.cs" />
+    <Compile Include="Bar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Bar.Designer.cs">
+      <DependentUpon>Bar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StateConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StateConfig.Designer.cs">
+      <DependentUpon>StateConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SMILEfcn.cs" />
+    <Compile Include="guiFCN.cs" />
+    <Compile Include="ObjectPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectPicker.Designer.cs">
+      <DependentUpon>ObjectPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SMASM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SMASM.Designer.cs">
+      <DependentUpon>SMASM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="pathsConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="pathsConfig.Designer.cs">
+      <DependentUpon>pathsConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateConfig_Help.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StateConfig_Help.Designer.cs">
+      <DependentUpon>StateConfig_Help.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StateConfig_Reorder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StateConfig_Reorder.Designer.cs">
+      <DependentUpon>StateConfig_Reorder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tilesets_Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tilesets_Settings.Designer.cs">
+      <DependentUpon>Tilesets_Settings.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AddStateDialog.resx">
+      <DependentUpon>AddStateDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Bar.resx">
+      <DependentUpon>Bar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectPicker.resx">
+      <DependentUpon>ObjectPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SMASM.resx">
+      <DependentUpon>SMASM.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="pathsConfig.resx">
+      <DependentUpon>pathsConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="StateConfig.resx">
+      <DependentUpon>StateConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StateConfig_Help.resx">
+      <DependentUpon>StateConfig_Help.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StateConfig_Reorder.resx">
+      <DependentUpon>StateConfig_Reorder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tilesets_Settings.resx">
+      <DependentUpon>Tilesets_Settings.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Bitmap1.bmp" />
+    <Content Include="LunarDLL.cpp" />
+    <Content Include="LunarDLL.h" />
+    <None Include="question.bmp" />
+    <None Include="MinSign.bmp" />
+    <Content Include="notes.txt" />
+    <Content Include="PlusSign.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
