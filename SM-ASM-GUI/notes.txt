@@ -1,9 +1,20 @@
 ﻿File created 3/26/23
+
+
+smasm-todo-today
+-put tag list into object picker
+-edit tags button in object viewer
+-MDB list to map
+-find a home for the picture on the main form
+	-add zoom controls; click drag to move around large rooms
+
 ---------------------------------------
 KNOWN BUGS-----------------------------
 ---------------------------------------
 Exporting all Tilesets will cause SMASM to go unresponsive 
 	-Need to set this up as a backgroundworker...
+
+There might still be some bugs with state reordering? Need to investigate.
 
 
 The FX data got messed up for a couple rooms i was working on a while back.
@@ -20,25 +31,16 @@ TTB export turned all the files into 0's for some reason
 FEATURES TODO-----------------------
 ---------------------------------------
 GENERAL FUNCTIONALITY
-Repointing for scroll PLM data...
-	-would have to build a scroll PLM editor into SMASM just like all the other state specific data.
-
 Make the config file remember the setting for level buffer freespace
 
 
-MDB List to ASM
-
-Need to update the ASM template that it generates.
-
-
-MDB to Map Generator
-	-could read from ROM, or from the hack ASM file?
-	-Read from ASM would probably be faster, but read from ROM would be faster for the user to set up.
+MAP GENERATOR
+on checkbox/user option:
+		-PLM graphic for items
 
 
 PLM/ENEMY SELECTOR
-Support for tagged searching
-	-pull images from SMILE folder.
+-Make the tags visible/editable onscreen
 
 
 TILESET I/O
@@ -46,14 +48,6 @@ Have it update the ASM file with the tileset table address specified in the SMAS
 
 
 ROOM I/O
-Export singular rooms to independent ASM files.
-	-Copy entire source ASM file; strip out all the SMASM stuff and then re-add the target room.
-	-Doesn't necessarily need to load a Room object from the ASM file; it only needs to know the label and get rid of everything else in the SMASM space.
-
-Import rooms from one ASM file to another.
-	-Again, it doesn't need to load the room as an object; just move the text around.
-
-
 
 
 
@@ -63,10 +57,16 @@ COMPLETED FEATURES---------------------
 GENERAL FUNCTIONALITY
 	Export rooms from ROM to ASM file
 	Addition of Room States, PLMs, Enemies, Enemy GFX, FX, and Doors
-
+	MDB List to ASM
+	MDB to Map Generator
+	Scroll PLM repointing
+	Import rooms from one ASM file to another.
+	Export singular rooms to independent ASM files.
 
 PLM/ENEMY SELECTOR
-	
+Support for tagged searching
+	-pull images from SMILE folder.
+	-supports adding enemies not in list by writing header address in search box
 
 TILESET I/O
 Tileset import/export, repointing

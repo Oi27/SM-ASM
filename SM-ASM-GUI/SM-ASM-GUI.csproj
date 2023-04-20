@@ -44,6 +44,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FuzzySharp, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FuzzySharp.2.0.2\lib\net461\FuzzySharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -69,6 +72,18 @@
     </Compile>
     <Compile Include="Bar.Designer.cs">
       <DependentUpon>Bar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="credits.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="credits.Designer.cs">
+      <DependentUpon>credits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScrollEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScrollEditor.Designer.cs">
+      <DependentUpon>ScrollEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="StateConfig.cs">
       <SubType>Form</SubType>
@@ -122,8 +137,14 @@
     <EmbeddedResource Include="Bar.resx">
       <DependentUpon>Bar.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="credits.resx">
+      <DependentUpon>credits.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ObjectPicker.resx">
       <DependentUpon>ObjectPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScrollEditor.resx">
+      <DependentUpon>ScrollEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SMASM.resx">
       <DependentUpon>SMASM.cs</DependentUpon>
@@ -153,6 +174,7 @@
     <EmbeddedResource Include="Tilesets_Settings.resx">
       <DependentUpon>Tilesets_Settings.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -168,8 +190,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bitmap1.bmp" />
+    <Content Include="SmasmLogo.ico" />
     <Content Include="LunarDLL.cpp" />
     <Content Include="LunarDLL.h" />
+    <Content Include="SmasmLogo_CoolS.ico" />
     <None Include="question.bmp" />
     <None Include="MinSign.bmp" />
     <Content Include="notes.txt" />

@@ -31,7 +31,7 @@ namespace SM_ASM_GUI
         {
             this.SearchBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.ObjectList = new System.Windows.Forms.ListBox();
             this.AddObject = new System.Windows.Forms.Button();
             this.EnemyDisplay = new System.Windows.Forms.PictureBox();
             this.Xpos = new System.Windows.Forms.TextBox();
@@ -49,6 +49,7 @@ namespace SM_ASM_GUI
             this.SearchBox.Name = "SearchBox";
             this.SearchBox.Size = new System.Drawing.Size(100, 20);
             this.SearchBox.TabIndex = 0;
+            this.SearchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchBox_KeyDown);
             // 
             // label1
             // 
@@ -59,13 +60,14 @@ namespace SM_ASM_GUI
             this.label1.TabIndex = 1;
             this.label1.Text = "Search";
             // 
-            // listBox1
+            // ObjectList
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(12, 47);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(100, 225);
-            this.listBox1.TabIndex = 2;
+            this.ObjectList.FormattingEnabled = true;
+            this.ObjectList.Location = new System.Drawing.Point(12, 47);
+            this.ObjectList.Name = "ObjectList";
+            this.ObjectList.Size = new System.Drawing.Size(100, 225);
+            this.ObjectList.TabIndex = 2;
+            this.ObjectList.SelectedIndexChanged += new System.EventHandler(this.ObjectList_SelectedIndexChanged);
             // 
             // AddObject
             // 
@@ -142,12 +144,13 @@ namespace SM_ASM_GUI
             this.Controls.Add(this.Xpos);
             this.Controls.Add(this.EnemyDisplay);
             this.Controls.Add(this.AddObject);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.ObjectList);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.SearchBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "ObjectPicker";
             this.Text = "Default";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ObjectPicker_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.EnemyDisplay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -158,7 +161,7 @@ namespace SM_ASM_GUI
 
         private System.Windows.Forms.TextBox SearchBox;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox ObjectList;
         private System.Windows.Forms.Button AddObject;
         private System.Windows.Forms.PictureBox EnemyDisplay;
         private System.Windows.Forms.TextBox Xpos;

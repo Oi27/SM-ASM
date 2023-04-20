@@ -29,7 +29,6 @@ namespace SM_ASM_GUI
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tilesets_Settings));
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -59,9 +58,11 @@ namespace SM_ASM_GUI
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(101, 36);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(209, 208);
+            this.label2.Size = new System.Drawing.Size(145, 104);
             this.label2.TabIndex = 2;
-            this.label2.Text = resources.GetString("label2.Text");
+            this.label2.Text = "Repointing of the tileset list\r\nwill be handled automatically;\r\nplaces it at the " +
+    "end of the \r\ngiven tileset table.\r\n\r\nSMASM will tweak $82DF03 \r\n(pointer to tile" +
+    "set list) to\r\nmatch the given address.";
             // 
             // button1
             // 
@@ -77,7 +78,7 @@ namespace SM_ASM_GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(318, 298);
+            this.ClientSize = new System.Drawing.Size(252, 153);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);

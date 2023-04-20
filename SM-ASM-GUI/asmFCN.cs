@@ -231,20 +231,87 @@ namespace SM_ASM_GUI
         }
         public static string plms2asm(state s)
         //For each PLM, add it to its own line.
+        //also needs to have scrolls...
         {
             string plmdata = "";
-            for(int i = 0; i < s.PLMs.Count(); i++)
+            string scrollstring = plmScrollData2asm(s, out List<PLMdata> scrollPLMs, out List<int> plmIndices);
+            //all the PLMs that are not scrolls have -1 in the plmindices list.
+            int scrollPLMcount = 0;
+            for (int i = 0; i < s.PLMs.Count(); i++)
             {
-                plmdata += "dw $" +
+                if(plmIndices[i] == -1)
+                {
+                    plmdata += "dw $" +
                     WWord(s.PLMs[i].ID) + " : db $" +
                     WByte(s.PLMs[i].PosX) + d +
                     WByte(s.PLMs[i].PosY) + " : dw $" +
                     WWord(s.PLMs[i].Variable) +
                     "\n"
                     ;
+                }
+                else
+                {
+                    plmdata += "dw $" +
+                    WWord(s.PLMs[i].ID) + " : db $" +
+                    WByte(s.PLMs[i].PosX) + d +
+                    WByte(s.PLMs[i].PosY) + " : dw ....scrolldata_scrollPLM" + scrollPLMcount + 
+                    "\n"
+                    ;
+                    scrollPLMcount++;
+                }
+
             }
             plmdata += "dw $0000\n";
+            plmdata += scrollstring;
             return plmdata;
+        }
+        public static string plmScrollData2asm(state s, out List<PLMdata> scrollPLMS, out List<int> plmIndices)
+        {
+            //generate a list of scroll data to attach to the end of the PLM list.
+            //..plms
+            //...default
+            //....scrolldata
+            //.....scrollPLM1
+            //.....scrollPLM2
+            //.
+            //.
+            //*Format of scroll updating data is as follows:
+            //(screen)(scroll)...(screen)(scroll)(80)
+            //Example:
+            //03 01 80 < ---change screen 03 to a blue scroll.
+
+            List<PLMdata> scrollsPlmList = new List<PLMdata>();
+            List<int> scrollPLMindices = new List<int>();
+            for (int i = 0; i < s.PLMs.Count; i++)
+            {
+                PLMdata plm = s.PLMs[i];
+                if(plm.ScrollData == null) 
+                { scrollPLMindices.Add(-1); continue; }
+                scrollsPlmList.Add(plm);
+                scrollPLMindices.Add(i);
+            }
+            scrollPLMS = scrollsPlmList;
+            plmIndices = scrollPLMindices;
+            if (scrollPLMS.Count == 0) { return ""; }
+
+            //only gets past this point it there's really data to process
+            string scrollPLMdata = "....scrolldata\n";
+            for (int i = 0; i < scrollPLMS.Count; i++)
+            {
+                PLMdata plm = scrollPLMS[i];
+                scrollPLMdata += ".....scrollPLM" + i + "\n";
+                string scrolldw = "db $";
+                for (int j = 0; j < plm.ScrollData.Length; j++)
+                {
+                    scrolldw += WByte(plm.ScrollData[j]) + d;
+                }
+                scrolldw = scrolldw.Substring(0, scrolldw.Length-3);
+                scrolldw += "\n";
+                scrollPLMdata += scrolldw;
+            }
+            //already ends in a \n
+
+            return scrollPLMdata;
         }
         public static string scrolls2asm(state s)
         {
@@ -327,9 +394,19 @@ namespace SM_ASM_GUI
 
         public static string fx2asm(state s)
         {
+            //each room with no FX gets its own $FFFF... would be nice to implement a way they can share.
+            //an idea similar to the way doors are moved around:
+            //modify the file before applying to have all these FFFF door selects replaced with a label pointing to a standard No-FX entry, hardcoded at the beginning of SMASM_83F
+            
+            //this loop is very strange but it works. Prints the FX with the default entry last.
             string fxdata = "";
-            for (int i = 0; i < s.FX.Count; i++)
+            for (int i = s.FX.Count-1; i > -1; i--)
             {
+                if(s.FX[i].DoorSelect == 0xFFFF)
+                {
+                    fxdata += "dw $FFFF\n";
+                    break;
+                }
                 fxdata += "dw $" +
                     WWord(s.FX[i].DoorSelect) + d +
                     WWord(s.FX[i].LiqStart) + d +

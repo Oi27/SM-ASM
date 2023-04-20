@@ -13,7 +13,7 @@ namespace SM_ASM_GUI
 {
     public partial class pathsConfig : Form
     {
-        SMASM parent;
+        SMASM parent = new SMASM();
         XmlDocument configs;
         public pathsConfig(XmlDocument config)
         {
@@ -23,33 +23,37 @@ namespace SM_ASM_GUI
             asmBox.Text = configs.ChildNodes[1].SelectSingleNode("ASM").InnerText;
             ASARbox.Text = configs.ChildNodes[1].SelectSingleNode("ASR").InnerText;
             SMILEbox.Text = configs.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText;
+            TilesetBox.Text = configs.ChildNodes[1].SelectSingleNode("TILESETTABLE").InnerText;
             romBox.SelectionStart = romBox.Text.Length;
             asmBox.SelectionStart = asmBox.Text.Length;
             ASARbox.SelectionStart = ASARbox.Text.Length;
             SMILEbox.SelectionStart = SMILEbox.Text.Length;
+            TilesetBox.SelectionStart = TilesetBox.Text.Length;
+
+            TilesetBox.Tag = TilesetBox.Text; //used for rolling back changes if not hex number.
         }
 
 
         private void pickasmButton_Click(object sender, EventArgs e)
         {
-            pathpicker(sender, e, asmBox);
+            pathpicker(sender, e, asmBox, 1, "Choose ASM");
         }
-
         private void pickromButton_Click(object sender, EventArgs e)
         {
-            pathpicker(sender, e, romBox);
+            pathpicker(sender, e, romBox, 2, "Choose ROM");
         }
         private void PickAsarButton_Click(object sender, EventArgs e)
         {
-            pathpicker(sender, e, ASARbox);
+            pathpicker(sender, e, ASARbox, 3, "Choose ASAR");
         }
 
-        private void pathpicker(object sender, EventArgs e, TextBox dest)
+        private void pathpicker(object sender, EventArgs e, TextBox dest, int fileExt, string caption)
         {
             Button foo = (Button)sender;
-            this.parent = new SMASM();
-            parent.openFilemenu(sender, e);
+            foo.Tag = parent.FilePicker(fileExt, out DialogResult buttonPressed, caption);
+            if(buttonPressed == DialogResult.Cancel) { return; }
             //button tag is populated with file path.
+            //reworking old code.... not sure if this tag thing is important later on but ??? why did i do this
             dest.Text = foo.Tag.ToString();
             dest.SelectionStart = dest.Text.Length;
         }
@@ -72,6 +76,7 @@ namespace SM_ASM_GUI
             configs.ChildNodes[1].SelectSingleNode("ASM").InnerText = asmBox.Text;
             configs.ChildNodes[1].SelectSingleNode("ASR").InnerText = ASARbox.Text;
             configs.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText = SMILEbox.Text;
+            configs.ChildNodes[1].SelectSingleNode("TILESETTABLE").InnerText = TilesetBox.Text;
             configs.Save(DbLocation + "config.xml");
             this.Close();
         }
@@ -80,5 +85,11 @@ namespace SM_ASM_GUI
         {
             folderpicker(sender, e, SMILEbox);
         }
+
+        private void TilesetBox_TextChanged(object sender, EventArgs e)
+        {
+            parent.AllowHexOnlyTEXTBOX(sender, e);
+        }
+
     }
 }

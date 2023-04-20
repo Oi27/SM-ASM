@@ -15,9 +15,306 @@ using System.Globalization;
 using System.Diagnostics;
 
 
-
 namespace SM_ASM_GUI
 {
+    public struct Tile
+    {
+        //tile in the context of the map drawing tool
+        //BTS unused for now, but could be used to draw super missile blocks differently from others/ etc.
+        //the endianness of the tiledata must be correct prior to calling.
+        public Tile(uint tileIndex, byte[]levelDataUncompressed)
+        {
+            uint levelSize = (uint)levelDataUncompressed[0] + (uint)levelDataUncompressed[1] * 0x100;
+            uint btsPosition = 1 + levelSize + tileIndex/2;
+
+            uint tileData = (uint)levelDataUncompressed[tileIndex] + (uint)levelDataUncompressed[tileIndex + 1] * 0x100;
+            sbyte bts = (sbyte)levelDataUncompressed[btsPosition];
+            Raw = tileData;
+            BTS = bts;
+            BTS_unsigned = (uint)levelDataUncompressed[btsPosition];
+            Index = tileIndex;
+            Color black = Color.FromArgb(255, 0, 0, 0);
+            Color white = Color.FromArgb(255, 255, 255, 255);
+            Color alpha = Color.LightGray;
+
+            Color powerbomb = Color.FromArgb(255, 128, 0);
+            Color supermissile = Color.FromArgb(0, 200, 0);
+            Color missile = Color.FromArgb(215,32,155);
+            Color blueDoor = Color.FromArgb(40,160,240);
+
+            Color doorTube = Color.Brown;
+
+            Color crumble = Color.Gray;
+            Color speed = Color.Aquamarine;
+
+            Color grapple = Color.LightSlateGray;
+
+            Color bombblock = Color.White;
+
+            //this sets up the default colors for each tile type - another switch for BTS after this one.
+            tileData &= 0xF000;
+            switch (tileData)
+            {
+                case (uint)TileType.Air:
+                    Type = TileType.Air;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.Slope:
+                    Type = TileType.Slope;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.AirSpike:
+                    Type = TileType.AirSpike;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.AirShootable:
+                    Type = TileType.AirShootable;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.Hcopy:
+                    Type = TileType.Hcopy;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.AirUnused:
+                    Type = TileType.AirUnused;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.AirBombable:
+                    Type = TileType.AirBombable;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.Solid:
+                    Type = TileType.Solid;
+                    DrawColor = black;
+                    break;
+                case (uint)TileType.Door:
+                    Type = TileType.Door;
+                    DrawColor = doorTube;
+                    break;
+                case (uint)TileType.Spike:
+                    Type = TileType.Spike;
+                    DrawColor = black;
+                    break;
+                case (uint)TileType.Special:
+                    Type = TileType.Special;
+                    DrawColor = black; //the BTS will fix this later if an important type.
+                    break;
+                case (uint)TileType.Shot:
+                    Type = TileType.Shot;
+                    DrawColor = white;
+                    break;
+                case (uint)TileType.Vcopy:
+                    Type = TileType.Vcopy;
+                    DrawColor = alpha;
+                    break;
+                case (uint)TileType.Grapple:
+                    Type = TileType.Grapple;
+                    DrawColor = grapple;
+                    break;
+                case (uint)TileType.Bomb:
+                    Type = TileType.Bomb;
+                    DrawColor = bombblock;
+                    break;
+                default:
+                    Type = TileType.Air;
+                    DrawColor = alpha;
+                    break;
+            }
+            //Type has been assigned:
+            switch (Type)
+            {
+                case TileType.Air:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                //slope + $40 = H flip
+                //slope + $80 = V Flip
+                case TileType.Slope:
+                    bool squareSlope = false;
+                    if (IsBetween(7 + 0x00, 0xE + 0x00, BTS_unsigned)) { squareSlope = true;}
+               else if (IsBetween(7 + 0x40, 0xE + 0x40, BTS_unsigned)) { squareSlope = true;}
+               else if (IsBetween(7 + 0x80, 0xE + 0x80, BTS_unsigned)) { squareSlope = true;}
+               else if (IsBetween(7 + 0xC0, 0xE + 0xC0, BTS_unsigned)) { squareSlope = true;}
+               else if (BTS_unsigned == 0x13 + 0x00) { squareSlope = true;}
+               else if (BTS_unsigned == 0x13 + 0x40) { squareSlope = true;}
+               else if (BTS_unsigned == 0x13 + 0x80) { squareSlope = true;}
+               else if (BTS_unsigned == 0x13 + 0xC0) { squareSlope = true;}
+
+                    if (squareSlope)
+                    {
+                        DrawColor = black; break;
+                    }
+                    //if we want to color any other kinds of slopes, it's here...
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.AirSpike:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.AirSpecial:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.AirShootable:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Hcopy:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.AirUnused:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.AirBombable:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Solid:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Door:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Spike:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Special:
+                    switch (BTS)
+                    {
+                        case 0x0:
+                        case 0x1:
+                        case 0x2:
+                        case 0x3:
+                        case 0x4:
+                        case 0x7:
+                            DrawColor = crumble; break;
+                        case 0X8:
+                        case 0X9:
+                        case 0XA:
+                        case 0XB:
+                            DrawColor = alpha; break;
+                        case 0xE:
+                        case 0xF:
+                            DrawColor = speed; break;
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Shot:
+                    switch (BTS)
+                    {
+                        case 0x8:
+                        case 0x9:
+                            DrawColor = powerbomb; break;
+                        case 0xA:
+                        case 0xB:
+                            DrawColor = supermissile; break;
+                        case 0xC:
+                            DrawColor = missile; break;
+                        case 0x40:
+                        case 0x41:
+                        case 0x42:
+                        case 0x43:
+                            DrawColor = blueDoor; break;
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Vcopy:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Grapple:
+                    switch (BTS)
+                    { 
+                        default:
+                            break;
+                    }
+                    break;
+                case TileType.Bomb:
+                    switch (BTS)
+                    {
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        public uint Raw { get; set; }
+        public sbyte BTS { get; set; }
+        public uint BTS_unsigned { get; set; }
+        public uint Index { get; set; }
+        public TileType Type { get; set; }
+        public Color DrawColor { get; set; }
+        private bool IsBetween(uint lower, uint higher, uint input)
+        {
+            if((input < higher) && (input > lower)) { return true; }
+            else { return false; }
+        }
+    }
+    public enum TileType : uint
+    {
+        Air = 0x0000,
+        Slope = 0x1000,
+        AirSpike = 0x2000,
+        AirSpecial = 0x3000,
+        AirShootable = 0x4000,
+        Hcopy = 0x5000,
+        AirUnused = 0x6000,
+        AirBombable = 0x7000,
+        Solid = 0x8000,
+        Door = 0x9000,
+        Spike = 0xA000,
+        Special = 0xB000,
+        Shot = 0xC000,
+        Vcopy = 0xD000,
+        Grapple = 0xE000,
+        Bomb = 0xF000
+    }
     public enum StateType : uint
     {
         Default = 0xE5E6,
@@ -63,6 +360,9 @@ namespace SM_ASM_GUI
 
             uint pcLevelPointer = LUNAR.SNEStoPC(pLevelData);
             uint addr2 = 0; //this will be assigned the end of the compressed data; compressed data size = addr2 - level data pointer
+            //#################################################################################
+            //THIS MAX LEVEL SIZE MUST AGREE WITH THE MAX DECOMPRESSION SIZE IN THE LUNAR CLASS
+            //#################################################################################
             byte[] levelUC = new byte[0xA000];    //reserve max level data size. Landing site is 0x5A00 bytes for reference.
             fixed (void* ptr = levelUC)
             LUNAR.Decompress(ptr, pcLevelPointer, &addr2);    //decompression takes a PC address.
@@ -132,6 +432,7 @@ namespace SM_ASM_GUI
             for (i = 0; i < 0x100; i++)
             {
                 if (ROM.readWord(j, sm.Rom) == 0x0000) { break; }
+                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
                 theseFX.Add(new FXdata(sm, j));
                 j += 0x10;
             }
@@ -213,8 +514,6 @@ namespace SM_ASM_GUI
         public string pmScrolls { get; set; }
         public string pmPLMset { get; set; }
     }
-
-
     public struct roomdata
     {//contains top header properties and sub-structs for each state.
         public roomdata(ROM sm, uint pheader)
@@ -236,65 +535,80 @@ namespace SM_ASM_GUI
             LabelM = "R" + asmFCN.WByte(RoomIndex) + "A" + string.Format("{0:X1}", AreaIndex);
 
 
-
-            uint i, j = LUNAR.SNEStoPC(DoorOut + 0x8F0000); //this short pointer is in $8F.
-            //i is to limit this to max doors
-            //j is pointer to read in $8F.
-            List<DoorData> thesedoors = new List<DoorData>();
-            for (i = 0; i < 0x100; i++)
+            try
             {
-                thesedoors.Add(new DoorData(sm, LUNAR.SNEStoPC(ROM.readWord(j,sm.Rom)+0x830000)));    //Readword passes the pointer at this address
-                j++; j++;
-                if (ROM.readWord(j, sm.Rom) < 0x8000) { break; }
+                uint i, j = LUNAR.SNEStoPC(DoorOut + 0x8F0000); //this short pointer is in $8F.
+                                                                //i is to limit this to max doors
+                                                                //j is pointer to read in $8F.
+                List<DoorData> thesedoors = new List<DoorData>();
+                for (i = 0; i < 0x100; i++)
+                {
+                    thesedoors.Add(new DoorData(sm, LUNAR.SNEStoPC(ROM.readWord(j, sm.Rom) + 0x830000)));    //Readword passes the pointer at this address
+                    j++; j++;
+                    if (ROM.readWord(j, sm.Rom) < 0x8000) { break; }
+                }
+                Doors = thesedoors;
+                //mandatory header is 11 bytes, door list is that many words plus terminator.
+                Bytes8F = 11 + thesedoors.Count * 2 + 2;
+
+
+
+                //count how many words after the Doorout pointer that Std. State $E5E6 is found.
+                uint statecount = 0;
+                i = 0;
+                uint x = ROM.readWord(pheader + 11 + i, rom);
+                uint[,] statepointers = new uint[255, 3];
+                //               0           1              2
+                //statepointers [Event type, Event Pointer, Optional Arg.] for each state.
+                while (x != (uint)StateType.Default)          //As pc address
+                {
+                    statepointers[statecount, 0] = x;
+                    if (x == (uint)StateType.Event || x == (uint)StateType.BossChoose)
+                    {
+                        statepointers[statecount, 1] = ROM.readWord(pheader + 11 + i + 3, rom) + 0x70000;
+                        statepointers[statecount, 2] = rom[pheader + 11 + i + 2];
+                        i = i + 5;
+                    }     //events and boss bits take 1 byte arg
+                    else if (x == (uint)StateType.Door)
+                    {
+                        statepointers[statecount, 1] = ROM.readWord(pheader + 11 + i + 4, rom) + 0x70000;
+                        statepointers[statecount, 2] = ROM.readWord(pheader + 11 + i + 2, rom);
+                        i = i + 6;
+                    }                //the door room state needs a special one for its two-byte arg.
+                    else
+                    {
+                        statepointers[statecount, 1] = ROM.readWord(pheader + 11 + i + 2, rom) + 0x70000;
+                        i = i + 4;
+                    }                                                        //all the other ones are 4 bytes.
+                    x = ROM.readWord(pheader + 11 + i, rom);
+                    statecount++;
+                }
+                StateCount = (int)statecount;            //this weird assignment is so we can have roomdata.statecount = #
+                uint stdstate = pheader + 11 + i;
+                //[pheader + 11 + i] is currently the address of the std. state pointer.
+                //If there were room states, they are organized in reverse order; IE state 0 is the one with highest priority.
+                //to create the state array, we pass information from StatePointers array.
+                //All 3 parts of the state are accounted for.
+                uint roomsize = Width * Height;
+                States = new List<state>();                //reserve array of states.
+                for (i = 0; i < statecount; i++)        //this loop is skipped if there are is ONLY a default state because statecount will be 0.
+                {
+                    States.Add(new state(sm, statepointers[i, 0], statepointers[i, 1], statepointers[i, 2], roomsize));    //states need revised to include their own info? Or we can have it on the main header.
+                }
+                //have a special assignment for std. state
+                //Event pointer is stdstate+2 because stdstate is the beginning of 0xE5E6.
+                //                   0           1              2
+                //    statepointers [Event type, Event Pointer, Optional Arg.] for each state.
+                States.Add(new state(sm, x, stdstate + 2, 0, roomsize));
             }
-            Doors = thesedoors;
-            //mandatory header is 11 bytes, door list is that many words plus terminator.
-            Bytes8F = 11 + thesedoors.Count * 2 + 2;
-
-
-
-            //count how many words after the Doorout pointer that Std. State $E5E6 is found.
-            uint statecount = 0;
-            i = 0;
-            uint x = ROM.readWord(pheader + 11 + i,rom);
-            uint[,] statepointers = new uint[255,3];
-            //               0           1              2
-            //statepointers [Event type, Event Pointer, Optional Arg.] for each state.
-            while (x != (uint)StateType.Default)          //As pc address
+            catch
             {
-                statepointers[statecount, 0] = x;
-                if (x == (uint)StateType.Event || x == (uint)StateType.BossChoose) { 
-                    statepointers[statecount, 1] = ROM.readWord(pheader + 11 + i + 3, rom) + 0x70000;
-                    statepointers[statecount, 2] = rom[pheader + 11 + i + 2];
-                    i = i + 5; }     //events and boss bits take 1 byte arg
-                else if(x == (uint)StateType.Door) { 
-                    statepointers[statecount, 1] = ROM.readWord(pheader + 11 + i + 4, rom) + 0x70000;
-                    statepointers[statecount, 2] = ROM.readWord(pheader + 11 + i + 2, rom);
-                    i = i + 6; }                //the door room state needs a special one for its two-byte arg.
-                else { 
-                    statepointers[statecount, 1] = ROM.readWord(pheader + 11 + i + 2, rom) + 0x70000; 
-                    i = i + 4; }                                                        //all the other ones are 4 bytes.
-                x = ROM.readWord(pheader + 11 + i, rom);
-                statecount++;
+                Bytes8F = 0;
+                StateCount = 0;
+                States = null;
+                Doors = null;
+                MessageBox.Show("Invalid level header. Aborting read operation.", "Invalid Level Header.", MessageBoxButtons.OK);
             }
-            StateCount = (int)statecount;            //this weird assignment is so we can have roomdata.statecount = #
-            uint stdstate = pheader + 11 + i;
-            //[pheader + 11 + i] is currently the address of the std. state pointer.
-            //If there were room states, they are organized in reverse order; IE state 0 is the one with highest priority.
-            //to create the state array, we pass information from StatePointers array.
-            //All 3 parts of the state are accounted for.
-            uint roomsize = Width * Height;
-            States = new List<state>();                //reserve array of states.
-            for (i = 0; i < statecount; i++)        //this loop is skipped if there are is ONLY a default state because statecount will be 0.
-            {
-                States.Add(new state(sm, statepointers[i,0], statepointers[i,1], statepointers[i,2], roomsize));    //states need revised to include their own info? Or we can have it on the main header.
-            }
-            //have a special assignment for std. state
-            //Event pointer is stdstate+2 because stdstate is the beginning of 0xE5E6.
-            //                   0           1              2
-            //    statepointers [Event type, Event Pointer, Optional Arg.] for each state.
-            States.Add(new state(sm,  x,          stdstate+2,    0, roomsize));
-
 
 
         }
@@ -514,12 +828,58 @@ namespace SM_ASM_GUI
             PosX = sm.Rom[pointer]; pointer++;
             PosY = sm.Rom[pointer]; pointer++;
             Variable = ROM.readWord(pointer, sm.Rom);
+            ScrollData = null;
+            Index = -1;
+            //index is initialized during some operations
+            //  -export to ASM
+            ScrollLabel = "";
+            //scrolldata will be intialialized once control returns to SMASM itself, since we need to reference config to know what the scroll PLM is...
+            //unless we read from ROM to check the instruction list for scroll PLM things??
+            //that seems more reasonable tbh
+            ScrollData = ReadScrollPLM(ID, Variable, sm);
+        }
+        
+        byte[] ReadScrollPLM(uint id, uint variable, ROM sm)
+        {
+            //read the instruction list to see if it's a scroll PLM (contains pointer 0x8B55)
+            //if so, return its data
+            //else, return null
+            bool scrollPLM = false;
+            uint headerAddr = LUNAR.SNEStoPC(0x840000 + id);
+            uint instructionPointer = (uint)LUNAR.SNEStoPC((uint)0x840000 + (uint)sm.Rom[headerAddr + 2] + (uint)(sm.Rom[headerAddr + 3]*0x100));
+            uint[] instructionlist = new uint[5];
+            //scroll instruction should be within the first 5 words of the list.
+            int j = 0;
+            for (int i = 0; i < 10; i += 2)
+            {
+                instructionlist[j] = (uint)(sm.Rom[instructionPointer + i] + (sm.Rom[instructionPointer + i + 1] * 0x100));
+                j++;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                if (instructionlist[i] == 0x8B55) { scrollPLM = true; }
+            }
+
+            if (!scrollPLM) { return null; }
+
+            uint dataAddr = LUNAR.SNEStoPC(0x8F0000 + variable);
+            List<byte> scrollData = new List<byte>();
+            for (int i = 0; i < 1000; i++)
+            {
+                byte scroll = sm.Rom[dataAddr + i];
+                scrollData.Add(scroll);
+                if(scroll == 0x80) { break; }
+            }
+            return scrollData.ToArray();
         }
 
         public uint ID { get; set; }
         public uint PosX { get; set; }
         public uint PosY { get; set; }
         public uint Variable { get; set; }
+        public byte[] ScrollData { get; set; }
+        public int Index { set; get; }
+        public string ScrollLabel { get; set; }
     }
     public struct FXdata
     {
@@ -563,6 +923,9 @@ namespace SM_ASM_GUI
         public ROM sm;
         roomdata thisroom;
 
+        Bitmap roomPic;
+        int imageScale;
+
         const int MaxEnemies = 32;
         const int     MaxGFX = 04;
         const int    MaxPLMs = 40;
@@ -594,6 +957,7 @@ namespace SM_ASM_GUI
                     writer.WriteElementString("SMILEFILE", " ");
                     writer.WriteElementString("ROOMLIST", " ");
                     writer.WriteElementString("TILESETTABLE", "E6A2");
+                    writer.WriteElementString("SCROLLPLM", "B703");
                     writer.WriteElementString("ONTOP", "0");
                     writer.Close();
                 }
@@ -602,8 +966,9 @@ namespace SM_ASM_GUI
             //if it DOES exist, we should probably verify it with a schema... oh well!
             config.Load(DbLocation + "config.xml");
             if (config.ChildNodes[1].SelectSingleNode("ONTOP").InnerText == "True") { this.TopMost = true; this.alltopCheckbox.Checked = true; }
-
+            SMILEfilesPath = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText;
             sm = new ROM(config.ChildNodes[1].SelectSingleNode("ROM").InnerText);
+            PopulateHeaderList();
             
 
             //pcBox.Text = string.Format("{0:X6}", readWord(0x10, sm));
@@ -612,33 +977,50 @@ namespace SM_ASM_GUI
         }
 
 
-
-        public void openFilemenu(object sender, EventArgs e)
+        public string FilePicker(int extensionSelect, out DialogResult buttonPressed, string windowCaption = "Open File", string startPath = "")
         {
+            var filePath = string.Empty;
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                Button foo = (Button)sender;
-
-                var filePath = string.Empty;
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                openFileDialog.InitialDirectory = DbLocation;
+                string filter;
+                switch (extensionSelect)
                 {
-                    openFileDialog.InitialDirectory = DbLocation;
-                    openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                    openFileDialog.FilterIndex = 1;
-                    openFileDialog.RestoreDirectory = true;
-
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        //Get the path of specified file
-                        filePath = openFileDialog.FileName;
-
-                        //Read the contents of the file into a stream
-                        //fails if the file is already open in SMILE...?
-                        var fileStream = openFileDialog.OpenFile();
-
-                    }
+                    case 0:
+                        filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                        break;
+                    case 1:
+                        filter = "ASM files (*.asm)|*.asm|All files (*.*)|*.*";
+                        break;
+                    case 2:
+                        filter = "ROM files (*.smc, *.sfc)|*.smc;*.sfc|All files (*.*)|*.*";
+                        break;
+                    case 3:
+                        filter = "EXE files (*.exe)|*.exe|All files (*.*)|*.*";
+                        break;
+                    default:
+                        filter = "All files(*.*)|*.*|";
+                        break;
                 }
-                foo.Tag = filePath;
+                openFileDialog.InitialDirectory = startPath;
+                openFileDialog.Filter = filter;
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+                openFileDialog.Title = windowCaption;
+
+                buttonPressed = openFileDialog.ShowDialog();
+                if (buttonPressed == DialogResult.OK)
+                {
+                    //Get the path of specified file
+                    filePath = openFileDialog.FileName;
+
+                    //Read the contents of the file into a stream
+                    //fails if the file is already open in SMILE...?
+                    var fileStream = openFileDialog.OpenFile();
+
+                }
             }
+            return filePath;
         }
 
         private void alltopCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -663,32 +1045,33 @@ namespace SM_ASM_GUI
             LUNAR.CloseFile();
         }
 
-        private void pcBox_TextChanged(object sender, EventArgs e)
-        {
-            //needs to do number validation first to make sure it's valid hex
-            if (pcBox.Text == "" || pcBox.Text == null) { return; }
-            uint pcaddr = uint.Parse(pcBox.Text, System.Globalization.NumberStyles.HexNumber);
-            lorombox.Text = string.Format("{0:X6}", LUNAR.LunarPCtoSNES(pcaddr, 0x10, 0));
-            //lorombox.Text = pcaddr.ToString();  //hex to dec converter
-        }
+        //private void pcBox_TextChanged(object sender, EventArgs e)
+        //{
+        //    //needs to do number validation first to make sure it's valid hex
+        //    if (pcBox.Text == "" || pcBox.Text == null) { return; }
+        //    uint pcaddr = uint.Parse(pcBox.Text, System.Globalization.NumberStyles.HexNumber);
+        //    lorombox.Text = string.Format("{0:X6}", LUNAR.LunarPCtoSNES(pcaddr, 0x10, 0));
+        //    //lorombox.Text = pcaddr.ToString();  //hex to dec converter
+        //}
 
-        private void HeaderBox_TextChanged(object sender, EventArgs e)
-        {
-            int x = HeaderBox.SelectionStart;
-            HeaderBox.Text = HeaderBox.Text.ToUpper();
-            HeaderBox.SelectionStart = x;
-        }
+        //private void HeaderBox_TextChanged(object sender, EventArgs e)
+        //{
+        //    int x = HeaderBox.SelectionStart;
+        //    HeaderBox.Text = HeaderBox.Text.ToUpper();
+        //    HeaderBox.SelectionStart = x;
+        //}
 
         private void HeaderBox_Validated(object sender, EventArgs e)
         {
-            LoadRoomToGUI();
+            //LoadRoomToGUI();
         }
 
-        private void LoadRoomToGUI()
+        private void LoadRoomToGUI(uint headeraddr)
         {
             sm = new ROM(config.ChildNodes[1].SelectSingleNode("ROM").InnerText);
-            uint headeraddr = uint.Parse(HeaderBox.Text, System.Globalization.NumberStyles.HexNumber);
+            if(HeaderDropdown.Text == "") { return; }
             thisroom = new roomdata(sm, headeraddr);
+            if(thisroom.States == null) { return; }
 
             RoomIndex.Text = string.Format("{0:X2}", thisroom.RoomIndex);
             AreaIndex.Text = string.Format("{0:X2}", thisroom.AreaIndex);
@@ -711,7 +1094,10 @@ namespace SM_ASM_GUI
             StateBox.SelectedIndex = StateBox.Items.Count - 1;
 
             AppendStatus("Loaded R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.RoomIndex) + " - " + DateTime.Now.ToLongTimeString());
-            //RoomLoadTimeStamp.Text = DateTime.Now.ToShortDateString() + "\n" + DateTime.Now.ToLongTimeString();
+            Bitmap test = LevelData2Bitmap(thisroom,thisroom.StateCount);
+            roomPic = test;
+            RoomPicture.Image = test;
+            imageScale = 1;
         }
         public void AppendStatus(string text)
         {
@@ -741,7 +1127,14 @@ namespace SM_ASM_GUI
             FXbox.Items.Clear();
             for (int i = 0; i < thisroom.States[StateBox.SelectedIndex].FX.Count(); i++)
             {
-                FXbox.Items.Add(asmFCN.WByte((uint)i) + " - " + asmFCN.WWord(thisroom.States[StateBox.SelectedIndex].FX[i].Type));
+                if(thisroom.States[StateBox.SelectedIndex].FX[i].DoorSelect == 0xFFFF)
+                {
+                    FXbox.Items.Add("No Room FX");
+                }
+                else
+                {
+                    FXbox.Items.Add(asmFCN.WByte((uint)i) + " - " + asmFCN.WWord(thisroom.States[StateBox.SelectedIndex].FX[i].DoorSelect));
+                }
             }
 
             DoorBox.Items.Clear();
@@ -761,16 +1154,85 @@ namespace SM_ASM_GUI
             
         }
 
-        private void HeaderBox_Validating(object sender, CancelEventArgs e)
+        //private void HeaderBox_Validating(object sender, CancelEventArgs e)
+        //{
+        //    //make sure it only contains numbers and ABCDEF
+        //    return;
+        //    if(int.TryParse(HeaderBox.Text, System.Globalization.NumberStyles.HexNumber, new CultureInfo("en-US"), out int resul) && HeaderBox.Text.Length == 5)
+        //    {
+        //        return;
+        //    }
+        //    TextBox header = (TextBox)sender;
+        //    header.Text = "";
+        //    e.Cancel = true;
+        //}
+
+        public void AllowHexOnlyCOMBO(object sender, EventArgs e)
         {
-            //make sure it only contains numbers and ABCDEF
-            if(int.TryParse(HeaderBox.Text, System.Globalization.NumberStyles.HexNumber, new CultureInfo("en-US"), out int resul) && HeaderBox.Text.Length == 5)
+            //if entry is not a hex number, roll it back to its tag.
+            ComboBox A = (ComboBox)sender;
+            if (A.Text.Length < 1) { A.Tag = "";  return; }
+            if (A.Tag == null) { A.Tag = ""; }
+            A.Text = A.Text.ToUpper();
+
+            int inValidnum = 0;
+            for (int i = 0; i < A.Text.Length; i++)
             {
+                int lastchar = (int)A.Text[i];
+                bool isNumber = lastchar >= 48 && lastchar <= 57;
+                bool hexLetter = (lastchar >= 65 && lastchar <= 70);
+                if (isNumber || hexLetter)
+                {
+                }
+                else
+                {
+                    inValidnum++;
+                }
+            }
+            if(inValidnum > 0)
+            {
+                A.Text = A.Tag.ToString();
+                A.SelectionStart = A.Text.Length;
                 return;
             }
-            TextBox header = (TextBox)sender;
-            header.Text = "";
-            e.Cancel = true;
+            //valid number
+            A.Tag = A.Text;
+            A.SelectionStart = A.Text.Length;
+            return;
+        }
+
+        public void AllowHexOnlyTEXTBOX(object sender, EventArgs e)
+        {
+            //if entry is not a hex number, roll it back to its tag.
+            TextBox A = (TextBox)sender;
+            if (A.Text.Length < 1) { A.Tag = ""; return; }
+            if (A.Tag == null) { A.Tag = ""; }
+            A.Text = A.Text.ToUpper();
+
+            int inValidnum = 0;
+            for (int i = 0; i < A.Text.Length; i++)
+            {
+                int lastchar = (int)A.Text[i];
+                bool isNumber = lastchar >= 48 && lastchar <= 57;
+                bool hexLetter = (lastchar >= 65 && lastchar <= 70);
+                if (isNumber || hexLetter)
+                {
+                }
+                else
+                {
+                    inValidnum++;
+                }
+            }
+            if (inValidnum > 0)
+            {
+                A.Text = A.Tag.ToString();
+                A.SelectionStart = A.Text.Length;
+                return;
+            }
+            //valid number
+            A.Tag = A.Text;
+            A.SelectionStart = A.Text.Length;
+            return;
         }
 
         private void Duplicate_Item(object sender, MouseEventArgs e)
@@ -794,7 +1256,46 @@ namespace SM_ASM_GUI
             }
             else if (A.Name.Substring(0, 1) == "F" && A.Items.Count < MaxFX)
             {
-                thisroom.States[StateBox.SelectedIndex].FX.Add(thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex]);
+                if(thisroom.States[StateBox.SelectedIndex].FX[0].DoorSelect == 0xFFFF)
+                {
+                    //if room didn't have any FX data, make some and get rid of the garbage data.
+                    thisroom.States[StateBox.SelectedIndex].FX.Add(CreateFX(0x0000));
+                    thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(0);
+                }
+                else
+                {
+                    //else, the extant data is legit
+                    //and if the default FX was copied, it should give itself a door ID.
+                    FXdata newFX;
+                    if (thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].DoorSelect == 0x0000)
+                    {
+                        newFX = new FXdata
+                        {
+                            DoorSelect = thisroom.Doors[0].Destination,
+                            LiqStart = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].LiqStart,
+                              LiqEnd = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].LiqEnd,
+                            LiqSpeed = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].     LiqSpeed,
+                            LiqDelay = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].     LiqDelay,
+                                Type = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].         Type,
+                                BitA = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].         BitA,
+                                BitB = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].         BitB,
+                                BitC = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].         BitC,
+                          PalFXflags = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].   PalFXflags,
+                       TileAnimFlags = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].TileAnimFlags,
+                            PalBlend = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex].     PalBlend,
+                    };
+                    }
+                    else
+                    {
+                        newFX = thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex];
+                    }
+                    //thisroom.States[StateBox.SelectedIndex].FX.Add(newFX);
+                    //order matters in this list:
+                    FXdata terminator = thisroom.States[StateBox.SelectedIndex].FX[thisroom.States[StateBox.SelectedIndex].FX.Count-1];
+                    thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(thisroom.States[StateBox.SelectedIndex].FX.Count-1);
+                    thisroom.States[StateBox.SelectedIndex].FX.Add(newFX);
+                    thisroom.States[StateBox.SelectedIndex].FX.Add(terminator);
+                }
             }
             else if (A.Name.Substring(0, 1) == "D" && A.Items.Count < MaxDoors)
             {
@@ -807,6 +1308,13 @@ namespace SM_ASM_GUI
 
 
             StateBox_SelectedIndexChanged(sender, e);
+        }
+        private void DataListMenu_Opening(object sender, CancelEventArgs e)
+        {
+            ListBox A = (ListBox)((sender as ContextMenuStrip).SourceControl);
+            string firstletter = A.Name.Substring(0, 1);
+            if (firstletter == "P") { ScrollPLMedit.Visible = true; }
+            else { ScrollPLMedit.Visible = false; }
         }
 
         private void BlockDelete_Click(object sender, EventArgs e)
@@ -837,12 +1345,19 @@ namespace SM_ASM_GUI
                     thisroom.States[StateBox.SelectedIndex].PLMs.RemoveAt((int)A.SelectedIndices[i]);
                 }
             }
-            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count < MaxFX && A.Items.Count > 1)
+            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count < MaxFX && A.Items.Count >= 1)
             {
                 for (int i = A.SelectedIndices.Count - 1; i >= 0; i--)
                 {
                     count--;
-                    if (count < 1) { MessageBox.Show("Room must have at least one FX."); break; }
+                    if (count < 1) 
+                    {
+                        //make the door select into FFFF; rest is handled by the asm write process/GUI load
+                        FXdata terminator = CreateFX(0xFFFF);
+                        thisroom.States[StateBox.SelectedIndex].FX.Clear();
+                        thisroom.States[StateBox.SelectedIndex].FX.Add(terminator);
+                        break; 
+                    }
                     thisroom.States[StateBox.SelectedIndex].FX.RemoveAt((int)A.SelectedIndices[i]);
                 }
             }
@@ -901,7 +1416,11 @@ namespace SM_ASM_GUI
 
         private void HeaderBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter) { SendKeys.Send("\t"); }
+            if (e.KeyCode == Keys.Enter) { SendKeys.Send("\t"); }
+            else
+            {
+                //AllowHexOnlyCOMBO(sender, e);
+            }
         }
         public void CreateNewSMASMspace(string asmPath)
         {
@@ -953,7 +1472,7 @@ namespace SM_ASM_GUI
                 "";
 
             tASM += smasmspace;
-            File.AppendAllText(asmPath,tASM);
+            File.WriteAllText(asmPath,tASM);
         }
 
         public List<string> ASM2List(string asmPath)
@@ -1425,22 +1944,43 @@ namespace SM_ASM_GUI
             StateBox_SelectedIndexChanged(sender, dummy);
         }
 
+        public string getMDBpath(out bool mdbExists)
+        {
+            //new MDB is created on ASM-apply if it did not already exist.
+            //romname is the file path minus the extension
+            string rom = config.ChildNodes[1].SelectSingleNode("ROM").InnerText;
+            string romname = rom.Substring(rom.LastIndexOf('\\') + 1); romname = romname.Substring(0, romname.Length - 4);
+            string customF = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText + "\\Custom\\" + romname + "\\Data\\";
+            Directory.CreateDirectory(customF);
+            string mdbpath = customF + "mdb.txt";
+            mdbExists = File.Exists(mdbpath);
+            return mdbpath;
+        }
+
+        public void updateTilesetAddress(string asmPath, string tstAddr)
+        {
+            //search with regex for the !smasmTilesetTable = $8F#### label and replace the numbers
+            string searchPattern = @"!smasmTilesetTable = \$8F....";
+            string replacement = "!smasmTilesetTable = $8F" + tstAddr;
+            System.Text.RegularExpressions.Regex nameFormat = new System.Text.RegularExpressions.Regex(searchPattern);
+            string asm = File.ReadAllText(asmPath);
+            System.Text.RegularExpressions.Match a = nameFormat.Match(asm);
+            asm = asm.Replace(a.Value, replacement);
+            File.WriteAllText(asmPath,asm);
+        }
+
         private void ApplyButton_Click(object sender, EventArgs e)
         {
             string q = @"" + (char)34;
             string rom = config.ChildNodes[1].SelectSingleNode("ROM").InnerText;
-            string asm = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
             string asr = config.ChildNodes[1].SelectSingleNode("ASR").InnerText;
+            string tstAddr = config.ChildNodes[1].SelectSingleNode("TILESETTABLE").InnerText;
+            string mdbpath = getMDBpath(out bool mdbExists);
 
-            //romname is the file path minus the extension
-            string romname = rom.Substring(rom.LastIndexOf('\\')+1); romname = romname.Substring(0, romname.Length - 4);
-            string customF = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText + "\\Custom\\" + romname + "\\Data\\";
-            Directory.CreateDirectory(customF);
-            string mdbpath = customF + "mdb.txt";
+            updateTilesetAddress(asmPath, tstAddr);
 
-
-
-            string strCmdText = string.Format(@" {0}{1}{0} {0}{2}{0}", q, asm, rom);
+            string strCmdText = string.Format(@" {0}{1}{0} {0}{2}{0}", q, asmPath, rom);
             try
             {
                 using (Process patch = new Process())
@@ -1537,7 +2077,7 @@ namespace SM_ASM_GUI
                     //------------------------------------------------
                     //Stuff for repointing the doors
                     //
-                    List<string> smasmASM = Parse_SMASM_ASM(asm, out int startline, out int endline, out bool roomExists);
+                    List<string> smasmASM = Parse_SMASM_ASM(asmPath, out int startline, out int endline, out bool roomExists);
 
                     List<string> smasm8F = new List<string>();
                     List<string> smasm83d = new List<string>();
@@ -1573,12 +2113,12 @@ namespace SM_ASM_GUI
 
                     //to insert this new $83, the easiest way would be to rebuild the whole ASM file in the same way that Export to ASM does.
                     string final = ConcatASMsections(smasm8F, new83d, smasm83f, smasmA1, smasmB4, smasmLV, smasmTilesets, smasmTilesetTable);
-                    List<string> pASM = ASM2List(asm);
+                    List<string> pASM = ASM2List(asmPath);
                     pASM.RemoveRange(startline, (endline + 1) - startline);
                     pASM.Insert(startline, final);
                     try
                     {
-                        File.WriteAllLines(asm, pASM);
+                        File.WriteAllLines(asmPath, pASM);
                     }
                     catch
                     {
@@ -1604,7 +2144,8 @@ namespace SM_ASM_GUI
                         ""
                         );
                     StatusBox.Text += res + "\n-------------------\n";
-
+                    //also account for the MDB changing
+                    PopulateHeaderList();
                 }
             }
             catch (Exception eg)
@@ -1627,21 +2168,30 @@ namespace SM_ASM_GUI
 
         private void HeaderData_Validating(object sender, CancelEventArgs e)
         {
-            TextBox a = (TextBox)sender;
-            uint barse;
-            if (uint.TryParse(RoomIndex.Text, NumberStyles.HexNumber, null, out barse))
-            {
+            //AllowHexOnlyTEXTBOX(sender, null);
+            return;
+            //TextBox a = (TextBox)sender;
+            //uint barse;
+            //if (uint.TryParse(RoomIndex.Text, NumberStyles.HexNumber, null, out barse))
+            //{
                 
-            }
-            else
-            {
-                a.Text = "";
-                e.Cancel = true;
-            }
+            //}
+            //else
+            //{
+            //    a.Text = "";
+            //    e.Cancel = true;
+            //}
         }
 
         private void RoomIndex_Validated(object sender, EventArgs e)
         {
+            if(
+                RoomIndex.Text.Length < 2 
+                && 
+                AreaIndex.Text.Length < 2
+                ||
+                thisroom.States == null
+                ) { return; }
             thisroom.Rename(uint.Parse(RoomIndex.Text, NumberStyles.HexNumber), uint.Parse(AreaIndex.Text, NumberStyles.HexNumber));
         }
 
@@ -1695,6 +2245,7 @@ namespace SM_ASM_GUI
                 A.ShowDialog();
                 n = A.Results();
                 A.Close();
+                if(n == null) { return; }
                 thisroom.States[StateBox.SelectedIndex].Enemies.Add(CreateEnemy(sm, n[0], n[1], n[2]));
             }
             else if (B.Name.Substring(0, 1) == "G" && B.Items.Count < MaxGFX)
@@ -1702,6 +2253,7 @@ namespace SM_ASM_GUI
                 A.ShowDialog();
                 n = A.Results();
                 A.Close();
+                if (n == null) { return; }
                 thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Add(CreateGFX(sm, n[0], n[1]));
             }
             else if (B.Name.Substring(0, 1) == "P" && B.Items.Count < MaxPLMs)
@@ -1709,14 +2261,22 @@ namespace SM_ASM_GUI
                 A.ShowDialog();
                 n = A.Results();
                 A.Close();
+                if (n == null) { return; }
                 thisroom.States[StateBox.SelectedIndex].PLMs.Add(CreatePLM(sm, n[0], n[1], n[2]));
             }
+            //doors and FX don't have hardcoded maximums but they should probably be limited anyway?
             else if (B.Name.Substring(0, 1) == "F" && B.Items.Count < MaxPLMs)
             {
-                thisroom.States[StateBox.SelectedIndex].FX.Add(CreateFX());
+                //order matters in this list:
+                A.Close();
+                FXdata terminator = thisroom.States[StateBox.SelectedIndex].FX[thisroom.States[StateBox.SelectedIndex].FX.Count-1];
+                thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(thisroom.States[StateBox.SelectedIndex].FX.Count-1);
+                thisroom.States[StateBox.SelectedIndex].FX.Add(CreateFX(thisroom.Doors[0].Destination));
+                thisroom.States[StateBox.SelectedIndex].FX.Add(terminator);
             }
             else if (B.Name.Substring(0, 1) == "D" && B.Items.Count < MaxPLMs)
             {
+                A.Close();
                 thisroom.Doors.Add(CreateDoor());
             }
 
@@ -1778,12 +2338,12 @@ namespace SM_ASM_GUI
             };
             return crate;
         }
-        public FXdata CreateFX()
+        public FXdata CreateFX(uint doorSelect)
         {
             //create a default FX with hardcoded values.
             FXdata crate = new FXdata()
             {
-                DoorSelect = 0xFFFF,
+                DoorSelect = doorSelect,
                 LiqStart = 0xFFFF,
                 LiqEnd = 0xFFFF,
                 LiqSpeed = 0x0000,
@@ -1871,7 +2431,9 @@ namespace SM_ASM_GUI
         private void RefreshExport_Click(object sender, EventArgs e)
         {
             //load room based on current address in Headerbox.
-            LoadRoomToGUI();
+            string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
+            uint headerAddr = uint.Parse(headerNumbers, NumberStyles.HexNumber);
+            LoadRoomToGUI(headerAddr);
             ASMbutton_Click(sender, e);
         }
 
@@ -2227,13 +2789,6 @@ namespace SM_ASM_GUI
             return tileSetTable;
         }
 
-        public List<string> ClearSection(List<string> input)
-        {
-            //return the query label and brackets with the inners removed.
-            //i might not actually need this for the tileset thing because it generates the query label + brackets.
-            return null;
-        }
-
         private void ImportTilesets_Click(object sender, EventArgs e)
         {
             //Thread t = new Thread(new ThreadStart(this.ImportTileSets()));
@@ -2342,9 +2897,348 @@ namespace SM_ASM_GUI
             private void bitshift_Click(object sender, EventArgs e)
         {
             //StatusBox.Text = asmFCN.WLong(RollASL(uint.Parse(StatusBox.Text, NumberStyles.HexNumber, null), 8, 3));
-            for (int i = 0; i < 500; i++)
+            //for (int i = 0; i < 500; i++)
+            //{
+            //    AppendStatus(i.ToString());
+            //}
+            //Bitmap test = new Bitmap(32, 32, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            //test = LevelData2Bitmap(thisroom, thisroom.StateCount);
+            //RoomPicture.Image = test;
+            //test.Save("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\bin\\Unsafe\\test.bmp");
+            ScrollEditor A = new ScrollEditor(
+                thisroom, 
+                StateBox.SelectedIndex, 
+                4, 
+                ScrollEditor.Mode.PLM, 
+                this
+                );
+            try
             {
-                AppendStatus(i.ToString());
+                A.ShowDialog();
+                thisroom = A.Room;
+                A.Close();
+            }
+            catch { }
+
+            //for (int i = 0; i < thisroom.States[StateBox.SelectedIndex].PLMs[0].ScrollData.Length; i++)
+            //{
+            //    AppendStatus(thisroom.States[StateBox.SelectedIndex].PLMs[0].ScrollData[i].ToString() + ", ");
+            //}
+        }
+
+        public Bitmap LevelData2Bitmap(roomdata room, int state)
+        {
+            //read the uncompressed level data for tile types:
+            int roomTilesX = (int)room.Width * 16;
+            int roomTilesY = (int)room.Height * 16;
+            Bitmap roomPic = new Bitmap(roomTilesX, roomTilesY, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            int levelSize = room.States[state].LevelDataUC[0] + room.States[state].LevelDataUC[1] * 0x100;
+
+            //LP initialized to 2 to skip size statement
+            uint levelPosition = 2;
+            int btsPosition = 2 + levelSize;
+            byte[] leveldata = room.States[state].LevelDataUC;
+            for (int i = 0; i < roomTilesY; i++)
+            {
+                for (int j = 0; j < roomTilesX; j++)
+                {
+                    Tile drawthis = new Tile(levelPosition, leveldata);
+                    //modify drawthis to match the color the copy tiles are pointing to
+                    if (drawthis.Type == TileType.Hcopy || drawthis.Type == TileType.Vcopy) 
+                    {
+                        drawthis = TraceCopyTiles(drawthis, room, state);
+                    }
+                    roomPic.SetPixel(j, i, drawthis.DrawColor);
+                    levelPosition += 2;
+                    btsPosition += 1;
+                }
+            }
+            //next, draw in the PLMs!
+            //items are IDs < $EED7; 1x1.
+            //doors should be defined in a file somewhere... maybe the PLM tag list anything with a "door" tag gets drawn?
+            //gates should work the same way?
+            //skip PLMs that are offscreen.
+            roomPic = DrawPLMs(roomPic,room, room.StateCount);
+            return roomPic;
+        }
+         Bitmap DrawPLMs(Bitmap roomPic, roomdata room, int statenumber)
+        {
+            //final tag in list should have mapProperties info
+            string PLMListPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "\\plmlist.txt";
+            List<string> plmTagList = File.ReadAllLines(PLMListPath).ToList();
+            foreach (PLMdata plm in room.States[statenumber].PLMs)
+            {
+                bool plmInList = false;
+                //bool drawPLM = true;
+                string[] tags = null;   //initialized to make it happy i guess...
+                string[] mapProperties;
+                //for each entry in the PLM tag list...
+                foreach (string entry in plmTagList)
+                {
+                    tags = entry.Split(',');
+                    try
+                    {
+                        if (plm.ID == uint.Parse(tags[0], NumberStyles.HexNumber)) { plmInList = true; break; }
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Invalid PLM ID detected in plmlist.txt! Header address must be first in the list and use hex representation.\nPLM drawing aborted.", "PLM Error", MessageBoxButtons.OK);
+                        return roomPic;
+                    }
+                }
+                mapProperties = tags[tags.Length - 1].Split(':');
+                try
+                {
+                    //mapProperties breakout
+                    //[0] "mapProperties" here so people know what it is in the text editor
+                    //[1] shape
+                    //[2] color0
+                    //[3] color1
+                    //[4] color3
+                    //.
+                    //.
+                    //.
+                    if (mapProperties[1].ToUpper().Trim(' ') == "EXCLUDE") { continue; }
+                    //move the draw instruction up here as a function.
+                    if ((plm.PosX < room.Width * 16 && plm.PosY < room.Height * 16) && plmInList)
+                    {
+                        roomPic = DrawMapShape(plm, mapProperties, roomPic);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Error reading mapProperties array for PLM " + asmFCN.WWord(plm.ID) + "\nAborting PLM draw.", "Invalid Property", MessageBoxButtons.OK);
+                    return roomPic;
+                }
+            }
+            return roomPic;
+        }
+        private Bitmap DrawMapShape(PLMdata plm, string[] mapProperties, Bitmap target)
+        {
+            //switch statement contains shape definitions for each keyword.
+            switch (mapProperties[1].ToLower())
+            {
+                case "doorlr":
+                    //expects one color to be listed in mP[2].
+                    //wound need error handling for if they forgot some color tags....
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY+0, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY+1, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY+2, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY+3, Color.FromName(mapProperties[2]));
+                    break;
+
+                case "doorud":
+                    target.SetPixel((int)plm.PosX + 0, (int)plm.PosY, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX + 1, (int)plm.PosY, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX + 2, (int)plm.PosY, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX + 3, (int)plm.PosY, Color.FromName(mapProperties[2]));
+                    break;
+
+                case "downgate":
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY + 0, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY + 1, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY + 2, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY + 3, Color.FromName(mapProperties[2]));
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY + 4, Color.FromName(mapProperties[2]));
+                    break;
+
+                case "upgate":
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY, Color.FromName(mapProperties[2]));
+                    break;
+
+                case "gateswitch":
+                    //this one needs to read the PLM to determine color!
+                    //it also gets 4 color args and will error otherwise.
+                    //first color in list will be default case.
+                    int offset;
+                    Color gateColor;
+                    //2's bit specifies right facing gate.
+                    if ((plm.Variable & 2) == 2)
+                    {
+                        offset = 1;
+                    }
+                    else
+                    {
+                        offset = -1;
+                    }
+                    uint a = plm.Variable & 0xD;
+                    switch (plm.Variable & 0xD)
+                    {
+                        case 0x00:
+                            gateColor = Color.FromName(mapProperties[2]); break;
+                        case 0x04:
+                            gateColor = Color.FromName(mapProperties[3]); break;
+                        case 0x08:
+                            gateColor = Color.FromName(mapProperties[4]); break;
+                        case 0x0C:
+                            gateColor = Color.FromName(mapProperties[5]); break;
+                        default:
+                            gateColor = Color.Black; //should never happen...
+                            break;
+                    }
+                    target.SetPixel((int)plm.PosX + offset, (int)plm.PosY, gateColor);
+                    break;
+
+                case "item":
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY, Color.FromName(mapProperties[2]));
+                    break;
+
+                default:
+                    //draw a single yellow pixel on the PLM position.
+                    target.SetPixel((int)plm.PosX, (int)plm.PosY, Color.Yellow);
+                    break;
+            }
+            return target;
+        }
+        private Tile TraceCopyTiles(Tile copytile, roomdata room, int state)
+        {
+            byte[] levelsUncompressed = room.States[state].LevelDataUC;
+            Tile original = copytile;
+            if(copytile.BTS == 0) { return copytile; }
+            int recursionlimit = 1000;
+            int recursionCount = 0;
+        CHAIN:
+            recursionCount++;
+            if (recursionCount == recursionlimit)
+            {
+                MessageBox.Show(
+                  "Recursion Limit reached: copy tile failure tracing from tile index " +
+                  (original.Index - 2),
+                  "Copy Tile Limit",
+                  MessageBoxButtons.OK);
+                return original;
+            }
+            Tile[] follow = AdjacentTiles(copytile, room, state);
+            //Follow indices:
+            //# 1 #
+            //0 T 2
+            //# 3 #
+            if(copytile.Type == TileType.Vcopy)
+            {
+                //Vcopy only needs to worry about going up and down
+                bool goingUP = copytile.BTS < 0;
+                if (goingUP)
+                {
+                    //check if it will go to another copy tile, or if it reached the destination
+                    if(follow[1].Type == TileType.Vcopy || follow[1].Type == TileType.Hcopy)
+                    {
+                        //loop must continue
+                        copytile = follow[1];
+                        goto CHAIN;
+                    }
+                    else
+                    {
+                        //destination reached
+                        return follow[1];
+                    }
+                }
+                else //going down
+                {
+                    //check if it will go to another copy tile, or if it reached the destination
+                    if (follow[3].Type == TileType.Vcopy || follow[3].Type == TileType.Hcopy)
+                    {
+                        //loop must continue
+                        copytile = follow[3];
+                        goto CHAIN;
+                    }
+                    else
+                    {
+                        //destination reached
+                        return follow[3];
+                    }
+                }
+            }
+            if (copytile.Type == TileType.Hcopy)
+            {
+                //Vcopy only needs to worry about going up and down
+                bool goingLEFT = copytile.BTS < 0;
+                if (goingLEFT)
+                {
+                    //check if it will go to another copy tile, or if it reached the destination
+                    if (follow[0].Type == TileType.Vcopy || follow[0].Type == TileType.Hcopy)
+                    {
+                        //loop must continue
+                        copytile = follow[0];
+                        goto CHAIN;
+                    }
+                    else
+                    {
+                        //destination reached
+                        return follow[0];
+                    }
+                }
+                else //going down
+                {
+                    //check if it will go to another copy tile, or if it reached the destination
+                    if (follow[2].Type == TileType.Vcopy || follow[2].Type == TileType.Hcopy)
+                    {
+                        //loop must continue
+                        copytile = follow[2];
+                        goto CHAIN;
+                    }
+                    else
+                    {
+                        //destination reached
+                        return follow[2];
+                    }
+                }
+            }
+            return copytile;
+        }
+        private Tile[] AdjacentTiles(Tile tile, roomdata room, int state)
+        {
+            //# 1 #
+            //0 T 2
+            //# 3 #
+            byte[] levelsUncompressed = room.States[state].LevelDataUC;
+            int levelsize = levelsUncompressed[0] + levelsUncompressed[1] * 0x100;
+            Tile[] rtn = new Tile[4];
+            //the 2's in here are because each level data tile is 2 bytes; we're working in 1-byte increments.
+            rtn[0] = new Tile(tile.Index - 2, levelsUncompressed);
+            rtn[1] = new Tile(tile.Index - thisroom.Width*16*2, levelsUncompressed);
+            rtn[2] = new Tile(tile.Index + 2, levelsUncompressed);
+            rtn[3] = new Tile(tile.Index + thisroom.Width*16*2, levelsUncompressed);
+            return rtn;
+        }
+        private TileType GetTileType(uint levelWord)
+        {
+            //all possibilities are accounted for, so the default case should never be reached... oh well!
+            levelWord &= 0xF000;
+            switch (levelWord)
+            {
+                case (uint)TileType.Air:
+                    return TileType.Air;
+                case (uint)TileType.Slope:
+                    return TileType.Slope;
+                case (uint)TileType.AirSpike:
+                    return TileType.AirSpike;
+                case (uint)TileType.AirShootable:
+                    return TileType.AirShootable;
+                case (uint)TileType.Hcopy:
+                    return TileType.Hcopy;
+                case (uint)TileType.AirUnused:
+                    return TileType.AirUnused;
+                case (uint)TileType.AirBombable:
+                    return TileType.AirBombable;
+                case (uint)TileType.Solid:
+                    return TileType.Solid;
+                case (uint)TileType.Door:
+                    return TileType.Door;
+                case (uint)TileType.Spike:
+                    return TileType.Spike;
+                case (uint)TileType.Special:
+                    return TileType.Special;
+                case (uint)TileType.Shot:
+                    return TileType.Shot;
+                case (uint)TileType.Vcopy:
+                    return TileType.Vcopy;
+                case (uint)TileType.Grapple:
+                    return TileType.Grapple;
+                case (uint)TileType.Bomb:
+                    return TileType.Bomb;
+                default:
+                    return TileType.Air;
+                    //break;
             }
         }
         public uint RollASL(uint operand, int shiftby, int dataBytes)
@@ -2393,6 +3287,765 @@ namespace SM_ASM_GUI
             RichTextBox A = (RichTextBox)sender;
              
         }
+
+        public string SMILEfilesPath { get; set; }
+
+        private void RoomPicture_MouseMove(object sender, MouseEventArgs e)
+        {
+            PictureBox A = (PictureBox)sender;
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    break;
+                case MouseButtons.Right:
+                    break;
+                case MouseButtons.Middle:
+                    break;
+                default:
+                    //update the mouse position even when then mouse is not held down to prevent odd jumping around
+                    if (A.Tag == null) { A.Tag = e.X.ToString() + "," + e.Y.ToString() + "," + 0 + "," + 0; return; }
+                    int scrlX = int.Parse(A.Tag.ToString().Split(',')[2]);
+                    int scrlY = int.Parse(A.Tag.ToString().Split(',')[3]);
+                    A.Tag = e.X.ToString() + "," + e.Y.ToString() + "," + scrlX + "," + scrlY;
+                    return;
+            }
+            if(A.Tag == null) { A.Tag = e.X.ToString() + "," + e.Y.ToString() + "," + 0 + "," + 0; return; }
+            //picture must also be bigger than picturebox to allow scrolling in that direction.
+            int prevX = int.Parse(A.Tag.ToString().Split(',')[0]);
+            int prevY = int.Parse(A.Tag.ToString().Split(',')[1]);
+            int scrollX = int.Parse(A.Tag.ToString().Split(',')[2]);
+            int scrollY = int.Parse(A.Tag.ToString().Split(',')[3]);
+            int delX = e.X - prevX;
+            int delY = e.Y - prevY;
+            scrollX += delX;
+            scrollY += delY;
+            if(roomPic.Width <= A.Width) { scrollX = 0; }
+            if(scrollX < 0) { scrollX = 0; }    //disallow scrolling left OOB
+            if (scrollX >= roomPic.Width-A.Width + 4 && (roomPic.Width > A.Width + 4)) { scrollX = roomPic.Width - A.Width + 4; }    //not sure why this +4 is needed...
+
+            if (roomPic.Height <= A.Height) { scrollY = 0; }
+            if (scrollY < 0) { scrollY = 0; }
+            if (scrollY >= roomPic.Height - A.Height + 4 && (roomPic.Height > A.Height + 4)) { scrollY = roomPic.Height - A.Height + 4; }
+
+            Rectangle cropArea = new Rectangle(scrollX, scrollY, roomPic.Width-scrollX, roomPic.Height-scrollY);
+            A.Image = roomPic.Clone(cropArea, roomPic.PixelFormat);
+            A.Tag = e.X.ToString() + "," + e.Y.ToString() + "," + scrollX + "," + scrollY; //store location to compare with next processing event.
+        }
+
+        private void ZoomPicIn_Click(object sender, EventArgs e)
+        {
+            if (imageScale >= 4) { return; }
+            Bitmap original = roomPic;
+            roomPic = new Bitmap(original, new Size(original.Width * 2, original.Height *2));
+            imageScale++;
+            RoomPicture.Image = roomPic;
+        }
+
+        private void ZoomPicOut_Click(object sender, EventArgs e)
+        {
+            if (imageScale <= 1) { return; }
+            Bitmap original = roomPic;
+            roomPic = new Bitmap(original, new Size(original.Width / 2, original.Height / 2));
+            imageScale--;
+            RoomPicture.Image = roomPic;
+        }
+        private Bitmap ZoomBMP(Bitmap input, int scale)
+        {
+            //float width = input.Width * scale;
+            //float height = input.Height * scale;
+            //var brush = new SolidBrush(Color.Black);
+
+            //var bmp = new Bitmap(input.Width*scale, input.Height*scale);
+            //var graph = Graphics.FromImage(bmp);
+
+            //// uncomment for higher quality output
+            ////graph.InterpolationMode = InterpolationMode.High;
+            ////graph.CompositingQuality = CompositingQuality.HighQuality;
+            ////graph.SmoothingMode = SmoothingMode.AntiAlias;
+
+            //var scaleWidth = (int)(input.Width * scale);
+            //var scaleHeight = (int)(input.Height * scale);
+
+            //graph.FillRectangle(brush, new RectangleF(0, 0, width, height));
+            //graph.DrawImage(input, ((int)width - scaleWidth) / 2, ((int)height - scaleHeight) / 2, scaleWidth, scaleHeight);
+            
+
+            return null;
+        }
+
+        private void fromMDBListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateAreaMaps();
+        }
+        private void thisRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveSingleRoomMap(thisroom);
+        }
+
+
+        private void SaveSingleRoomMap(roomdata mapThis)
+        {
+            roomdata origRoom = thisroom;
+            thisroom = mapThis;
+            string saveFolder = Path.GetDirectoryName(sm.Path);
+            Bitmap map = LevelData2Bitmap(thisroom, thisroom.StateCount);
+            map.Save(saveFolder + "\\" + asmFCN.WLong(mapThis.Header) + ".png");
+            thisroom = origRoom;
+            DialogResult openFolder = MessageBox.Show("Room map saved to:\n" + saveFolder + "\nOpen folder?", "Map Saved", MessageBoxButtons.YesNo);
+            if (openFolder == DialogResult.Yes) { Process.Start("explorer.exe", saveFolder); }
+        }
+        public void CreateAreaMaps()
+        {
+            //for some reason, the room export only works if the rooms are set to thisroom...... messy! That should be fixed.
+
+            //aside from that it needs to detect how many areas are listed in the MDB and make different pngs
+            roomdata origRoom = thisroom;
+            string saveFolder = Path.GetDirectoryName(sm.Path);
+            string mdbPath = getMDBpath(out bool mdbexists);
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            List<string> mdb = File.ReadAllLines(mdbPath).ToList();
+            //need to make lists of each area in the game... a new data type?
+            //but first i need a uint list of all the unique area numbers found in the MDB.
+            List<uint> areasFound = new List<uint>();
+            foreach (string entry in mdb)
+            {
+                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                roomdata check = new roomdata(sm, headerAddr);
+                bool areaInList = false;
+                foreach (uint areaNum in areasFound)
+                {
+                    if (check.AreaIndex == areaNum) { areaInList = true; }
+                }
+                if (!areaInList) { areasFound.Add(check.AreaIndex); }
+            }
+            List<MapArea> areaList = new List<MapArea>();
+            foreach (uint area in areasFound)
+            {
+                areaList.Add(new MapArea(area));
+            }
+            foreach (string entry in mdb)
+            {
+                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                roomdata check = new roomdata(sm, headerAddr);
+                foreach (MapArea area in areaList)
+                {
+                    if (check.AreaIndex == area.AreaIndex) { area.Rooms.Add(check); }
+                }
+            }
+            //AreaList is now populated with all the areas and their contained rooms.
+            foreach (MapArea area in areaList)
+            {
+                Bitmap areaMap = new Bitmap(64 * 8 * 2, 32 * 8 * 2);
+                foreach (roomdata room in area.Rooms)
+                {
+                    thisroom = room;
+                    Bitmap map = LevelData2Bitmap(thisroom, thisroom.StateCount);
+                    Graphics g = Graphics.FromImage(areaMap);
+                    g.DrawImage(map, thisroom.MapX * 16, thisroom.MapY * 16);
+                }
+                areaMap.Save(saveFolder + "\\area" + asmFCN.WByte(area.AreaIndex) + ".png");
+            }
+            DialogResult openFolder = MessageBox.Show("Area maps saved to:\n" + saveFolder + "\nOpen folder?", "Maps Saved", MessageBoxButtons.YesNo);
+            if (openFolder == DialogResult.Yes) { Process.Start("explorer.exe", saveFolder); }
+            thisroom = origRoom;
+
+        }
+
+        private void ScrollPLMedit_Click(object sender, EventArgs e)
+        {
+            ScrollEditor A = new ScrollEditor(
+                thisroom,
+                StateBox.SelectedIndex,
+                4,
+                ScrollEditor.Mode.PLM,
+                this
+                );
+                try
+                {
+                    A.ShowDialog();
+                    thisroom = A.Room;
+                    A.Close();
+                }
+                catch { }
+        }
+
+        private void EditLevelScrollsButton_Click(object sender, EventArgs e)
+        {
+           ScrollEditor A = new ScrollEditor(
+                thisroom,
+                StateBox.SelectedIndex,
+                4,
+                ScrollEditor.Mode.Normal,
+                this
+                );
+                try
+                {
+                    A.ShowDialog();
+                    thisroom = A.Room;
+                    A.Close();
+                }
+                catch { }
+        }
+
+        private void RoomPicture_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right) { LevelPicMenu.Show(); }
+        }
+
+        private void currentRoomToNewASMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //generate new ASM file named like the room, with default values.
+            //string a = Path.GetDirectoryName(sm.Path);
+            string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + thisroom.AreaIndex + ".asm"; 
+            GenerateNewASMfile(savePath);
+            CreateNewSMASMspace(savePath);
+
+            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            Export_Room(smasmSpace, startline, endline, savePath, false);
+            //DialogResult exportTilesets = MessageBox.Show("Include tileset with room file?","Tilesets",MessageBoxButtons.YesNo);
+            //if(exportTilesets == DialogResult.Yes)
+            //{
+            //    List<uint> usedTilesets = new List<uint>();
+            //}
+            AppendStatus("File saved to:\n" + savePath);
+            //Export_Room() takes the smasm space as a list, so it will need re-read from the ASM file, or assigned to an out variable.
+            //and it also saves to the file path with that function.
+        }
+        public void GenerateNewASMfile(string savePath)
+        {
+            //SavePath should include the .asm suffix
+            //only needs to create the defines and stuff outside SMASM space.
+            string newline = "\r\n";
+            string header =
+                "lorom" + newline +
+                newline +
+                "!smasm8F = $8F8000" + newline +
+                "!smasm83 = $83AD66" + newline +
+                "!smasmA1 = $A18000" + newline +
+                "!smasmB4 = $B48000" + newline +
+                "!smasmLevels = $BAC629; Start of vanilla tilesets; overwrites with tileset exports and then level data." + newline +
+                "!smasmTilesetTable = $8FE6A2; must agree with the tileset table location in SMASM config." + newline +
+                newline +
+                "org $82DF02; repoints the tileset table to the address of !smasmTilesetTable" + newline +
+                "LDX.w TILESETTABLE_POINTERS, y" + newline +
+                newline
+                ;
+            File.WriteAllText(savePath, header);
+            return;
+        }
+
+        private void mergeRoomFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //create lists of SMASM room objects for each ASM file and combine, making necessary room renames.
+
+            //file picker should start at same folder ROM is in, and then second file picker should start at folder of first file.
+            string firstFile = FilePicker(1, out DialogResult firstButton, "First File", Path.GetDirectoryName(sm.Path));
+            if(firstButton == DialogResult.Cancel) { return; }
+            string secondFile = FilePicker(1, out DialogResult secondButton, "Second File", Path.GetDirectoryName(firstFile));
+            if (secondButton == DialogResult.Cancel) { return; }
+
+            List<SmasmRoom> firstContents;
+            List<SmasmRoom> secondContents;
+            try
+            {
+                firstContents = GetRoomsInASM(firstFile);
+                secondContents = GetRoomsInASM(secondFile);
+                Console.WriteLine("A");
+            }
+            catch
+            {
+                MessageBox.Show("Problem reading the files! They may not contain any rooms, or the ones found were incomplete.", "Read Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            //rename each room from secondcontents to the highest room index in its given area.
+            List<int> firstAreas = new List<int>();
+            foreach (SmasmRoom item in firstContents)
+            {
+                bool matchfound = false;
+                foreach (int area in firstAreas)
+                {
+                    if(area == item.AreaIndex) { matchfound = true; }
+                }
+                if (matchfound) { continue; }
+                firstAreas.Add(item.AreaIndex);
+            }
+            List<int> highestRoomIndices = new List<int>();
+            for (int i = 0; i < firstAreas.Count; i++)
+            {
+                highestRoomIndices.Add(0);
+            }
+            for (int i = 0; i < firstAreas.Count; i++)
+            {
+                foreach (SmasmRoom room in firstContents)
+                {
+                    if(room.AreaIndex != i) { continue; }
+                    if(room.RoomIndex > highestRoomIndices[i]) { highestRoomIndices[i] = room.RoomIndex; }
+                }
+            }
+            for (int i = 0; i < secondContents.Count; i++)
+            {
+                SmasmRoom room = secondContents[i];
+                bool areaExists = false;
+                foreach (int area in firstAreas)
+                {
+                    if(room.AreaIndex == area) { areaExists = true; break; }
+                }
+                if (!areaExists) { room.AreaIndex = 0; }
+                //area index can be constant from here on out.
+                room.RoomIndex = highestRoomIndices[room.AreaIndex] + 1;
+                room.UpdateLabel();
+                //also need to manually update all of the section labels in the room object.
+                //also needs to update the print pc's in $8F!
+                room.Asm8F[0] = room.Label;
+                room.Asm8F[2] = room.PrintPC;
+                room.Asm83d[0] = room.Label;
+                room.Asm83f[0] = room.Label;
+                room.AsmA1[0] = room.Label;
+                room.AsmB4[0] = room.Label;
+                room.AsmLV[0] = room.Label;
+                highestRoomIndices[room.AreaIndex]++;
+            }
+            //the secondContents are all renamed and ready to be added to the first file.
+            //add everything from secondcontents into firstcontents
+            foreach (SmasmRoom room in secondContents)
+            {
+                firstContents.Add(room);
+            }
+            //write firstContents to a new ASM file using firstFile's header.
+            //so to do that, read firstFile and then delete/replace the contents of all the sections
+            List<string> smasmSpace = Parse_SMASM_ASM(firstFile, out int startline, out int endline, out bool roomExists);
+            GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            //oh these are clearing the section headers as well... need to just make new ones.
+            smasm8F = ClearSection(smasm8F);
+            smasm83d = ClearSection(smasm83d);
+            smasm83f = ClearSection(smasm83f);
+            smasmA1 = ClearSection(smasmA1);
+            smasmB4 = ClearSection(smasmB4);
+            smasmLV = ClearSection(smasmLV);
+            foreach (SmasmRoom room in firstContents)
+            {
+                StringBuilder conc = new StringBuilder(500);
+                foreach ( string line in room.Asm8F)
+                {
+                    conc.Append(line + "\n");
+                }
+                smasm8F.Add(conc.ToString()) ;
+                conc.Clear();
+                foreach (string line in room.Asm83d)
+                {
+                    conc.Append(line + "\n");
+                }
+                smasm83d.Add(conc.ToString());
+                conc.Clear();
+                foreach (string line in room.Asm83f)
+                {
+                    conc.Append(line + "\n");
+                }
+                smasm83f.Add(conc.ToString());
+                conc.Clear();
+                foreach (string line in room.AsmA1)
+                {
+                    conc.Append(line + "\n");
+                }
+                smasmA1.Add(conc.ToString());
+                conc.Clear();
+                foreach (string line in room.AsmB4)
+                {
+                    conc.Append(line + "\n");
+                }
+                smasmB4.Add(conc.ToString());
+                conc.Clear();
+                foreach (string line in room.AsmLV)
+                {
+                    conc.Append(line + "\n");
+                }
+                smasmLV.Add(conc.ToString());
+                conc.Clear();
+            }
+            smasm8F .Add("}");
+            smasm83d.Add("}");
+            smasm83f.Add("}");
+            smasmA1 .Add("}");
+            smasmB4 .Add("}");
+            smasmLV.Add("}");
+            string finalSMASM = ConcatASMsections(smasm8F, smasm83d, smasm83f, smasmA1, smasmB4, smasmLV, smasmTilesets, smasmTilesetTable);
+            string[] splitEscs = { "\n", "\r\n" };
+            List<string> firstFileList = File.ReadAllText(firstFile).Split(splitEscs,StringSplitOptions.None).ToList<string>();
+            List<string> firstNonSmasm = firstFileList.GetRange(0, startline);
+            firstNonSmasm.Add(finalSMASM);
+            StringBuilder output = new StringBuilder(5000);
+            foreach (string line in firstNonSmasm)
+            {
+                output.Append(line + '\n');
+            }
+            string backup = File.ReadAllText(firstFile);
+            File.WriteAllText(Path.GetDirectoryName(firstFile) + "\\" + "ASMbackup.asm", backup);
+            //can't do this write because the ASM file is "in use by another process". How to fix??
+            string destinationName = Path.GetDirectoryName(firstFile) + "\\" + Path.GetFileNameWithoutExtension(firstFile) + "_merge.asm";
+            File.WriteAllText(destinationName, output.ToString());
+            AppendStatus("Saved to " + destinationName);
+        }
+
+        private List<string> ClearSection(List<string> section)
+        {
+            //remove everything in a section while keeping the highest level label and opening bracket
+            List<string> rtn = new List<string>();
+            rtn.Add(section[0]);
+            rtn.Add(section[1]);
+            return rtn;
+        }
+
+        private List<SmasmRoom> GetRoomsInASM(string asmPath)
+        {
+            string namePattern = @"\.R\d{2}A\d";
+            System.Text.RegularExpressions.Regex nameFormat = new System.Text.RegularExpressions.Regex(namePattern);
+            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int startline, out int endline, out bool roomExists);
+            GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            List<string> roomNames = new List<string>();
+            foreach (string line in smasm8F)
+            {
+                if (nameFormat.IsMatch(line))
+                {
+                    roomNames.Add(line);
+                }
+            }
+            List<SmasmRoom> asmContents = new List<SmasmRoom>();
+            foreach (string roomName in roomNames)
+            {
+                asmContents.Add(new SmasmRoom(roomName, smasmSpace, this));
+            }
+            return asmContents;
+        }
+
+        private void mDBListToASMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //for some reason, the room export only works if the rooms are set to thisroom...... messy! That should be fixed.
+            //also this is doomed to be a horribly slow function unless the Export_Room function is reworked to output to string instead of save to file.
+
+            //...And for some reason all the state labels were missing from the output file! What gives!?
+            roomdata origRoom = thisroom;
+            string saveFolder = Path.GetDirectoryName(sm.Path);
+            string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "_rooms.asm";
+            string mdbPath = getMDBpath(out bool mdbexists);
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            List<string> mdb = File.ReadAllLines(mdbPath).ToList();
+            StringBuilder asmFile = new StringBuilder(5000);
+
+            GenerateNewASMfile(savePath);
+            CreateNewSMASMspace(savePath);
+
+            foreach (string entry in mdb)
+            {
+                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                thisroom = new roomdata(sm, headerAddr);
+                thisroom.DupChek();
+
+                List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+                GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+                Export_Room(smasmSpace, startline, endline, savePath, false);
+
+            }
+
+            DialogResult openFolder = MessageBox.Show("ASM File saved to:\n" + saveFolder + "\nOpen folder?", "ASM Saved", MessageBoxButtons.YesNo);
+            if (openFolder == DialogResult.Yes) { Process.Start("explorer.exe", saveFolder); }
+
+            thisroom = origRoom;
+            AppendStatus("File saved to:\n" + savePath);
+        }
+
+        private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            credits A = new credits();
+            A.ShowDialog();
+        }
+
+        private void Dropdown_LoadRoom(object sender, EventArgs e)
+        {
+            if(HeaderDropdown.Text.Length <= 5) { return; }
+            string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
+            uint headerAddr = uint.Parse(headerNumbers, NumberStyles.HexNumber);
+            LoadRoomToGUI(headerAddr);
+        }
+
+        private void PopulateHeaderList()
+        {
+            //fill HeaderDropdown with contents of given MDB, including room labels.
+            string mdbPath = getMDBpath(out bool mdbexists);
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            List<string> mdb = File.ReadAllLines(mdbPath).ToList();
+            foreach (string room in mdb)
+            {
+                HeaderDropdown.Items.Add(room);
+            }
+        }
+
+        private void HeaderDropdown_TextChanged(object sender, EventArgs e)
+        {
+            AllowHexOnlyCOMBO(sender, e);
+        }
+
+        //uses these SMASM global variables to determine what tutorial to show between button clicks.
+        public int tutorialCount = 0;
+        public int tutorialIndex = 0;
+        private List<TutorialText> tutorials = null;
+        private void walkthoughToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tutorials = GetTutorials();
+            //would also bring up the tutorial image that blocks the rest of SMASM.
+            ShowTutorialBox(tutorialIndex);
+        }
+        private List<TutorialText> GetTutorials()
+        {
+            List<TutorialText> tutorials = new List<TutorialText>();
+            TutorialText headerDropdown = new TutorialText
+            {
+                PosX = HeaderDropdown.Location.X,
+                PosY = HeaderDropdown.Location.Y,
+                Width = HeaderDropdown.Width,
+                Height = HeaderDropdown.Height,
+                Text = "Reads MDB List from SMILE's Custom folder for the ROM.\n" +
+                "Level header PC addresses can also be keyed in manually.",
+                LabelWidth = 300,
+                LabelHeight = 40,
+                Name = "Header Dropdown"
+            };
+
+            //do all the adds at once
+            tutorials.Add(headerDropdown);
+            return tutorials;
+        }
+        private void ClearTutorial()
+        {
+            //goto accounts for the list size changing; keeps looking until no more tutorial tags exist.
+            LOOP:
+            foreach (Control item in this.Controls)
+            {
+                if (item.Tag == null) { continue; }
+                if (item.Tag.ToString() == "tutorial") { this.Controls.Remove(item); goto LOOP; }
+            }
+        }
+        private void ShowTutorialBox(int index)
+        {
+            //clear all tutorial-related controls
+            //remake all the tutorial controls with the desired tutorial index.
+            //Does all the formatting and stuff to make the data in the TutorialText object into a rectangle/controls.
+
+            //might be good to use a borderPadding variable for whitespace around control.
+            //and borderThickness for the X and Y  width of the rectangles.
+            ClearTutorial();
+            
+            int borderThickness = 5;
+            int borderPadding = 3;
+            TutorialText activetut = tutorials[index];
+            Bitmap rectLR = DrawRectangle(borderThickness, activetut.Height, Color.Black);
+            Bitmap rectUD = DrawRectangle(activetut.Width, borderThickness, Color.Black);
+            //making a picturebox to contain several more pictureboxes will not work because it needs transparency.
+            //but, each line will still need its own picturebox!
+            PictureBox rectL = new PictureBox
+            {
+                Image = rectLR,
+                BackColor = Color.Transparent,
+                Size = new Size(rectLR.Width, rectLR.Height),
+                Location = new Point(activetut.PosX - borderPadding - borderThickness, activetut.PosY),
+                Visible = true,
+                SizeMode = PictureBoxSizeMode.AutoSize,
+                Name = "rectL;",
+                Tag = "tutorial",
+            };
+            PictureBox rectR = new PictureBox
+            {
+                Image = rectLR,
+                BackColor = Color.Transparent,
+                Size = new Size(rectLR.Width, rectLR.Height),
+                Location = new Point(activetut.PosX + activetut.Width + borderPadding, activetut.PosY),
+                Visible = true,
+                SizeMode = PictureBoxSizeMode.AutoSize,
+                Name = "rectR;",
+                Tag = "tutorial",
+            };
+            PictureBox rectU = new PictureBox
+            {
+                Image = rectUD,
+                BackColor = Color.Transparent,
+                Size = new Size(rectLR.Width, rectLR.Height),
+                Location = new Point(activetut.PosX, activetut.PosY - borderPadding - borderThickness),
+                Visible = true,
+                SizeMode = PictureBoxSizeMode.AutoSize,
+                Name = "rectU;",
+                Tag = "tutorial",
+            };
+            PictureBox rectD = new PictureBox
+            {
+                Image = rectUD,
+                BackColor = Color.Transparent,
+                Size = new Size(rectLR.Width, rectLR.Height),
+                Location = new Point(activetut.PosX, activetut.PosY + activetut.Height + borderPadding),
+                Visible = true,
+                SizeMode = PictureBoxSizeMode.AutoSize,
+                Name = "rectD;",
+                Tag = "tutorial",
+            };
+            Label explain = new Label
+            {
+                Text = activetut.Text,
+                Location = new Point(rectR.Location.X + borderThickness, rectR.Location.Y),
+                BackColor = Color.Yellow,
+                AutoSize = false,
+                Size = new Size(activetut.LabelWidth, activetut.LabelHeight),
+                Tag = "tutorial",
+            };
+            //an autosized control cannot have its size read accurately...
+
+            //size of additional space to add for buttons.
+            int buttonPadding = 25;
+            PictureBox explainBackground = new PictureBox
+            {
+                Image = DrawRectangle(explain.Size.Width + borderThickness * 2, explain.Size.Height + borderThickness * 2 + buttonPadding, Color.DarkSlateGray),
+                Location = new Point(explain.Location.X - borderThickness, explain.Location.Y - borderThickness),
+                SizeMode = PictureBoxSizeMode.AutoSize,
+                Tag = "tutorial",
+            };
+            Button closeTutorial = new Button
+            {
+                Text = "X",
+                Size = new Size(20, 20),
+                Location = new Point (explainBackground.Width-25, explainBackground.Height-25),
+            };
+            closeTutorial.Click += CloseTutorial_Click;
+
+            explainBackground.Controls.Add(closeTutorial);
+
+
+            this.Controls.Add(rectL);
+            this.Controls.Add(rectR);
+            this.Controls.Add(rectU);
+            this.Controls.Add(rectD);
+            this.Controls.Add(explain);
+            this.Controls.Add(explainBackground);
+
+
+            rectL.BringToFront();
+            rectR.BringToFront();
+            rectU.BringToFront();
+            rectD.BringToFront();
+            explainBackground.BringToFront();
+            explain.BringToFront();
+        }
+
+        private void CloseTutorial_Click(object sender, EventArgs e)
+        {
+            ClearTutorial();
+        }
+
+        private Bitmap DrawRectangle(int width, int height, Color color)
+        {
+            Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            using (Graphics gfx = Graphics.FromImage(bmp))
+            using (SolidBrush brush = new SolidBrush(color))
+            {
+                gfx.FillRectangle(brush, 0, 0, bmp.Width, bmp.Height);
+            }
+            return bmp;
+        }
+    }
+
+
+
+    public struct TutorialText
+    {
+        //variable properties of tutorial rectangles; will be displayed to screen with a different function.
+        //these will be different for each one so it doesn't really need a constructor(?)
+        //Unless, can constructors have out args? We could have that add it to the tutorials list.
+        public int PosX { get; set; }
+        public int PosY { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Text { get; set; }
+        public int LabelWidth { set; get; }
+        public int LabelHeight { get; set; }
+        bool LeftFacing { set; get; }
+        public string Name { get; set; }
+    }
+    public struct SmasmRoom
+    {
+        //GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+        public SmasmRoom(string roomLabel, List<string>smasmSpace, SMASM smasm)
+        {
+            //all properties return null if the room does not exist 
+            //would be nice if we didn't need to pass SMASM itself, but that was the only way to get GetSMASMsections() to work....
+            bool roomFound = false;
+            //string searchfor = "." + "R" + asmFCN.WByte(roomIndex) + "A" + areaIndex + ".asm";
+            string searchfor = roomLabel;
+            //break on first occurence of desired room; if one tag is found it is assumed to exist in all the sections.
+            foreach (string line in smasmSpace)
+            {
+                if(line.IndexOf(line) == -1) { continue; }
+                else { roomFound = true; break; }
+            }
+
+            Exists = roomFound;
+            if (!roomFound)
+            {
+                Label = null;
+                PrintPC = null;
+                AreaIndex = -1;
+                RoomIndex = -1;
+                Asm8F = null;
+                Asm83d = null;
+                Asm83f = null;
+                AsmA1 = null;
+                AsmB4 = null;
+                AsmLV = null;
+                return;
+            }
+
+            string roomIndexPattern = @"\d{2}";
+            System.Text.RegularExpressions.Regex roomIndex = new System.Text.RegularExpressions.Regex(roomIndexPattern);
+            Label = searchfor;
+            AreaIndex = int.Parse(roomLabel.Substring(roomLabel.Length-1));
+            RoomIndex = int.Parse(roomIndex.Match(roomLabel).ToString());
+            PrintPC = "print pc, \"-" + "R" + asmFCN.WByte((uint)RoomIndex) + "A" + AreaIndex + "\"";
+            smasm.GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            Asm8F = smasm.FindSection(searchfor, smasm8F);
+            Asm83d = smasm.FindSection(searchfor, smasm83d);
+            Asm83f = smasm.FindSection(searchfor, smasm83f);
+            AsmA1 = smasm.FindSection(searchfor, smasmA1);
+            AsmB4 = smasm.FindSection(searchfor, smasmB4);
+            AsmLV = smasm.FindSection(searchfor, smasmLV);
+        }
+        public void UpdateLabel()
+        {
+            //make label match the current Room and Area Indices.
+            Label = ".R" + asmFCN.WByte((uint)RoomIndex) + "A" + AreaIndex;
+            PrintPC = "print pc, \"-" + "R" + asmFCN.WByte((uint)RoomIndex) + "A" + AreaIndex + "\"";
+        }
+
+        public string Label { get; set; }
+        public string PrintPC { get; set; }
+        public bool Exists { get; set; }
+        public int AreaIndex { get; set; }
+        public int RoomIndex { get; set; }
+        public List<string> Asm8F { get; set; }
+        public List<string> Asm83d { get; set; }
+        public List<string> Asm83f { get; set; }
+        public List<string> AsmA1 { get; set; }
+        public List<string> AsmB4 { get; set; }
+        public List<string> AsmLV { get; set; }
+    }
+
+
+    public struct MapArea
+    {
+        //essentially this is just a list of rooms, so that we can have a list of areas.
+        public MapArea(uint number)
+        {
+            AreaIndex = number;
+            Rooms = new List<roomdata>();
+        }
+        public List<roomdata> Rooms { get; set; }
+        public uint AreaIndex { get; set; }
     }
 
     public class TilesetEntry
@@ -2446,7 +4099,7 @@ namespace SM_ASM_GUI
 
         public static unsafe uint Decompress(void* dest, uint pc, uint* end)
         {
-            return LunarDecompress(dest, pc, 0x5000, 4, 0, end);  //not sure if this will work since the last var ROMPOSITION is supposed to be a pointer....
+            return LunarDecompress(dest, pc, 0xA000, 4, 0, end);  //not sure if this will work since the last var ROMPOSITION is supposed to be a pointer....
         }
         public static unsafe uint Compress(void* source, void* dest, uint source_size)
         {

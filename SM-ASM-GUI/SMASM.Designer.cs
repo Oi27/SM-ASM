@@ -30,6 +30,7 @@ namespace SM_ASM_GUI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SMASM));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentRoomToNewASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,25 +38,18 @@ namespace SM_ASM_GUI
             this.mDBListToASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filePathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tilesetSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tilesetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tilesetFoldersToASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rOMToTilesetFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slimGUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createMapsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.thisRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fromMDBListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.areasFromMDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pcBox = new System.Windows.Forms.TextBox();
-            this.lorombox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HeaderLabel = new System.Windows.Forms.Label();
-            this.HeaderBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.RoomIndex = new System.Windows.Forms.TextBox();
             this.MapXLabel = new System.Windows.Forms.Label();
@@ -83,6 +77,7 @@ namespace SM_ASM_GUI
             this.DeleteButton = new System.Windows.Forms.ToolStripMenuItem();
             this.BlockCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.NewItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ScrollPLMedit = new System.Windows.Forms.ToolStripMenuItem();
             this.label8 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.EnemyBox = new System.Windows.Forms.ListBox();
@@ -96,9 +91,6 @@ namespace SM_ASM_GUI
             this.GFXbox = new System.Windows.Forms.ListBox();
             this.ApplyButton = new System.Windows.Forms.Button();
             this.StatusBox = new System.Windows.Forms.RichTextBox();
-            this.DelMDB = new System.Windows.Forms.CheckBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.LevelBuffer = new System.Windows.Forms.TextBox();
             this.ImportCurrentTileset = new System.Windows.Forms.Button();
             this.ExportCurrentTileset = new System.Windows.Forms.Button();
             this.RefreshExport = new System.Windows.Forms.Button();
@@ -108,10 +100,22 @@ namespace SM_ASM_GUI
             this.TilesetBox = new System.Windows.Forms.TextBox();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
             this.label17 = new System.Windows.Forms.Label();
+            this.LevelPicMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.EditLevelScrollsButton = new System.Windows.Forms.ToolStripMenuItem();
             this.alltopCheckbox = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.LevelBuffer = new System.Windows.Forms.TextBox();
+            this.DelMDB = new System.Windows.Forms.CheckBox();
+            this.ZoomPicIn = new System.Windows.Forms.Button();
+            this.ZoomPicOut = new System.Windows.Forms.Button();
+            this.RoomPicture = new System.Windows.Forms.PictureBox();
+            this.HeaderDropdown = new System.Windows.Forms.ComboBox();
+            this.walkthoughToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.StateMenuStrip.SuspendLayout();
             this.DataListMenu.SuspendLayout();
+            this.LevelPicMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -142,30 +146,29 @@ namespace SM_ASM_GUI
             // 
             // currentRoomToNewASMToolStripMenuItem
             // 
-            this.currentRoomToNewASMToolStripMenuItem.Enabled = false;
             this.currentRoomToNewASMToolStripMenuItem.Name = "currentRoomToNewASMToolStripMenuItem";
             this.currentRoomToNewASMToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.currentRoomToNewASMToolStripMenuItem.Text = "Current Room to New ASM";
+            this.currentRoomToNewASMToolStripMenuItem.Click += new System.EventHandler(this.currentRoomToNewASMToolStripMenuItem_Click);
             // 
             // mergeRoomFilesToolStripMenuItem
             // 
-            this.mergeRoomFilesToolStripMenuItem.Enabled = false;
             this.mergeRoomFilesToolStripMenuItem.Name = "mergeRoomFilesToolStripMenuItem";
             this.mergeRoomFilesToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.mergeRoomFilesToolStripMenuItem.Text = "Merge Room Files";
+            this.mergeRoomFilesToolStripMenuItem.Click += new System.EventHandler(this.mergeRoomFilesToolStripMenuItem_Click);
             // 
             // mDBListToASMToolStripMenuItem
             // 
-            this.mDBListToASMToolStripMenuItem.Enabled = false;
             this.mDBListToASMToolStripMenuItem.Name = "mDBListToASMToolStripMenuItem";
             this.mDBListToASMToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.mDBListToASMToolStripMenuItem.Text = "MDB List to ASM";
+            this.mDBListToASMToolStripMenuItem.Click += new System.EventHandler(this.mDBListToASMToolStripMenuItem_Click);
             // 
             // configToolStripMenuItem
             // 
             this.configToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.filePathsToolStripMenuItem,
-            this.tilesetSetupToolStripMenuItem});
+            this.filePathsToolStripMenuItem});
             this.configToolStripMenuItem.Name = "configToolStripMenuItem";
             this.configToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
             this.configToolStripMenuItem.Text = "Config";
@@ -173,23 +176,15 @@ namespace SM_ASM_GUI
             // filePathsToolStripMenuItem
             // 
             this.filePathsToolStripMenuItem.Name = "filePathsToolStripMenuItem";
-            this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.filePathsToolStripMenuItem.Text = "File Paths";
             this.filePathsToolStripMenuItem.Click += new System.EventHandler(this.filePathsToolStripMenuItem_Click);
-            // 
-            // tilesetSetupToolStripMenuItem
-            // 
-            this.tilesetSetupToolStripMenuItem.Name = "tilesetSetupToolStripMenuItem";
-            this.tilesetSetupToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
-            this.tilesetSetupToolStripMenuItem.Text = "Tileset Setup";
-            this.tilesetSetupToolStripMenuItem.Click += new System.EventHandler(this.tilesetSetupToolStripMenuItem_Click);
             // 
             // tilesetsToolStripMenuItem
             // 
             this.tilesetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tilesetFoldersToASMToolStripMenuItem,
-            this.rOMToTilesetFoldersToolStripMenuItem,
-            this.toolStripMenuItem2});
+            this.rOMToTilesetFoldersToolStripMenuItem});
             this.tilesetsToolStripMenuItem.Name = "tilesetsToolStripMenuItem";
             this.tilesetsToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.tilesetsToolStripMenuItem.Text = "Tilesets";
@@ -207,12 +202,6 @@ namespace SM_ASM_GUI
             this.rOMToTilesetFoldersToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.rOMToTilesetFoldersToolStripMenuItem.Text = "ROM to Tileset Folders";
             this.rOMToTilesetFoldersToolStripMenuItem.Click += new System.EventHandler(this.ExportTilesets_Click);
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(192, 22);
-            this.toolStripMenuItem2.Text = "Tileset Setup";
             // 
             // viewToolStripMenuItem
             // 
@@ -233,37 +222,32 @@ namespace SM_ASM_GUI
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createMapsToolStripMenuItem});
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.editToolStripMenuItem.Text = "Misc.";
-            // 
-            // createMapsToolStripMenuItem
-            // 
-            this.createMapsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.thisRoomToolStripMenuItem,
-            this.fromMDBListToolStripMenuItem});
-            this.createMapsToolStripMenuItem.Enabled = false;
-            this.createMapsToolStripMenuItem.Name = "createMapsToolStripMenuItem";
-            this.createMapsToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
-            this.createMapsToolStripMenuItem.Text = "Create Maps";
+            this.areasFromMDBToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.editToolStripMenuItem.Text = "Mapping";
             // 
             // thisRoomToolStripMenuItem
             // 
             this.thisRoomToolStripMenuItem.Name = "thisRoomToolStripMenuItem";
-            this.thisRoomToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.thisRoomToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.thisRoomToolStripMenuItem.Text = "This Room";
+            this.thisRoomToolStripMenuItem.Click += new System.EventHandler(this.thisRoomToolStripMenuItem_Click);
             // 
-            // fromMDBListToolStripMenuItem
+            // areasFromMDBToolStripMenuItem
             // 
-            this.fromMDBListToolStripMenuItem.Name = "fromMDBListToolStripMenuItem";
-            this.fromMDBListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.fromMDBListToolStripMenuItem.Text = "From MDB List";
+            this.areasFromMDBToolStripMenuItem.Name = "areasFromMDBToolStripMenuItem";
+            this.areasFromMDBToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.areasFromMDBToolStripMenuItem.Text = "Areas from MDB";
+            this.areasFromMDBToolStripMenuItem.Click += new System.EventHandler(this.fromMDBListToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.walkthoughToolStripMenuItem,
+            this.creditsToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -272,41 +256,15 @@ namespace SM_ASM_GUI
             // 
             this.aboutToolStripMenuItem.Enabled = false;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
-            // pcBox
+            // creditsToolStripMenuItem
             // 
-            this.pcBox.Location = new System.Drawing.Point(12, 421);
-            this.pcBox.Name = "pcBox";
-            this.pcBox.Size = new System.Drawing.Size(100, 20);
-            this.pcBox.TabIndex = 5;
-            this.pcBox.TextChanged += new System.EventHandler(this.pcBox_TextChanged);
-            // 
-            // lorombox
-            // 
-            this.lorombox.Location = new System.Drawing.Point(13, 459);
-            this.lorombox.Name = "lorombox";
-            this.lorombox.Size = new System.Drawing.Size(100, 20);
-            this.lorombox.TabIndex = 6;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 405);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(21, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "PC";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 443);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "LoROM";
+            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.creditsToolStripMenuItem.Text = "Credits";
+            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
             // HeaderLabel
             // 
@@ -316,18 +274,6 @@ namespace SM_ASM_GUI
             this.HeaderLabel.Size = new System.Drawing.Size(94, 13);
             this.HeaderLabel.TabIndex = 10;
             this.HeaderLabel.Text = "Level Header (PC)";
-            // 
-            // HeaderBox
-            // 
-            this.HeaderBox.Location = new System.Drawing.Point(12, 56);
-            this.HeaderBox.MaxLength = 5;
-            this.HeaderBox.Name = "HeaderBox";
-            this.HeaderBox.Size = new System.Drawing.Size(100, 20);
-            this.HeaderBox.TabIndex = 9;
-            this.HeaderBox.TextChanged += new System.EventHandler(this.HeaderBox_TextChanged);
-            this.HeaderBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HeaderBox_KeyDown);
-            this.HeaderBox.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderBox_Validating);
-            this.HeaderBox.Validated += new System.EventHandler(this.HeaderBox_Validated);
             // 
             // label1
             // 
@@ -345,6 +291,7 @@ namespace SM_ASM_GUI
             this.RoomIndex.Name = "RoomIndex";
             this.RoomIndex.Size = new System.Drawing.Size(29, 20);
             this.RoomIndex.TabIndex = 11;
+            this.RoomIndex.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.RoomIndex.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
             this.RoomIndex.Validated += new System.EventHandler(this.RoomIndex_Validated);
             // 
@@ -504,12 +451,13 @@ namespace SM_ASM_GUI
             this.AreaIndex.Name = "AreaIndex";
             this.AreaIndex.Size = new System.Drawing.Size(29, 20);
             this.AreaIndex.TabIndex = 21;
+            this.AreaIndex.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.AreaIndex.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
             this.AreaIndex.Validated += new System.EventHandler(this.RoomIndex_Validated);
             // 
             // ASMbutton
             // 
-            this.ASMbutton.Location = new System.Drawing.Point(162, 178);
+            this.ASMbutton.Location = new System.Drawing.Point(144, 178);
             this.ASMbutton.Name = "ASMbutton";
             this.ASMbutton.Size = new System.Drawing.Size(121, 41);
             this.ASMbutton.TabIndex = 35;
@@ -523,7 +471,7 @@ namespace SM_ASM_GUI
             this.StateBox.FormattingEnabled = true;
             this.StateBox.Location = new System.Drawing.Point(144, 56);
             this.StateBox.Name = "StateBox";
-            this.StateBox.Size = new System.Drawing.Size(139, 69);
+            this.StateBox.Size = new System.Drawing.Size(121, 69);
             this.StateBox.TabIndex = 38;
             this.StateBox.SelectedIndexChanged += new System.EventHandler(this.StateBox_SelectedIndexChanged);
             this.StateBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
@@ -562,30 +510,40 @@ namespace SM_ASM_GUI
             this.DataListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.DeleteButton,
             this.BlockCopy,
-            this.NewItem});
+            this.NewItem,
+            this.ScrollPLMedit});
             this.DataListMenu.Name = "contextMenuStrip1";
-            this.DataListMenu.Size = new System.Drawing.Size(135, 70);
+            this.DataListMenu.Size = new System.Drawing.Size(159, 92);
+            this.DataListMenu.Opening += new System.ComponentModel.CancelEventHandler(this.DataListMenu_Opening);
             // 
             // DeleteButton
             // 
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(134, 22);
+            this.DeleteButton.Size = new System.Drawing.Size(158, 22);
             this.DeleteButton.Text = "Delete Item";
             this.DeleteButton.Click += new System.EventHandler(this.BlockDelete_Click);
             // 
             // BlockCopy
             // 
             this.BlockCopy.Name = "BlockCopy";
-            this.BlockCopy.Size = new System.Drawing.Size(134, 22);
+            this.BlockCopy.Size = new System.Drawing.Size(158, 22);
             this.BlockCopy.Text = "Duplicate";
             this.BlockCopy.Click += new System.EventHandler(this.BlockCopy_Click);
             // 
             // NewItem
             // 
             this.NewItem.Name = "NewItem";
-            this.NewItem.Size = new System.Drawing.Size(134, 22);
+            this.NewItem.Size = new System.Drawing.Size(158, 22);
             this.NewItem.Text = "New Item";
             this.NewItem.Click += new System.EventHandler(this.NewItem_Click);
+            // 
+            // ScrollPLMedit
+            // 
+            this.ScrollPLMedit.Name = "ScrollPLMedit";
+            this.ScrollPLMedit.Size = new System.Drawing.Size(158, 22);
+            this.ScrollPLMedit.Text = "Edit Scroll PLMs";
+            this.ScrollPLMedit.Visible = false;
+            this.ScrollPLMedit.Click += new System.EventHandler(this.ScrollPLMedit_Click);
             // 
             // label8
             // 
@@ -729,7 +687,7 @@ namespace SM_ASM_GUI
             // 
             // ApplyButton
             // 
-            this.ApplyButton.Location = new System.Drawing.Point(162, 226);
+            this.ApplyButton.Location = new System.Drawing.Point(144, 226);
             this.ApplyButton.Name = "ApplyButton";
             this.ApplyButton.Size = new System.Drawing.Size(121, 41);
             this.ApplyButton.TabIndex = 50;
@@ -744,44 +702,14 @@ namespace SM_ASM_GUI
             this.StatusBox.ForeColor = System.Drawing.SystemColors.Window;
             this.StatusBox.Location = new System.Drawing.Point(407, 56);
             this.StatusBox.Name = "StatusBox";
-            this.StatusBox.Size = new System.Drawing.Size(231, 423);
+            this.StatusBox.Size = new System.Drawing.Size(231, 348);
             this.StatusBox.TabIndex = 51;
             this.StatusBox.Text = "";
             this.StatusBox.TextChanged += new System.EventHandler(this.StatusBox_TextChanged);
             // 
-            // DelMDB
-            // 
-            this.DelMDB.AutoSize = true;
-            this.DelMDB.Checked = true;
-            this.DelMDB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DelMDB.Location = new System.Drawing.Point(12, 359);
-            this.DelMDB.Name = "DelMDB";
-            this.DelMDB.Size = new System.Drawing.Size(167, 30);
-            this.DelMDB.TabIndex = 52;
-            this.DelMDB.Text = "On Apply: Delete MDB entries\r\nif not in ASM file";
-            this.DelMDB.UseVisualStyleBackColor = true;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 314);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 13);
-            this.label4.TabIndex = 54;
-            this.label4.Text = "Level Data Buffer";
-            // 
-            // LevelBuffer
-            // 
-            this.LevelBuffer.Location = new System.Drawing.Point(12, 330);
-            this.LevelBuffer.MaxLength = 4;
-            this.LevelBuffer.Name = "LevelBuffer";
-            this.LevelBuffer.Size = new System.Drawing.Size(56, 20);
-            this.LevelBuffer.TabIndex = 53;
-            this.LevelBuffer.Text = "1000";
-            // 
             // ImportCurrentTileset
             // 
-            this.ImportCurrentTileset.Location = new System.Drawing.Point(162, 287);
+            this.ImportCurrentTileset.Location = new System.Drawing.Point(144, 273);
             this.ImportCurrentTileset.Name = "ImportCurrentTileset";
             this.ImportCurrentTileset.Size = new System.Drawing.Size(121, 41);
             this.ImportCurrentTileset.TabIndex = 55;
@@ -791,7 +719,7 @@ namespace SM_ASM_GUI
             // 
             // ExportCurrentTileset
             // 
-            this.ExportCurrentTileset.Location = new System.Drawing.Point(162, 334);
+            this.ExportCurrentTileset.Location = new System.Drawing.Point(144, 320);
             this.ExportCurrentTileset.Name = "ExportCurrentTileset";
             this.ExportCurrentTileset.Size = new System.Drawing.Size(121, 19);
             this.ExportCurrentTileset.TabIndex = 56;
@@ -801,7 +729,7 @@ namespace SM_ASM_GUI
             // 
             // RefreshExport
             // 
-            this.RefreshExport.Location = new System.Drawing.Point(162, 131);
+            this.RefreshExport.Location = new System.Drawing.Point(144, 131);
             this.RefreshExport.Name = "RefreshExport";
             this.RefreshExport.Size = new System.Drawing.Size(121, 41);
             this.RefreshExport.TabIndex = 57;
@@ -820,7 +748,7 @@ namespace SM_ASM_GUI
             // 
             // bitshift
             // 
-            this.bitshift.Location = new System.Drawing.Point(304, 418);
+            this.bitshift.Location = new System.Drawing.Point(447, 34);
             this.bitshift.Name = "bitshift";
             this.bitshift.Size = new System.Drawing.Size(97, 21);
             this.bitshift.TabIndex = 60;
@@ -833,7 +761,7 @@ namespace SM_ASM_GUI
             // 
             this.label16.AutoSize = true;
             this.label16.Enabled = false;
-            this.label16.Location = new System.Drawing.Point(120, 282);
+            this.label16.Location = new System.Drawing.Point(77, 253);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(38, 13);
             this.label16.TabIndex = 62;
@@ -842,7 +770,7 @@ namespace SM_ASM_GUI
             // TilesetBox
             // 
             this.TilesetBox.Enabled = false;
-            this.TilesetBox.Location = new System.Drawing.Point(126, 298);
+            this.TilesetBox.Location = new System.Drawing.Point(83, 269);
             this.TilesetBox.MaxLength = 2;
             this.TilesetBox.Name = "TilesetBox";
             this.TilesetBox.Size = new System.Drawing.Size(29, 20);
@@ -858,22 +786,131 @@ namespace SM_ASM_GUI
             this.label17.TabIndex = 63;
             this.label17.Text = "Status";
             // 
+            // LevelPicMenu
+            // 
+            this.LevelPicMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.LevelPicMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EditLevelScrollsButton});
+            this.LevelPicMenu.Name = "contextMenuStrip1";
+            this.LevelPicMenu.Size = new System.Drawing.Size(162, 26);
+            // 
+            // EditLevelScrollsButton
+            // 
+            this.EditLevelScrollsButton.Name = "EditLevelScrollsButton";
+            this.EditLevelScrollsButton.Size = new System.Drawing.Size(161, 22);
+            this.EditLevelScrollsButton.Text = "Edit Level Scrolls";
+            this.EditLevelScrollsButton.Click += new System.EventHandler(this.EditLevelScrollsButton_Click);
+            // 
             // alltopCheckbox
             // 
             this.alltopCheckbox.AutoSize = true;
-            this.alltopCheckbox.Location = new System.Drawing.Point(12, 388);
+            this.alltopCheckbox.Location = new System.Drawing.Point(644, 358);
             this.alltopCheckbox.Name = "alltopCheckbox";
             this.alltopCheckbox.Size = new System.Drawing.Size(96, 17);
             this.alltopCheckbox.TabIndex = 3;
             this.alltopCheckbox.Text = "Always on Top";
             this.alltopCheckbox.UseVisualStyleBackColor = true;
+            this.alltopCheckbox.Visible = false;
             this.alltopCheckbox.CheckedChanged += new System.EventHandler(this.alltopCheckbox_CheckedChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(642, 382);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(90, 13);
+            this.label4.TabIndex = 54;
+            this.label4.Text = "Level Data Buffer";
+            this.label4.Visible = false;
+            // 
+            // LevelBuffer
+            // 
+            this.LevelBuffer.Location = new System.Drawing.Point(644, 398);
+            this.LevelBuffer.MaxLength = 4;
+            this.LevelBuffer.Name = "LevelBuffer";
+            this.LevelBuffer.Size = new System.Drawing.Size(56, 20);
+            this.LevelBuffer.TabIndex = 53;
+            this.LevelBuffer.Text = "1000";
+            this.LevelBuffer.Visible = false;
+            // 
+            // DelMDB
+            // 
+            this.DelMDB.AutoSize = true;
+            this.DelMDB.Checked = true;
+            this.DelMDB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DelMDB.Location = new System.Drawing.Point(644, 322);
+            this.DelMDB.Name = "DelMDB";
+            this.DelMDB.Size = new System.Drawing.Size(167, 30);
+            this.DelMDB.TabIndex = 52;
+            this.DelMDB.Text = "On Apply: Delete MDB entries\r\nif not in ASM file";
+            this.DelMDB.UseVisualStyleBackColor = true;
+            this.DelMDB.Visible = false;
+            // 
+            // ZoomPicIn
+            // 
+            this.ZoomPicIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ZoomPicIn.Location = new System.Drawing.Point(110, 297);
+            this.ZoomPicIn.Name = "ZoomPicIn";
+            this.ZoomPicIn.Size = new System.Drawing.Size(29, 27);
+            this.ZoomPicIn.TabIndex = 65;
+            this.ZoomPicIn.Text = "+";
+            this.ZoomPicIn.UseVisualStyleBackColor = true;
+            this.ZoomPicIn.Click += new System.EventHandler(this.ZoomPicIn_Click);
+            // 
+            // ZoomPicOut
+            // 
+            this.ZoomPicOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ZoomPicOut.Location = new System.Drawing.Point(110, 323);
+            this.ZoomPicOut.Name = "ZoomPicOut";
+            this.ZoomPicOut.Size = new System.Drawing.Size(29, 27);
+            this.ZoomPicOut.TabIndex = 66;
+            this.ZoomPicOut.Text = "-";
+            this.ZoomPicOut.UseVisualStyleBackColor = true;
+            this.ZoomPicOut.Click += new System.EventHandler(this.ZoomPicOut_Click);
+            // 
+            // RoomPicture
+            // 
+            this.RoomPicture.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.RoomPicture.ContextMenuStrip = this.LevelPicMenu;
+            this.RoomPicture.Cursor = System.Windows.Forms.Cursors.NoMove2D;
+            this.RoomPicture.Location = new System.Drawing.Point(12, 298);
+            this.RoomPicture.Name = "RoomPicture";
+            this.RoomPicture.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.RoomPicture.Size = new System.Drawing.Size(100, 106);
+            this.RoomPicture.TabIndex = 64;
+            this.RoomPicture.TabStop = false;
+            this.RoomPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseMove);
+            this.RoomPicture.MouseUp += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseUp);
+            // 
+            // HeaderDropdown
+            // 
+            this.HeaderDropdown.FormattingEnabled = true;
+            this.HeaderDropdown.Location = new System.Drawing.Point(12, 56);
+            this.HeaderDropdown.MaxLength = 5;
+            this.HeaderDropdown.Name = "HeaderDropdown";
+            this.HeaderDropdown.Size = new System.Drawing.Size(121, 21);
+            this.HeaderDropdown.TabIndex = 1;
+            this.HeaderDropdown.SelectedIndexChanged += new System.EventHandler(this.Dropdown_LoadRoom);
+            this.HeaderDropdown.TextChanged += new System.EventHandler(this.HeaderDropdown_TextChanged);
+            this.HeaderDropdown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HeaderBox_KeyDown);
+            this.HeaderDropdown.Validated += new System.EventHandler(this.Dropdown_LoadRoom);
+            // 
+            // walkthoughToolStripMenuItem
+            // 
+            this.walkthoughToolStripMenuItem.Name = "walkthoughToolStripMenuItem";
+            this.walkthoughToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.walkthoughToolStripMenuItem.Text = "Walkthough";
+            this.walkthoughToolStripMenuItem.Click += new System.EventHandler(this.walkthoughToolStripMenuItem_Click);
             // 
             // SMASM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 491);
+            this.ClientSize = new System.Drawing.Size(684, 411);
+            this.Controls.Add(this.HeaderDropdown);
+            this.Controls.Add(this.ZoomPicOut);
+            this.Controls.Add(this.ZoomPicIn);
+            this.Controls.Add(this.RoomPicture);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.TilesetBox);
@@ -918,17 +955,13 @@ namespace SM_ASM_GUI
             this.Controls.Add(this.label1);
             this.Controls.Add(this.RoomIndex);
             this.Controls.Add(this.HeaderLabel);
-            this.Controls.Add(this.HeaderBox);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.lorombox);
-            this.Controls.Add(this.pcBox);
             this.Controls.Add(this.alltopCheckbox);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.RoomLoadTimeStamp);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(700, 530);
-            this.MinimumSize = new System.Drawing.Size(420, 530);
+            this.MaximumSize = new System.Drawing.Size(700, 450);
+            this.MinimumSize = new System.Drawing.Size(420, 450);
             this.Name = "SMASM";
             this.Text = "SM-ASM";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SMASM_FormClosing);
@@ -936,6 +969,8 @@ namespace SM_ASM_GUI
             this.menuStrip1.PerformLayout();
             this.StateMenuStrip.ResumeLayout(false);
             this.DataListMenu.ResumeLayout(false);
+            this.LevelPicMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -948,12 +983,7 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem configToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem filePathsToolStripMenuItem;
-        private System.Windows.Forms.TextBox pcBox;
-        private System.Windows.Forms.TextBox lorombox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label HeaderLabel;
-        private System.Windows.Forms.TextBox HeaderBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox RoomIndex;
         private System.Windows.Forms.Label MapXLabel;
@@ -991,13 +1021,9 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem DeleteButton;
         private System.Windows.Forms.ToolStripMenuItem BlockCopy;
         private System.Windows.Forms.ToolStripMenuItem NewItem;
-        private System.Windows.Forms.CheckBox DelMDB;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox LevelBuffer;
         private System.Windows.Forms.ContextMenuStrip StateMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem AddStateButton;
-        private System.Windows.Forms.ToolStripMenuItem tilesetSetupToolStripMenuItem;
         private System.Windows.Forms.Button ImportCurrentTileset;
         private System.Windows.Forms.Button ExportCurrentTileset;
         private System.Windows.Forms.Button RefreshExport;
@@ -1014,13 +1040,23 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem currentRoomToNewASMToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mergeRoomFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mDBListToASMToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem slimGUIToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem createMapsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem thisRoomToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fromMDBListToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.PictureBox RoomPicture;
         private System.Windows.Forms.CheckBox alltopCheckbox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox LevelBuffer;
+        private System.Windows.Forms.CheckBox DelMDB;
+        private System.Windows.Forms.Button ZoomPicIn;
+        private System.Windows.Forms.Button ZoomPicOut;
+        private System.Windows.Forms.ToolStripMenuItem thisRoomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem areasFromMDBToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ScrollPLMedit;
+        private System.Windows.Forms.ContextMenuStrip LevelPicMenu;
+        private System.Windows.Forms.ToolStripMenuItem EditLevelScrollsButton;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
+        private System.Windows.Forms.ComboBox HeaderDropdown;
+        private System.Windows.Forms.ToolStripMenuItem walkthoughToolStripMenuItem;
     }
 }
 

@@ -42,6 +42,9 @@ namespace SM_ASM_GUI
             this.PickSmileButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.SMILEbox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.TilesetBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // romBox
@@ -78,7 +81,7 @@ namespace SM_ASM_GUI
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(30, 222);
+            this.saveButton.Location = new System.Drawing.Point(30, 183);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(105, 37);
             this.saveButton.TabIndex = 4;
@@ -158,11 +161,43 @@ namespace SM_ASM_GUI
             this.SMILEbox.Size = new System.Drawing.Size(357, 20);
             this.SMILEbox.TabIndex = 10;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(239, 183);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(145, 39);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "SMASM will tweak $82DF03 \r\n(pointer to tileset list) to\r\nmatch the given address." +
+    "";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(165, 183);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(68, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Tileset Table";
+            // 
+            // TilesetBox
+            // 
+            this.TilesetBox.Location = new System.Drawing.Point(168, 199);
+            this.TilesetBox.MaxLength = 4;
+            this.TilesetBox.Name = "TilesetBox";
+            this.TilesetBox.Size = new System.Drawing.Size(65, 20);
+            this.TilesetBox.TabIndex = 13;
+            this.TilesetBox.Text = "ERR";
+            this.TilesetBox.TextChanged += new System.EventHandler(this.TilesetBox_TextChanged);
+            // 
             // pathsConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(455, 271);
+            this.ClientSize = new System.Drawing.Size(455, 241);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.TilesetBox);
             this.Controls.Add(this.PickSmileButton);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.SMILEbox);
@@ -200,5 +235,8 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.Button PickSmileButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox SMILEbox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox TilesetBox;
     }
 }
