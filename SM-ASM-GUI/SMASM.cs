@@ -601,6 +601,7 @@ namespace SM_ASM_GUI
                 //    statepointers [Event type, Event Pointer, Optional Arg.] for each state.
                 States.Add(new state(sm, x, stdstate + 2, 0, roomsize));
             }
+            //return;
             catch
             {
                 Bytes8F = 0;
@@ -942,25 +943,8 @@ namespace SM_ASM_GUI
             //if config does not exist, create it
             if (!File.Exists(DbLocation + "config.xml")) 
             {
-                
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "   ";
 
-                using (XmlWriter writer = XmlWriter.Create(DbLocation + "config.xml", settings))
-                {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("config");
-                    writer.WriteElementString("ROM", " ");
-                    writer.WriteElementString("ASM", " ");
-                    writer.WriteElementString("ASR", " ");
-                    writer.WriteElementString("SMILEFILE", " ");
-                    writer.WriteElementString("ROOMLIST", " ");
-                    writer.WriteElementString("TILESETTABLE", "E6A2");
-                    writer.WriteElementString("SCROLLPLM", "B703");
-                    writer.WriteElementString("ONTOP", "0");
-                    writer.Close();
-                }
+                CreateNewConfig();
                 
             }
             //if it DOES exist, we should probably verify it with a schema... oh well!
@@ -976,6 +960,44 @@ namespace SM_ASM_GUI
             //if (!LUNAR.OpenFile(az)) { MessageBox.Show ("LUNAR rom load failed"); }
         }
 
+        public void CreateNewConfig()
+        {
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.IndentChars = "   ";
+
+            using (XmlWriter writer = XmlWriter.Create(DbLocation + "config.xml", settings))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("config");
+                writer.WriteElementString("ROM", " ");
+                writer.WriteElementString("ASM", " ");
+                writer.WriteElementString("ASR", " ");
+                writer.WriteElementString("SMILEFILE", " ");
+                writer.WriteElementString("ROOMLIST", " ");
+                writer.WriteElementString("TILESETTABLE", "E6A2");
+                writer.WriteElementString("SCROLLPLM", "B703");
+                writer.WriteElementString("ONTOP", "0");
+                writer.WriteElementString("SHOWSETUP", "TRUE");
+                writer.Close();
+            }
+            config.Load(DbLocation + "config.xml");
+            //also call the popup to populate all the file paths.
+            FilePaths_Open(null, null);
+            config.Load(DbLocation + "config.xml");
+            string rompath = config.ChildNodes[1].SelectSingleNode("ROM").InnerText;
+            string asmpath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            bool shorterThanFive = asmpath.Length < 5;
+            if (shorterThanFive) 
+            {
+                string savePath = Path.GetDirectoryName(rompath) + "\\" + Path.GetFileNameWithoutExtension(rompath) + ".asm";
+                MessageBox.Show("No ASM file specified. Creating new file at:\n" + savePath,"No ASM",MessageBoxButtons.OK);
+                CreateNewASMfile(savePath);
+                CreateNewSMASMspace(savePath);
+                config.ChildNodes[1].SelectSingleNode("ASM").InnerText = savePath;
+                config.Save(DbLocation + "config.xml");
+            }
+        }
 
         public string FilePicker(int extensionSelect, out DialogResult buttonPressed, string windowCaption = "Open File", string startPath = "")
         {
@@ -1029,11 +1051,12 @@ namespace SM_ASM_GUI
             SMASM.ActiveForm.TopMost = !SMASM.ActiveForm.TopMost;
         }
 
-        private void filePathsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void FilePaths_Open(object sender, EventArgs e)
         {
-            pathsConfig nw = new pathsConfig(config);
+            pathsConfig nw = new pathsConfig(config, this);
             nw.ShowDialog();
             nw.Dispose();
+            config.Load(DbLocation + "config.xml");
             sm = new ROM(config.ChildNodes[1].SelectSingleNode("ROM").InnerText);
         }
 
@@ -1093,7 +1116,7 @@ namespace SM_ASM_GUI
             StateBox.Items.Add("Default");
             StateBox.SelectedIndex = StateBox.Items.Count - 1;
 
-            AppendStatus("Loaded R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.RoomIndex) + " - " + DateTime.Now.ToLongTimeString());
+            AppendStatus("Loaded R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.AreaIndex) + " - " + DateTime.Now.ToLongTimeString());
             Bitmap test = LevelData2Bitmap(thisroom,thisroom.StateCount);
             roomPic = test;
             RoomPicture.Image = test;
@@ -1467,6 +1490,7 @@ namespace SM_ASM_GUI
                 "TILESETTABLE:" + "\n" +
                 "{" + "\n" +
                 "\n" +
+                ".POINTERS" + "\n" +
                 "}" + "\n" +
                 ";SMASM-END----------" + "\n" +
                 "";
@@ -1707,6 +1731,7 @@ namespace SM_ASM_GUI
             List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
             if(smasmSpace == null) { return; }
             Export_Room(smasmSpace, smasmStartLine, smasmEndLine, asmPath, true);
+            AppendStatus("Exported R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.AreaIndex));
             return;
         }
         public List<string> FindSection(string query, List<string> fulltext)
@@ -1980,8 +2005,8 @@ namespace SM_ASM_GUI
 
             updateTilesetAddress(asmPath, tstAddr);
 
-            string strCmdText = string.Format(@" {0}{1}{0} {0}{2}{0}", q, asmPath, rom);
-            try
+            string strCmdText = string.Format(@"{0}{1}{0} {0}{2}{0}", q, asmPath, rom);
+            //try
             {
                 using (Process patch = new Process())
                 {
@@ -2000,6 +2025,7 @@ namespace SM_ASM_GUI
                     //StatusBox.Text = a.ReadToEnd();
                     string asarOut = a.ReadToEnd();
                     a.Close();
+
 
                     List<string> sRooms = new List<string>();
                     List<string> sNames = new List<string>();
@@ -2103,9 +2129,16 @@ namespace SM_ASM_GUI
                     //NOTE: this only catches valid door links. eg, the room header in the door data MUST be in the list, else it gets ignored.
                     for (int i = 0; i < oldRooms.Count; i++)
                     {
-                        string find = "dw $" + oldRooms[i].Substring(1) + " :";
-                        string replace = "dw $" + aRooms[i].Substring(1) + " :";
-                        single_string_83d = ReplaceAllOccurences(single_string_83d,find, replace);
+                        try
+                        {
+                            string find = "dw $" + oldRooms[i].Substring(1) + " :";
+                            string replace = "dw $" + aRooms[i].Substring(1) + " :";
+                            single_string_83d = ReplaceAllOccurences(single_string_83d, find, replace);
+                        }
+                        catch
+                        {
+                            //this is in a try-catch because it was giving an index oob error and idk why
+                        }
                     }
                     List<string> new83d = single_string_83d.Split('@').ToList<string>();
                     new83d.RemoveAt(new83d.Count-1);
@@ -2136,7 +2169,8 @@ namespace SM_ASM_GUI
 
 
                     File.WriteAllText(mdbpath, res);
-                   // StatusBox.Clear();
+                    //AppendStatus(asarOut);
+                    // StatusBox.Clear();
                     StatusBox.AppendText(
                         "-------------------\n" +
                         "ROOMS APPLIED\n" +
@@ -2148,11 +2182,11 @@ namespace SM_ASM_GUI
                     PopulateHeaderList();
                 }
             }
-            catch (Exception eg)
-            {
-                StatusBox.Text = "Fail";
-                Console.WriteLine(eg.Message);
-            }
+            //catch (Exception eg)
+            //{
+            //    AppendStatus("Fail");
+            //    Console.WriteLine(eg.Message);
+            //}
         }
 
         private string ReplaceAllOccurences(string Source, string Find, string Replace)
@@ -2474,7 +2508,7 @@ namespace SM_ASM_GUI
             LUNAR.OpenFile(sm.Path);
             foreach (TilesetEntry item in tileSetTable)
             {
-                if ((singleset != -1) && ((uint)singleset != folderIndex)) { return; }
+                if ((singleset != -1) && ((uint)singleset != folderIndex)) { folderIndex++; continue; }
 
                 string currentDirectory = (tilesDir + "\\" + folderIndex + "-" + asmFCN.WByte(folderIndex));
                 Directory.CreateDirectory(currentDirectory);
@@ -2487,15 +2521,24 @@ namespace SM_ASM_GUI
 
 
 
-            StatusBox.Clear();
+            StatusBox.AppendText(
+            "-------------------\n" +
+            tileSetTable.Count + " TILESETS IN ROM:\n" +
+            DateTime.Now.ToLongTimeString() + "\n" +
+            ""
+            );
             foreach (TilesetEntry item in tileSetTable)
             {
                 StatusBox.AppendText(asmFCN.WWord(item.Pointer) + " - " + asmFCN.WLong(item.TileTable) + ", " + asmFCN.WLong(item.SCE) + ", " + asmFCN.WLong(item.Palette) + "\r\n");
             }
+            StatusBox.AppendText(
+            "-------------------\n"
+            );
         }
         private unsafe void ExportTileset(uint compDataPointer, string destpath, string fileExtension, uint tilesetIndex)
         {
             byte[] dataUC;    //reserve max data size. Norfair gfx are 0x4800 for reference.
+            if(tilesetIndex == 17) { Console.WriteLine("A"); }
             switch (fileExtension)
             {
                 case ".gfx":
@@ -2517,7 +2560,7 @@ namespace SM_ASM_GUI
             uint addr2 = 0; //this will be assigned the end of the compressed data; compressed data size = addr2 - pointer
 
             fixed (void* ptr = dataUC)
-            LUNAR.Decompress(ptr, pcPointer, &addr2);    //decompression takes a PC address.
+            LUNAR.TilesetDecompress(ptr, pcPointer, &addr2);    //decompression takes a PC address.
             uint dataCompressedSize = addr2 - pcPointer;
 
             switch (fileExtension)
@@ -2583,6 +2626,7 @@ namespace SM_ASM_GUI
         {
             //still needs data validation for what to do when there are unexpected items in a folder.
             string tilesetFolder = GetTilesetDir();
+            if (!Directory.Exists(tilesetFolder)) { MessageBox.Show("Export at least one tileset first.\nExport all (Tilesets > ROM to Tileset Folders) is recommended.", "No Tileset Folder", MessageBoxButtons.OK); return null; }
             int dircount = Directory.GetDirectories(tilesetFolder).Length;
 
             Bar TilesetMeter = new Bar("Loading Tilesets:", "This may take a while...",  dircount * 3);
@@ -2801,6 +2845,7 @@ namespace SM_ASM_GUI
             //specifying a number will export only THAT tileset.
             string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
             string tilesets = TilesetFolders2ASM(singleSet);
+            if(tilesets == null) { return; } //no tileset folders
             List<string> smasmList = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool Room);
             GetSMASMsections(smasmList, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             //when adding functionality for singles, it needs to locate and replace only the .T## that we selected.
@@ -2845,6 +2890,7 @@ namespace SM_ASM_GUI
         {
             if(TilesetBox.Text == "") { MessageBox.Show("No room is currently loaded! Open a room first.", "No Room Loaded", MessageBoxButtons.OK); return; }
             ImportTileSets(int.Parse(TilesetBox.Text));
+            AppendStatus("Imported Tileset " + TilesetBox.Text + " from folders.");
         }
 
         private string GenerateTilesetTable()
@@ -3274,6 +3320,7 @@ namespace SM_ASM_GUI
         private void ExportCurrentTileset_Click(object sender, EventArgs e)
         {
             Tilesets2folders(true, true, true, int.Parse(TilesetBox.Text, NumberStyles.HexNumber));
+            AppendStatus("Exported Tileset " + TilesetBox.Text + " from ROM to folders.");
         }
 
         private void tilesetSetupToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3497,7 +3544,7 @@ namespace SM_ASM_GUI
             //generate new ASM file named like the room, with default values.
             //string a = Path.GetDirectoryName(sm.Path);
             string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + thisroom.AreaIndex + ".asm"; 
-            GenerateNewASMfile(savePath);
+            CreateNewASMfile(savePath);
             CreateNewSMASMspace(savePath);
 
             List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
@@ -3512,7 +3559,7 @@ namespace SM_ASM_GUI
             //Export_Room() takes the smasm space as a list, so it will need re-read from the ASM file, or assigned to an out variable.
             //and it also saves to the file path with that function.
         }
-        public void GenerateNewASMfile(string savePath)
+        public void CreateNewASMfile(string savePath)
         {
             //SavePath should include the .asm suffix
             //only needs to create the defines and stuff outside SMASM space.
@@ -3733,9 +3780,16 @@ namespace SM_ASM_GUI
             List<string> mdb = File.ReadAllLines(mdbPath).ToList();
             StringBuilder asmFile = new StringBuilder(5000);
 
-            GenerateNewASMfile(savePath);
-            CreateNewSMASMspace(savePath);
+            //maaaaaan it needs to be async for this to work. the sep progressbar isn't in the main windows, so that's why it works.
+            string statusBar = 
+                "\n-------------------\n" +
+                "MDB to ASM Progress:\n";
+            string endStatus = "\n-------------------\n";
+            char[] progress = new string('.', mdb.Count).ToCharArray();
 
+            CreateNewASMfile(savePath);
+            CreateNewSMASMspace(savePath);
+            int i = 0;
             foreach (string entry in mdb)
             {
                 uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
@@ -3746,6 +3800,9 @@ namespace SM_ASM_GUI
                 GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
                 Export_Room(smasmSpace, startline, endline, savePath, false);
 
+                progress[i] = '/';
+                i++;
+                StatusBox.Text = statusBar + new string(progress) + endStatus;
             }
 
             DialogResult openFolder = MessageBox.Show("ASM File saved to:\n" + saveFolder + "\nOpen folder?", "ASM Saved", MessageBoxButtons.YesNo);
@@ -3763,7 +3820,8 @@ namespace SM_ASM_GUI
 
         private void Dropdown_LoadRoom(object sender, EventArgs e)
         {
-            if(HeaderDropdown.Text.Length <= 5) { return; }
+            if(HeaderDropdown.Text.Length < 5) { return; }
+            if (tutorialMode) { return; }
             string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
             uint headerAddr = uint.Parse(headerNumbers, NumberStyles.HexNumber);
             LoadRoomToGUI(headerAddr);
@@ -3772,6 +3830,7 @@ namespace SM_ASM_GUI
         private void PopulateHeaderList()
         {
             //fill HeaderDropdown with contents of given MDB, including room labels.
+            HeaderDropdown.Items.Clear();
             string mdbPath = getMDBpath(out bool mdbexists);
             if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
             List<string> mdb = File.ReadAllLines(mdbPath).ToList();
@@ -3790,6 +3849,7 @@ namespace SM_ASM_GUI
         public int tutorialCount = 0;
         public int tutorialIndex = 0;
         private List<TutorialText> tutorials = null;
+        bool tutorialMode = false;
         private void walkthoughToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tutorials = GetTutorials();
@@ -3798,22 +3858,136 @@ namespace SM_ASM_GUI
         }
         private List<TutorialText> GetTutorials()
         {
-            List<TutorialText> tutorials = new List<TutorialText>();
-            TutorialText headerDropdown = new TutorialText
+            //NOTE: the labels already have word wrap by default!
+            List<TutorialText> tutorials = new List<TutorialText>
             {
+               new TutorialText
+               {
                 PosX = HeaderDropdown.Location.X,
                 PosY = HeaderDropdown.Location.Y,
                 Width = HeaderDropdown.Width,
                 Height = HeaderDropdown.Height,
                 Text = "Reads MDB List from SMILE's Custom folder for the ROM.\n" +
-                "Level header PC addresses can also be keyed in manually.",
+                        "Level header PC addresses can also be keyed in manually.",
                 LabelWidth = 300,
                 LabelHeight = 40,
+                LeftFacing = false,
                 Name = "Header Dropdown"
-            };
-
-            //do all the adds at once
-            tutorials.Add(headerDropdown);
+               },
+               new TutorialText
+               {
+                PosX = RoomIndex.Location.X,
+                PosY = RoomIndex.Location.Y - 10,
+                Width = 100,
+                Height = 195,
+                Text = "Room and Area indices can be changed for the purpose of copying rooms.\n" +
+                "Others should be changed in main editor.\n\n" +
+                "Copying a room:\n" +
+                "-Load Room\n" +
+                "-Change Indices\n" +
+                "-Export to ASM\n" +
+                "-Apply to ROM\n" +
+                ""
+                ,
+                LabelWidth = 150,
+                LabelHeight = 160,
+                LeftFacing = false,
+                Name = "RoomVars"
+               },
+               new TutorialText
+               {
+                PosX = RoomPicture.Location.X,
+                PosY = RoomPicture.Location.Y,
+                Width = RoomPicture.Width,
+                Height = RoomPicture.Height,
+                Text = "Click and drag to scroll. Right-click for scroll editor.\n" +
+                "Scroll Editor: RGB scrolls are like SMILE's. Close normally, or shortcut by holding right and left click at the same time."
+                ,
+                LabelWidth = 300,
+                LabelHeight = 50,
+                LeftFacing = false,
+                Name = "RoomPicture"
+               },
+                new TutorialText
+               {
+                PosX = StateBox.Location.X,
+                PosY = StateBox.Location.Y,
+                Width = StateBox.Width,
+                Height = StateBox.Height,
+                Text = "Right click to add/remove/rearrange states."
+                ,
+                LabelWidth = 150,
+                LabelHeight = 30,
+                LeftFacing = false,
+                Name = "Room States"
+               },
+                new TutorialText
+               {
+                PosX = RefreshExport.Location.X,
+                PosY = RefreshExport.Location.Y,
+                Width = RefreshExport.Width,
+                Height = 205,
+                Text = "Refresh + Export: Use after making changes in SMILE.\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "Export: Export currently loaded room to ASM file.\n" +
+                "Use after making changes in SMASM.\n" +
+                "\n" +
+                "\n" +
+                "Apply: Commit ASM file to ROM.\n" +
+                "Use after making changes in SMASM.\n" +
+                "\n" +
+                "Current Tileset to ASM: Imports the current room tileset from the SMASM Tileset Folders into the ASM File.\n" +
+                "Use after making changes in your chosen gfx editor.\n" +
+                "\n" +
+                "ROM to Tset Folder: Exports the current room tileset from ROM to the SMASM tileset folders for editing.\n" +
+                "Use after modifying tile table or other tileset components in SMILE.\n"
+                ,
+                LabelWidth = 350,
+                LabelHeight = 250,
+                LeftFacing = false,
+                Name = "ASM Buttons"
+               },
+               new TutorialText
+               {
+                PosX = EnemyBox.Location.X,
+                PosY = EnemyBox.Location.Y,
+                Width = EnemyBox.Width,
+                Height = 340,
+                Text = "Right Click to add and remove room objects. Multiple can be selected for copying/deletion.\n" +
+                "\n" +
+                "Click and Drag to rearrange lists.\n" +
+                "\n" +
+                "Shortcut: Double click to duplicate items without opening menu.\n" +
+                "\n" +
+                "\n" +
+                "Info Displayed:\n" +
+                "-Enemy ID\n" +
+                "-PLM ID\n" +
+                "-FX Door Select ($0000 for default FX, else it's a door pointer.)\n" +
+                "-Door Destinations (new doors are assigned a placeholder value.)"
+                ,
+                LabelWidth = 200,
+                LabelHeight = 250,
+                LeftFacing = false,
+                Name = "Room Objects"
+               },
+               new TutorialText
+               {
+                PosX = StatusBox.Location.X,
+                PosY = StatusBox.Location.Y,
+                Width = StatusBox.Width,
+                Height = StatusBox.Height,
+                Text = "Info console.\n" +
+                "Planned support for typing commands."
+                ,
+                LabelWidth = 200,
+                LabelHeight = 250,
+                LeftFacing = true,
+                Name = "Console"
+               },
+        };
             return tutorials;
         }
         private void ClearTutorial()
@@ -3834,6 +4008,12 @@ namespace SM_ASM_GUI
 
             //might be good to use a borderPadding variable for whitespace around control.
             //and borderThickness for the X and Y  width of the rectangles.
+            List<TutorialText> tutorials = GetTutorials();
+
+            tutorialMode = true;
+            if(index < 0) { index = tutorials.Count - 1; tutorialIndex = index; }
+            if(index > tutorials.Count-1) { index = 0; tutorialIndex = index; }
+
             ClearTutorial();
             
             int borderThickness = 5;
@@ -3897,7 +4077,10 @@ namespace SM_ASM_GUI
                 Tag = "tutorial",
             };
             //an autosized control cannot have its size read accurately...
-
+            if (activetut.LeftFacing)
+            {
+                explain.Location = new Point(rectL.Location.X - borderThickness - explain.Width, rectL.Location.Y);
+            }
             //size of additional space to add for buttons.
             int buttonPadding = 25;
             PictureBox explainBackground = new PictureBox
@@ -3913,10 +4096,25 @@ namespace SM_ASM_GUI
                 Size = new Size(20, 20),
                 Location = new Point (explainBackground.Width-25, explainBackground.Height-25),
             };
+            Button prevTutorial = new Button
+            {
+                Text = "<",
+                Size = new Size(20, 20),
+                Location = new Point(borderThickness, explainBackground.Height - 25),
+            };
+            Button nextTutorial = new Button
+            {
+                Text = ">",
+                Size = new Size(20, 20),
+                Location = new Point(prevTutorial.Location.X + prevTutorial.Width + 5, prevTutorial.Location.Y),
+            };
             closeTutorial.Click += CloseTutorial_Click;
+            prevTutorial.Click += PrevTutorial_Click;
+            nextTutorial.Click += NextTutorial_Click;
 
             explainBackground.Controls.Add(closeTutorial);
-
+            explainBackground.Controls.Add(prevTutorial);
+            explainBackground.Controls.Add(nextTutorial);
 
             this.Controls.Add(rectL);
             this.Controls.Add(rectR);
@@ -3934,8 +4132,21 @@ namespace SM_ASM_GUI
             explain.BringToFront();
         }
 
+        private void NextTutorial_Click(object sender, EventArgs e)
+        {
+            tutorialIndex++;
+            ShowTutorialBox(tutorialIndex);
+        }
+
+        private void PrevTutorial_Click(object sender, EventArgs e)
+        {
+            tutorialIndex--;
+            ShowTutorialBox(tutorialIndex);
+        }
+
         private void CloseTutorial_Click(object sender, EventArgs e)
         {
+            tutorialMode = false;
             ClearTutorial();
         }
 
@@ -3948,6 +4159,23 @@ namespace SM_ASM_GUI
                 gfx.FillRectangle(brush, 0, 0, bmp.Width, bmp.Height);
             }
             return bmp;
+        }
+
+        private void OpenMDB_Click(object sender, EventArgs e)
+        {
+            string mdbPath = getMDBpath(out bool mdbExists);
+            if (!mdbExists) { MessageBox.Show("MDB does not exist.\nCreate one by exporting a room and applying to ROM, or supply an existing one at:\n" + mdbPath, "No MDB", MessageBoxButtons.OK); return; }
+            Process.Start("notepad.exe", mdbPath);
+        }
+
+        private void HeaderDropdown_DropDown(object sender, EventArgs e)
+        {
+            PopulateHeaderList();
+        }
+
+        private void HeaderDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SendKeys.Send("\t");
         }
     }
 
@@ -3965,7 +4193,7 @@ namespace SM_ASM_GUI
         public string Text { get; set; }
         public int LabelWidth { set; get; }
         public int LabelHeight { get; set; }
-        bool LeftFacing { set; get; }
+        public bool LeftFacing { set; get; }
         public string Name { get; set; }
     }
     public struct SmasmRoom
@@ -4096,7 +4324,10 @@ namespace SM_ASM_GUI
         {
             return LunarCloseFile();
         }
-
+        public static unsafe uint TilesetDecompress(void* dest, uint pc, uint* end)
+        {
+            return LunarDecompress(dest, pc, 0x5000, 4, 0, end);  //this exists because the tilesets are 0x5000 max size (editor is not compatible with mode 7 tilesets)
+        }
         public static unsafe uint Decompress(void* dest, uint pc, uint* end)
         {
             return LunarDecompress(dest, pc, 0xA000, 4, 0, end);  //not sure if this will work since the last var ROMPOSITION is supposed to be a pointer....

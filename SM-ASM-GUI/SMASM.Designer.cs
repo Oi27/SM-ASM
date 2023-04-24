@@ -48,6 +48,7 @@ namespace SM_ASM_GUI
             this.areasFromMDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.walkthoughToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HeaderLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -95,7 +96,6 @@ namespace SM_ASM_GUI
             this.ExportCurrentTileset = new System.Windows.Forms.Button();
             this.RefreshExport = new System.Windows.Forms.Button();
             this.RoomLoadTimeStamp = new System.Windows.Forms.Label();
-            this.bitshift = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.TilesetBox = new System.Windows.Forms.TextBox();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
@@ -110,7 +110,7 @@ namespace SM_ASM_GUI
             this.ZoomPicOut = new System.Windows.Forms.Button();
             this.RoomPicture = new System.Windows.Forms.PictureBox();
             this.HeaderDropdown = new System.Windows.Forms.ComboBox();
-            this.walkthoughToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OpenMDB = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.StateMenuStrip.SuspendLayout();
             this.DataListMenu.SuspendLayout();
@@ -178,7 +178,7 @@ namespace SM_ASM_GUI
             this.filePathsToolStripMenuItem.Name = "filePathsToolStripMenuItem";
             this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.filePathsToolStripMenuItem.Text = "File Paths";
-            this.filePathsToolStripMenuItem.Click += new System.EventHandler(this.filePathsToolStripMenuItem_Click);
+            this.filePathsToolStripMenuItem.Click += new System.EventHandler(this.FilePaths_Open);
             // 
             // tilesetsToolStripMenuItem
             // 
@@ -256,13 +256,20 @@ namespace SM_ASM_GUI
             // 
             this.aboutToolStripMenuItem.Enabled = false;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            // 
+            // walkthoughToolStripMenuItem
+            // 
+            this.walkthoughToolStripMenuItem.Name = "walkthoughToolStripMenuItem";
+            this.walkthoughToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.walkthoughToolStripMenuItem.Text = "Walkthough";
+            this.walkthoughToolStripMenuItem.Click += new System.EventHandler(this.walkthoughToolStripMenuItem_Click);
             // 
             // creditsToolStripMenuItem
             // 
             this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.creditsToolStripMenuItem.Text = "Credits";
             this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
@@ -746,17 +753,6 @@ namespace SM_ASM_GUI
             this.RoomLoadTimeStamp.TabIndex = 58;
             this.RoomLoadTimeStamp.Text = "          ";
             // 
-            // bitshift
-            // 
-            this.bitshift.Location = new System.Drawing.Point(447, 34);
-            this.bitshift.Name = "bitshift";
-            this.bitshift.Size = new System.Drawing.Size(97, 21);
-            this.bitshift.TabIndex = 60;
-            this.bitshift.Text = "test";
-            this.bitshift.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bitshift.UseVisualStyleBackColor = true;
-            this.bitshift.Click += new System.EventHandler(this.bitshift_Click);
-            // 
             // label16
             // 
             this.label16.AutoSize = true;
@@ -890,23 +886,29 @@ namespace SM_ASM_GUI
             this.HeaderDropdown.Name = "HeaderDropdown";
             this.HeaderDropdown.Size = new System.Drawing.Size(121, 21);
             this.HeaderDropdown.TabIndex = 1;
-            this.HeaderDropdown.SelectedIndexChanged += new System.EventHandler(this.Dropdown_LoadRoom);
+            this.HeaderDropdown.DropDown += new System.EventHandler(this.HeaderDropdown_DropDown);
+            this.HeaderDropdown.SelectedIndexChanged += new System.EventHandler(this.HeaderDropdown_SelectedIndexChanged);
             this.HeaderDropdown.TextChanged += new System.EventHandler(this.HeaderDropdown_TextChanged);
             this.HeaderDropdown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HeaderBox_KeyDown);
             this.HeaderDropdown.Validated += new System.EventHandler(this.Dropdown_LoadRoom);
             // 
-            // walkthoughToolStripMenuItem
+            // OpenMDB
             // 
-            this.walkthoughToolStripMenuItem.Name = "walkthoughToolStripMenuItem";
-            this.walkthoughToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.walkthoughToolStripMenuItem.Text = "Walkthough";
-            this.walkthoughToolStripMenuItem.Click += new System.EventHandler(this.walkthoughToolStripMenuItem_Click);
+            this.OpenMDB.Location = new System.Drawing.Point(109, 32);
+            this.OpenMDB.Name = "OpenMDB";
+            this.OpenMDB.Size = new System.Drawing.Size(24, 21);
+            this.OpenMDB.TabIndex = 67;
+            this.OpenMDB.Text = "M";
+            this.OpenMDB.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.OpenMDB.UseVisualStyleBackColor = true;
+            this.OpenMDB.Click += new System.EventHandler(this.OpenMDB_Click);
             // 
             // SMASM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 411);
+            this.Controls.Add(this.OpenMDB);
             this.Controls.Add(this.HeaderDropdown);
             this.Controls.Add(this.ZoomPicOut);
             this.Controls.Add(this.ZoomPicIn);
@@ -914,7 +916,6 @@ namespace SM_ASM_GUI
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.TilesetBox);
-            this.Controls.Add(this.bitshift);
             this.Controls.Add(this.RefreshExport);
             this.Controls.Add(this.ExportCurrentTileset);
             this.Controls.Add(this.ImportCurrentTileset);
@@ -1028,7 +1029,6 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.Button ExportCurrentTileset;
         private System.Windows.Forms.Button RefreshExport;
         private System.Windows.Forms.Label RoomLoadTimeStamp;
-        private System.Windows.Forms.Button bitshift;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox TilesetBox;
         private System.Windows.Forms.ToolStripMenuItem tilesetsToolStripMenuItem;
@@ -1057,6 +1057,7 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
         private System.Windows.Forms.ComboBox HeaderDropdown;
         private System.Windows.Forms.ToolStripMenuItem walkthoughToolStripMenuItem;
+        private System.Windows.Forms.Button OpenMDB;
     }
 }
 

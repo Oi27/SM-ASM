@@ -44,9 +44,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FuzzySharp, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FuzzySharp.2.0.2\lib\net461\FuzzySharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -78,6 +75,11 @@
     </Compile>
     <Compile Include="credits.Designer.cs">
       <DependentUpon>credits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ScrollEditor.cs">
       <SubType>Form</SubType>
@@ -154,14 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="StateConfig.resx">
       <DependentUpon>StateConfig.cs</DependentUpon>
     </EmbeddedResource>
@@ -190,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bitmap1.bmp" />
+    <Content Include="filefolder.bmp" />
     <Content Include="SmasmLogo.ico" />
     <Content Include="LunarDLL.cpp" />
     <Content Include="LunarDLL.h" />

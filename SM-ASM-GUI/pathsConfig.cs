@@ -13,10 +13,11 @@ namespace SM_ASM_GUI
 {
     public partial class pathsConfig : Form
     {
-        SMASM parent = new SMASM();
+        SMASM parent;
         XmlDocument configs;
-        public pathsConfig(XmlDocument config)
+        public pathsConfig(XmlDocument config, SMASM caller)
         {
+            parent = caller;
             configs = config;
             InitializeComponent();
             romBox.Text = configs.ChildNodes[1].SelectSingleNode("ROM").InnerText;

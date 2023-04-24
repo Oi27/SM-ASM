@@ -36,15 +36,16 @@ namespace SM_ASM_GUI
             this.saveButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.ASARbox = new System.Windows.Forms.TextBox();
-            this.PickAsarButton = new System.Windows.Forms.Button();
-            this.pickasmButton = new System.Windows.Forms.Button();
-            this.pickromButton = new System.Windows.Forms.Button();
-            this.PickSmileButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.SMILEbox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.TilesetBox = new System.Windows.Forms.TextBox();
+            this.PickSmileButton = new System.Windows.Forms.Button();
+            this.PickAsarButton = new System.Windows.Forms.Button();
+            this.pickasmButton = new System.Windows.Forms.Button();
+            this.pickromButton = new System.Windows.Forms.Button();
+            this.AsmSetupLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // romBox
@@ -105,46 +106,6 @@ namespace SM_ASM_GUI
             this.ASARbox.Size = new System.Drawing.Size(357, 20);
             this.ASARbox.TabIndex = 7;
             // 
-            // PickAsarButton
-            // 
-            this.PickAsarButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
-            this.PickAsarButton.Location = new System.Drawing.Point(30, 110);
-            this.PickAsarButton.Name = "PickAsarButton";
-            this.PickAsarButton.Size = new System.Drawing.Size(24, 20);
-            this.PickAsarButton.TabIndex = 9;
-            this.PickAsarButton.UseVisualStyleBackColor = true;
-            this.PickAsarButton.Click += new System.EventHandler(this.PickAsarButton_Click);
-            // 
-            // pickasmButton
-            // 
-            this.pickasmButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
-            this.pickasmButton.Location = new System.Drawing.Point(30, 69);
-            this.pickasmButton.Name = "pickasmButton";
-            this.pickasmButton.Size = new System.Drawing.Size(24, 20);
-            this.pickasmButton.TabIndex = 6;
-            this.pickasmButton.UseVisualStyleBackColor = true;
-            this.pickasmButton.Click += new System.EventHandler(this.pickasmButton_Click);
-            // 
-            // pickromButton
-            // 
-            this.pickromButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
-            this.pickromButton.Location = new System.Drawing.Point(30, 24);
-            this.pickromButton.Name = "pickromButton";
-            this.pickromButton.Size = new System.Drawing.Size(24, 20);
-            this.pickromButton.TabIndex = 5;
-            this.pickromButton.UseVisualStyleBackColor = true;
-            this.pickromButton.Click += new System.EventHandler(this.pickromButton_Click);
-            // 
-            // PickSmileButton
-            // 
-            this.PickSmileButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
-            this.PickSmileButton.Location = new System.Drawing.Point(30, 151);
-            this.PickSmileButton.Name = "PickSmileButton";
-            this.PickSmileButton.Size = new System.Drawing.Size(24, 20);
-            this.PickSmileButton.TabIndex = 12;
-            this.PickSmileButton.UseVisualStyleBackColor = true;
-            this.PickSmileButton.Click += new System.EventHandler(this.PickSmileButton_Click);
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -190,11 +151,61 @@ namespace SM_ASM_GUI
             this.TilesetBox.Text = "ERR";
             this.TilesetBox.TextChanged += new System.EventHandler(this.TilesetBox_TextChanged);
             // 
+            // PickSmileButton
+            // 
+            this.PickSmileButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
+            this.PickSmileButton.Location = new System.Drawing.Point(30, 151);
+            this.PickSmileButton.Name = "PickSmileButton";
+            this.PickSmileButton.Size = new System.Drawing.Size(24, 20);
+            this.PickSmileButton.TabIndex = 12;
+            this.PickSmileButton.UseVisualStyleBackColor = true;
+            this.PickSmileButton.Click += new System.EventHandler(this.PickSmileButton_Click);
+            // 
+            // PickAsarButton
+            // 
+            this.PickAsarButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
+            this.PickAsarButton.Location = new System.Drawing.Point(30, 110);
+            this.PickAsarButton.Name = "PickAsarButton";
+            this.PickAsarButton.Size = new System.Drawing.Size(24, 20);
+            this.PickAsarButton.TabIndex = 9;
+            this.PickAsarButton.UseVisualStyleBackColor = true;
+            this.PickAsarButton.Click += new System.EventHandler(this.PickAsarButton_Click);
+            // 
+            // pickasmButton
+            // 
+            this.pickasmButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
+            this.pickasmButton.Location = new System.Drawing.Point(30, 69);
+            this.pickasmButton.Name = "pickasmButton";
+            this.pickasmButton.Size = new System.Drawing.Size(24, 20);
+            this.pickasmButton.TabIndex = 6;
+            this.pickasmButton.UseVisualStyleBackColor = true;
+            this.pickasmButton.Click += new System.EventHandler(this.pickasmButton_Click);
+            // 
+            // pickromButton
+            // 
+            this.pickromButton.Image = global::SM_ASM_GUI.Properties.Resources.Bitmap1;
+            this.pickromButton.Location = new System.Drawing.Point(30, 24);
+            this.pickromButton.Name = "pickromButton";
+            this.pickromButton.Size = new System.Drawing.Size(24, 20);
+            this.pickromButton.TabIndex = 5;
+            this.pickromButton.UseVisualStyleBackColor = true;
+            this.pickromButton.Click += new System.EventHandler(this.pickromButton_Click);
+            // 
+            // AsmSetupLabel
+            // 
+            this.AsmSetupLabel.AutoSize = true;
+            this.AsmSetupLabel.Location = new System.Drawing.Point(88, 53);
+            this.AsmSetupLabel.Name = "AsmSetupLabel";
+            this.AsmSetupLabel.Size = new System.Drawing.Size(140, 13);
+            this.AsmSetupLabel.TabIndex = 16;
+            this.AsmSetupLabel.Text = "(Leave blank to create new)";
+            // 
             // pathsConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(455, 241);
+            this.Controls.Add(this.AsmSetupLabel);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.TilesetBox);
@@ -238,5 +249,6 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox TilesetBox;
+        private System.Windows.Forms.Label AsmSetupLabel;
     }
 }
