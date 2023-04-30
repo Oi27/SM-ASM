@@ -193,6 +193,7 @@
     <Content Include="filefolder.bmp" />
     <Content Include="logo_large.png" />
     <Content Include="plmlist.txt" />
+    <Content Include="readme.txt" />
     <Content Include="s0.png" />
     <Content Include="s1.png" />
     <Content Include="s2.png" />
