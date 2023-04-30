@@ -111,6 +111,7 @@ namespace SM_ASM_GUI
             this.RoomPicture = new System.Windows.Forms.PictureBox();
             this.HeaderDropdown = new System.Windows.Forms.ComboBox();
             this.OpenMDB = new System.Windows.Forms.Button();
+            this.testbutton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.StateMenuStrip.SuspendLayout();
             this.DataListMenu.SuspendLayout();
@@ -903,11 +904,23 @@ namespace SM_ASM_GUI
             this.OpenMDB.UseVisualStyleBackColor = true;
             this.OpenMDB.Click += new System.EventHandler(this.OpenMDB_Click);
             // 
+            // testbutton
+            // 
+            this.testbutton.Location = new System.Drawing.Point(447, 32);
+            this.testbutton.Name = "testbutton";
+            this.testbutton.Size = new System.Drawing.Size(85, 21);
+            this.testbutton.TabIndex = 68;
+            this.testbutton.Text = "test";
+            this.testbutton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.testbutton.UseVisualStyleBackColor = true;
+            this.testbutton.Click += new System.EventHandler(this.testbutton_Click);
+            // 
             // SMASM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 411);
+            this.Controls.Add(this.testbutton);
             this.Controls.Add(this.OpenMDB);
             this.Controls.Add(this.HeaderDropdown);
             this.Controls.Add(this.ZoomPicOut);
@@ -1058,6 +1071,7 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ComboBox HeaderDropdown;
         private System.Windows.Forms.ToolStripMenuItem walkthoughToolStripMenuItem;
         private System.Windows.Forms.Button OpenMDB;
+        private System.Windows.Forms.Button testbutton;
     }
 }
 

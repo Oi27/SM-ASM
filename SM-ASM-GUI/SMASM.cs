@@ -1627,7 +1627,7 @@ namespace SM_ASM_GUI
             final += ";SMASM-END----------";
             return final;
         }
-        public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite)
+        public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite, roomdata room)
         {
             List<string> pASM = ASM2List(asmPath);
             //newsmasm list of all the lines, which we can now insert things to as needed.
@@ -1646,8 +1646,8 @@ namespace SM_ASM_GUI
             bool roomExists = false;
             for (int i = startline; i < endline; i++)
             {
-                if (pASM[i].Trim() == thisroom.Label && !roomExists)
-                //if thisroom already exists in the ASM file, then overwrite it...
+                if (pASM[i].Trim() == room.Label && !roomExists)
+                //if room already exists in the ASM file, then overwrite it...
                 {
                     roomExists = true;
                     //show additional messageboxes if the confirmation is enabled.
@@ -1663,7 +1663,7 @@ namespace SM_ASM_GUI
                 }
             }
 
-            string[] export = asmFCN.Room2ASM(thisroom, int.Parse(LevelBuffer.Text));
+            string[] export = asmFCN.Room2ASM(room, int.Parse(LevelBuffer.Text));
             //export  = 8F, 83d, 83f, A1, B4, LEVELS
             //Place each export at the end of each section.
             if (!roomExists)
@@ -1678,32 +1678,32 @@ namespace SM_ASM_GUI
             else //isolate the room labels in each section, delete, and replace.
             {
                 //these are all +2 to delete the closing bracket and the following empty line.
-                FindSection(thisroom.Label, smasm8F, out int st, out int ed);
+                FindSection(room.Label, smasm8F, out int st, out int ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
                 smasm8F.RemoveRange(st, ed - st + 2);
                 smasm8F.Insert(st, export[0]);
 
-                FindSection(thisroom.Label, smasm83d, out st, out ed);
+                FindSection(room.Label, smasm83d, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
                 smasm83d.RemoveRange(st, ed - st + 2);
                 smasm83d.Insert(st, export[1]);
 
-                FindSection(thisroom.Label, smasm83f, out st, out ed);
+                FindSection(room.Label, smasm83f, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
                 smasm83f.RemoveRange(st, ed - st + 2);
                 smasm83f.Insert(st, export[2]);
 
-                FindSection(thisroom.Label, smasmA1, out st, out ed);
+                FindSection(room.Label, smasmA1, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
                 smasmA1.RemoveRange(st, ed - st + 2);
                 smasmA1.Insert(st, export[3]);
 
-                FindSection(thisroom.Label, smasmB4, out st, out ed);
+                FindSection(room.Label, smasmB4, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
                 smasmB4.RemoveRange(st, ed - st + 2);
                 smasmB4.Insert(st, export[4]);
 
-                FindSection(thisroom.Label, smasmLV, out st, out ed);
+                FindSection(room.Label, smasmLV, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
                 smasmLV.RemoveRange(st, ed - st + 2);
                 smasmLV.Insert(st, export[5]);
@@ -1724,13 +1724,102 @@ namespace SM_ASM_GUI
                 MessageBox.Show("Write to ASM failed. Is it open in another program?", "Write Fail", MessageBoxButtons.OK);
             }
         }
+        public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite, roomdata room, out string smasmOut)
+        {
+            //This overload outputs to the provided string instead of saving to the ASM file.
+            List<string> pASM = ASM2List(asmPath);
+            //newsmasm list of all the lines, which we can now insert things to as needed.
+            //But first, parse out all the separate regions.
+            //$83 is the only one that will need multiple R##A# sublabels per room.
+            List<string> smasm8F = new List<string>();
+            List<string> smasm83d = new List<string>();
+            List<string> smasm83f = new List<string>();
+            List<string> smasmA1 = new List<string>();
+            List<string> smasmB4 = new List<string>();
+            List<string> smasmLV = new List<string>();
+            List<string> smasmTilesets = new List<string>();
+
+            GetSMASMsections(smasmSpace, out smasm8F, out smasm83d, out smasm83f, out smasmA1, out smasmB4, out smasmLV, out smasmTilesets, out List<string> smasmTilesetTable);
+
+            bool roomExists = false;
+            for (int i = startline; i < endline; i++)
+            {
+                if (pASM[i].Trim() == room.Label && !roomExists)
+                //if room already exists in the ASM file, then overwrite it...
+                {
+                    roomExists = true;
+                    //show additional messageboxes if the confirmation is enabled.
+                    if (checkRoomOverwrite)
+                    {
+                        DialogResult a = MessageBox.Show("Room already exists. Overwrite ASM?", "Overwrite Room?", MessageBoxButtons.YesNo);
+                        if (a == DialogResult.No)
+                        {
+                            MessageBox.Show("Operation cancelled.", "Overwrite Room?", MessageBoxButtons.OK);
+                            smasmOut = null;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            string[] export = asmFCN.Room2ASM(room, int.Parse(LevelBuffer.Text));
+            //export  = 8F, 83d, 83f, A1, B4, LEVELS
+            //Place each export at the end of each section.
+            if (!roomExists)
+            {
+                smasm8F.Insert(smasm8F.Count - 1, export[0]);
+                smasm83d.Insert(smasm83d.Count - 1, export[1]);
+                smasm83f.Insert(smasm83f.Count - 1, export[2]);
+                smasmA1.Insert(smasmA1.Count - 1, export[3]);
+                smasmB4.Insert(smasmB4.Count - 1, export[4]);
+                smasmLV.Insert(smasmLV.Count - 1, export[5]);
+            }
+            else //isolate the room labels in each section, delete, and replace.
+            {
+                //these are all +2 to delete the closing bracket and the following empty line.
+                FindSection(room.Label, smasm8F, out int st, out int ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
+                smasm8F.RemoveRange(st, ed - st + 2);
+                smasm8F.Insert(st, export[0]);
+
+                FindSection(room.Label, smasm83d, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
+                smasm83d.RemoveRange(st, ed - st + 2);
+                smasm83d.Insert(st, export[1]);
+
+                FindSection(room.Label, smasm83f, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
+                smasm83f.RemoveRange(st, ed - st + 2);
+                smasm83f.Insert(st, export[2]);
+
+                FindSection(room.Label, smasmA1, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
+                smasmA1.RemoveRange(st, ed - st + 2);
+                smasmA1.Insert(st, export[3]);
+
+                FindSection(room.Label, smasmB4, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
+                smasmB4.RemoveRange(st, ed - st + 2);
+                smasmB4.Insert(st, export[4]);
+
+                FindSection(room.Label, smasmLV, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
+                smasmLV.RemoveRange(st, ed - st + 2);
+                smasmLV.Insert(st, export[5]);
+
+            }
+
+            //use loops to compile all these into a single output string for the text file.
+            string final = ConcatASMsections(smasm8F, smasm83d, smasm83f, smasmA1, smasmB4, smasmLV, smasmTilesets, smasmTilesetTable);
+            smasmOut = final;
+        }
 
         private void ASMbutton_Click(object sender, EventArgs e)
         {
             string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
             List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
             if(smasmSpace == null) { return; }
-            Export_Room(smasmSpace, smasmStartLine, smasmEndLine, asmPath, true);
+            Export_Room(smasmSpace, smasmStartLine, smasmEndLine, asmPath, true, thisroom);
             AppendStatus("Exported R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.AreaIndex));
             return;
         }
@@ -2032,6 +2121,7 @@ namespace SM_ASM_GUI
                     List<string> aRooms = new List<string>();
                     List<string> aNames = new List<string>();
                     SMILEfcn.ASARList(asarOut, out aRooms, out aNames);
+                    if (aRooms.Count == 0) { MessageBox.Show("MDB Error: ASAR output not detected. Was there an assembler error?\n You can check by using ASAR.exe with the command line to patch the ROM.", "ASAR Error", MessageBoxButtons.OK); return; }
                     //if the MBDpath does not exist then it will just be the ASAR output
                     if (File.Exists(mdbpath))
                     {
@@ -2091,6 +2181,7 @@ namespace SM_ASM_GUI
                     //sNames and sRooms now contain the ASAR generated entries.
                     //recombine them into a valid MBD.txt:
                     //the area names in the vanilla MDB seem optional.
+                    
                     string res = "";
                     for (int i = 0; i < sNames.Count; i++)
                     {
@@ -2177,9 +2268,12 @@ namespace SM_ASM_GUI
                         DateTime.Now.ToLongTimeString() + "\n" +
                         ""
                         );
-                    StatusBox.Text += res + "\n-------------------\n";
+                    StatusBox.Text += res + "\n-------------------";
+                    AppendStatus("");   //to scroll the caret
                     //also account for the MDB changing
                     PopulateHeaderList();
+                    //and reload ROM to be safe? this might fix the insconsistent crashes with tileset I/O.
+                    sm = new ROM(sm.Path);
                 }
             }
             //catch (Exception eg)
@@ -2788,15 +2882,21 @@ namespace SM_ASM_GUI
                     }
                     db = db.Remove(db.Length-1,1);
 
-                    db.Append("\n");
+                    string padbyte = "fillbyte $FF\n" +
+                                    "fill 10\n";
+
+                    db.Append("\n" + padbyte);
                     tilesets.Append(label + db);
                     TilesetMeter.AddToBar(1);
                 }
-                //Append the closing parenthesis
                 tilesets.Append(
-                    "}" + "\n"
+                    "}"
                     );
-
+                //only needs the \n if everything being added.
+                if(singleSet == -1)
+                {
+                    tilesets.Append("\n");
+                }
             }
             //Console.WriteLine("a");
             //File.WriteAllText(@"tilesets.txt", tilesets.ToString(),Encoding.UTF8);
@@ -3549,7 +3649,7 @@ namespace SM_ASM_GUI
 
             List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
-            Export_Room(smasmSpace, startline, endline, savePath, false);
+            Export_Room(smasmSpace, startline, endline, savePath, false, thisroom);
             //DialogResult exportTilesets = MessageBox.Show("Include tileset with room file?","Tilesets",MessageBoxButtons.YesNo);
             //if(exportTilesets == DialogResult.Yes)
             //{
@@ -3584,11 +3684,16 @@ namespace SM_ASM_GUI
 
         private void mergeRoomFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MergeRooms();
+        }
+
+        private void MergeRooms()
+        {
             //create lists of SMASM room objects for each ASM file and combine, making necessary room renames.
 
             //file picker should start at same folder ROM is in, and then second file picker should start at folder of first file.
             string firstFile = FilePicker(1, out DialogResult firstButton, "First File", Path.GetDirectoryName(sm.Path));
-            if(firstButton == DialogResult.Cancel) { return; }
+            if (firstButton == DialogResult.Cancel) { return; }
             string secondFile = FilePicker(1, out DialogResult secondButton, "Second File", Path.GetDirectoryName(firstFile));
             if (secondButton == DialogResult.Cancel) { return; }
 
@@ -3613,7 +3718,7 @@ namespace SM_ASM_GUI
                 bool matchfound = false;
                 foreach (int area in firstAreas)
                 {
-                    if(area == item.AreaIndex) { matchfound = true; }
+                    if (area == item.AreaIndex) { matchfound = true; }
                 }
                 if (matchfound) { continue; }
                 firstAreas.Add(item.AreaIndex);
@@ -3627,8 +3732,8 @@ namespace SM_ASM_GUI
             {
                 foreach (SmasmRoom room in firstContents)
                 {
-                    if(room.AreaIndex != i) { continue; }
-                    if(room.RoomIndex > highestRoomIndices[i]) { highestRoomIndices[i] = room.RoomIndex; }
+                    if (room.AreaIndex != i) { continue; }
+                    if (room.RoomIndex > highestRoomIndices[i]) { highestRoomIndices[i] = room.RoomIndex; }
                 }
             }
             for (int i = 0; i < secondContents.Count; i++)
@@ -3637,7 +3742,7 @@ namespace SM_ASM_GUI
                 bool areaExists = false;
                 foreach (int area in firstAreas)
                 {
-                    if(room.AreaIndex == area) { areaExists = true; break; }
+                    if (room.AreaIndex == area) { areaExists = true; break; }
                 }
                 if (!areaExists) { room.AreaIndex = 0; }
                 //area index can be constant from here on out.
@@ -3663,22 +3768,44 @@ namespace SM_ASM_GUI
             //write firstContents to a new ASM file using firstFile's header.
             //so to do that, read firstFile and then delete/replace the contents of all the sections
             List<string> smasmSpace = Parse_SMASM_ASM(firstFile, out int startline, out int endline, out bool roomExists);
+
+            string finalSMASM = RoomList2string(smasmSpace, firstContents);
+
+            string[] splitEscs = { "\n", "\r\n" };
+            List<string> firstFileList = File.ReadAllText(firstFile).Split(splitEscs, StringSplitOptions.None).ToList<string>();
+            List<string> firstNonSmasm = firstFileList.GetRange(0, startline);
+            firstNonSmasm.Add(finalSMASM);
+            StringBuilder output = new StringBuilder(5000);
+            foreach (string line in firstNonSmasm)
+            {
+                output.Append(line + '\n');
+            }
+            string backup = File.ReadAllText(firstFile);
+            File.WriteAllText(Path.GetDirectoryName(firstFile) + "\\" + "ASMbackup.asm", backup);
+            //can't do this write because the ASM file is "in use by another process". How to fix??
+            string destinationName = Path.GetDirectoryName(firstFile) + "\\" + Path.GetFileNameWithoutExtension(firstFile) + "_merge.asm";
+            File.WriteAllText(destinationName, output.ToString());
+            AppendStatus("Saved to " + destinationName);
+        }
+
+        private string RoomList2string(List<string> smasmSpace, List<SmasmRoom> roomList)
+        {
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
-            //oh these are clearing the section headers as well... need to just make new ones.
+            //Clearsection keeps the section label and opening bracket.
             smasm8F = ClearSection(smasm8F);
             smasm83d = ClearSection(smasm83d);
             smasm83f = ClearSection(smasm83f);
             smasmA1 = ClearSection(smasmA1);
             smasmB4 = ClearSection(smasmB4);
             smasmLV = ClearSection(smasmLV);
-            foreach (SmasmRoom room in firstContents)
+            foreach (SmasmRoom room in roomList)
             {
                 StringBuilder conc = new StringBuilder(500);
-                foreach ( string line in room.Asm8F)
+                foreach (string line in room.Asm8F)
                 {
                     conc.Append(line + "\n");
                 }
-                smasm8F.Add(conc.ToString()) ;
+                smasm8F.Add(conc.ToString());
                 conc.Clear();
                 foreach (string line in room.Asm83d)
                 {
@@ -3711,28 +3838,14 @@ namespace SM_ASM_GUI
                 smasmLV.Add(conc.ToString());
                 conc.Clear();
             }
-            smasm8F .Add("}");
+            smasm8F.Add("}");
             smasm83d.Add("}");
             smasm83f.Add("}");
-            smasmA1 .Add("}");
-            smasmB4 .Add("}");
+            smasmA1.Add("}");
+            smasmB4.Add("}");
             smasmLV.Add("}");
             string finalSMASM = ConcatASMsections(smasm8F, smasm83d, smasm83f, smasmA1, smasmB4, smasmLV, smasmTilesets, smasmTilesetTable);
-            string[] splitEscs = { "\n", "\r\n" };
-            List<string> firstFileList = File.ReadAllText(firstFile).Split(splitEscs,StringSplitOptions.None).ToList<string>();
-            List<string> firstNonSmasm = firstFileList.GetRange(0, startline);
-            firstNonSmasm.Add(finalSMASM);
-            StringBuilder output = new StringBuilder(5000);
-            foreach (string line in firstNonSmasm)
-            {
-                output.Append(line + '\n');
-            }
-            string backup = File.ReadAllText(firstFile);
-            File.WriteAllText(Path.GetDirectoryName(firstFile) + "\\" + "ASMbackup.asm", backup);
-            //can't do this write because the ASM file is "in use by another process". How to fix??
-            string destinationName = Path.GetDirectoryName(firstFile) + "\\" + Path.GetFileNameWithoutExtension(firstFile) + "_merge.asm";
-            File.WriteAllText(destinationName, output.ToString());
-            AppendStatus("Saved to " + destinationName);
+            return finalSMASM;
         }
 
         private List<string> ClearSection(List<string> section)
@@ -3766,12 +3879,79 @@ namespace SM_ASM_GUI
             return asmContents;
         }
 
+        private List<SmasmRoom> GetRoomsInString(string smasmDoc)
+        {
+            string namePattern = @"\.R\S{2}A\d";
+            System.Text.RegularExpressions.Regex nameFormat = new System.Text.RegularExpressions.Regex(namePattern);
+
+            List<string> smasmSpace = smasmDoc.Split('\n').ToList();
+            GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            List<string> roomNames = new List<string>();
+            foreach (string line in smasm8F)
+            {
+                if (nameFormat.IsMatch(line))
+                {
+                    roomNames.Add(line);
+                }
+            }
+            List<SmasmRoom> asmContents = new List<SmasmRoom>();
+            foreach (string roomName in roomNames)
+            {
+                asmContents.Add(new SmasmRoom(roomName, smasmSpace, this));
+            }
+            return asmContents;
+        }
+
         private void mDBListToASMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //for some reason, the room export only works if the rooms are set to thisroom...... messy! That should be fixed.
             //also this is doomed to be a horribly slow function unless the Export_Room function is reworked to output to string instead of save to file.
 
-            //...And for some reason all the state labels were missing from the output file! What gives!?
+            QuickMDBtoASM(); return;
+
+            //old code below:
+
+            //roomdata origRoom = thisroom;
+            //string saveFolder = Path.GetDirectoryName(sm.Path);
+            //string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "_rooms.asm";
+            //string mdbPath = getMDBpath(out bool mdbexists);
+            //if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            //List<string> mdb = File.ReadAllLines(mdbPath).ToList();
+            //StringBuilder asmFile = new StringBuilder(5000);
+
+            ////maaaaaan it needs to be async for this to work. the sep progressbar isn't in the main windows, so that's why it works.
+            //string statusBar = 
+            //    "\n-------------------\n" +
+            //    "MDB to ASM Progress:\n";
+            //string endStatus = "\n-------------------\n";
+            //char[] progress = new string('.', mdb.Count).ToCharArray();
+
+            //CreateNewASMfile(savePath);
+            //CreateNewSMASMspace(savePath);
+            //int i = 0;
+            //foreach (string entry in mdb)
+            //{
+            //    uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+            //    roomdata room = new roomdata(sm, headerAddr);
+            //    room.DupChek();
+
+            //    List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            //    GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            //    Export_Room(smasmSpace, startline, endline, savePath, false, room);
+
+            //    progress[i] = '/';
+            //    i++;
+            //    StatusBox.Text = statusBar + new string(progress) + endStatus;
+            //}
+
+            //DialogResult openFolder = MessageBox.Show("ASM File saved to:\n" + saveFolder + "\nOpen folder?", "ASM Saved", MessageBoxButtons.YesNo);
+            //if (openFolder == DialogResult.Yes) { Process.Start("explorer.exe", saveFolder); }
+
+            //thisroom = origRoom;
+            //AppendStatus("File saved to:\n" + savePath);
+        }
+        private void QuickMDBtoASM()
+        {
             roomdata origRoom = thisroom;
             string saveFolder = Path.GetDirectoryName(sm.Path);
             string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "_rooms.asm";
@@ -3781,7 +3961,7 @@ namespace SM_ASM_GUI
             StringBuilder asmFile = new StringBuilder(5000);
 
             //maaaaaan it needs to be async for this to work. the sep progressbar isn't in the main windows, so that's why it works.
-            string statusBar = 
+            string statusBar =
                 "\n-------------------\n" +
                 "MDB to ASM Progress:\n";
             string endStatus = "\n-------------------\n";
@@ -3789,21 +3969,88 @@ namespace SM_ASM_GUI
 
             CreateNewASMfile(savePath);
             CreateNewSMASMspace(savePath);
-            int i = 0;
+            int j = 0;
+            //for this new and improved version:
+            //after creating new ASM file, all the threads will draw from it.
+            //Preallocate an array of the MDB count
+            //Export Room will give us a SMASMSPACE with a single room for each in the game.
+            //Stick each of these into the thread number [i] in the preallocated array.
+            //threading part is over with
+            //process the MDB smasm spaces to merge all the rooms into one.
+            //(can use existing ASM merge function??)
+            //MIGHT execute faster than the singlethreaded approach.
+            string[] manySmasms = new string[mdb.Count];
+            List<roomdata> mdbRooms = new List<roomdata>();
             foreach (string entry in mdb)
             {
                 uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
-                thisroom = new roomdata(sm, headerAddr);
-                thisroom.DupChek();
-
-                List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
-                GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
-                Export_Room(smasmSpace, startline, endline, savePath, false);
-
-                progress[i] = '/';
-                i++;
-                StatusBox.Text = statusBar + new string(progress) + endStatus;
+                roomdata room = new roomdata(sm, headerAddr);
+                room.DupChek();
+                mdbRooms.Add(room);
             }
+
+            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            //everything is the same up to this point, for each thread.
+
+            //Export_Room(smasmSpace, startline, endline, savePath, false, room, out string roomASM);
+
+            //any arguments need passed via the class constructor?
+            //ok ok so all the threads need to be created from the main program(?) they cannot live in the sub-class.
+            List<ThreadedRoomExporter> A = new List<ThreadedRoomExporter>();
+
+            foreach (roomdata room in mdbRooms)
+            {//pretty sure the mdbindex is unused... placeholder 0.
+                A.Add(new ThreadedRoomExporter(this, room, 0, smasmSpace, savePath, startline, endline));
+            }
+
+            List<ThreadStart> B = new List<ThreadStart>(new ThreadStart[A.Count]);
+            List<Thread> C = new List<Thread>(new Thread[A.Count]);
+            for (int i = 0; i < A.Count; i++)
+            {
+                B[i] = new ThreadStart(A[i].ExportRoom);
+                C[i] = new Thread(B[i]);
+            }
+            foreach (Thread item in C)
+            {
+                item.Start();
+            }
+            //now, everything we want to use the threads for will run in parallel, populating each RoomExporter.Result with the desired string
+            //so, the main thread should just wait for everything to be done.
+            bool allComplete = true;
+            while (allComplete)
+            {
+                bool incompleteFound = false;
+                foreach (ThreadedRoomExporter item in A)
+                {
+                    if (item.Finished == false) { incompleteFound = true; break; }
+                }
+                if (!incompleteFound) { allComplete = false; }
+                Thread.Sleep(500);
+            }
+
+            List<SmasmRoom> allRooms = new List<SmasmRoom>();
+            foreach (ThreadedRoomExporter item in A)
+            {
+                //each .Result goes into manySmasms for manipulation.
+                //it will only have one room in each thread.
+                List<SmasmRoom> roomExported = GetRoomsInString(item.Result);
+                allRooms.Add(roomExported[0]);
+            }
+
+            string finalSMASM = RoomList2string(smasmSpace, allRooms);
+
+            string[] splitEscs = { "\n", "\r\n" };
+            List<string> firstFileList = File.ReadAllText(savePath).Split(splitEscs, StringSplitOptions.None).ToList<string>();
+            List<string> firstNonSmasm = firstFileList.GetRange(0, startline);
+            firstNonSmasm.Add(finalSMASM);
+            StringBuilder output = new StringBuilder(5000);
+            foreach (string line in firstNonSmasm)
+            {
+                output.Append(line + '\n');
+            }
+            //string backup = File.ReadAllText(savePath);
+            File.WriteAllText(savePath, output.ToString());
 
             DialogResult openFolder = MessageBox.Show("ASM File saved to:\n" + saveFolder + "\nOpen folder?", "ASM Saved", MessageBoxButtons.YesNo);
             if (openFolder == DialogResult.Yes) { Process.Start("explorer.exe", saveFolder); }
@@ -3811,7 +4058,6 @@ namespace SM_ASM_GUI
             thisroom = origRoom;
             AppendStatus("File saved to:\n" + savePath);
         }
-
         private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             credits A = new credits();
@@ -4177,9 +4423,46 @@ namespace SM_ASM_GUI
         {
             SendKeys.Send("\t");
         }
+
+        private void testbutton_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void testThreading()
+        {
+            
+        }
     }
 
+    class ThreadedRoomExporter
+    { 
+        public ThreadedRoomExporter(SMASM caller, roomdata room, int mdbIndex, List<string> smasmSpace, string savepath, int startline, int endline)
+        {
+            Parent = caller;
+            Room = room;
+            MDBindex = mdbIndex;
+            SmasmSpace = smasmSpace;
+            SavePath = savepath;
+            StartLine = startline;
+            EndLine = endline;
+        }
 
+        public void ExportRoom()
+        {
+            Parent.Export_Room(SmasmSpace, StartLine, EndLine, SavePath, false, Room, out string res);
+            Result = res;
+            Finished = true;
+        }
+        public List<string> SmasmSpace { get; set; }
+        public string Result { set; get; }
+        public string SavePath { set; get; }
+        public roomdata Room { set; get; }
+        public int MDBindex { set; get; }
+        public int StartLine { set; get; }
+        public int EndLine { set; get; }
+        public SMASM Parent { set; get; }
+        public bool Finished { get; set; }
+    }
 
     public struct TutorialText
     {
@@ -4229,11 +4512,13 @@ namespace SM_ASM_GUI
                 return;
             }
 
-            string roomIndexPattern = @"\d{2}";
-            System.Text.RegularExpressions.Regex roomIndex = new System.Text.RegularExpressions.Regex(roomIndexPattern);
+            //string roomIndexPattern = @"\S{2}";
+            roomLabel = roomLabel.Substring(roomLabel.IndexOf("R")+1);
+            //room label pared down to ##A#
+            //System.Text.RegularExpressions.Regex roomIndex = new System.Text.RegularExpressions.Regex(roomIndexPattern);
             Label = searchfor;
-            AreaIndex = int.Parse(roomLabel.Substring(roomLabel.Length-1));
-            RoomIndex = int.Parse(roomIndex.Match(roomLabel).ToString());
+            AreaIndex = int.Parse(roomLabel.Substring(roomLabel.Length-1),NumberStyles.HexNumber);
+            RoomIndex = int.Parse(roomLabel.Substring(0,2), NumberStyles.HexNumber);
             PrintPC = "print pc, \"-" + "R" + asmFCN.WByte((uint)RoomIndex) + "A" + AreaIndex + "\"";
             smasm.GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             Asm8F = smasm.FindSection(searchfor, smasm8F);
