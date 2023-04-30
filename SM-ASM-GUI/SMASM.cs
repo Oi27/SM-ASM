@@ -939,7 +939,6 @@ namespace SM_ASM_GUI
         {
             InitializeComponent();
             DbLocation = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-            CreateImages();
             //Console.WriteLine(DbLocation);
             //if config does not exist, create it
             if (!File.Exists(DbLocation + "config.xml")) 
@@ -961,10 +960,11 @@ namespace SM_ASM_GUI
             //if (!LUNAR.OpenFile(az)) { MessageBox.Show ("LUNAR rom load failed"); }
         }
 
-        private void CreateImages()
+        private bool RoomLoaded()
         {
-            //generate the s1s2s3... bitmaps for the scroll editor
-            
+            //put a bunch of transparent pictureboxes in front
+            if (TilesetBox.Text == "") { MessageBox.Show("No room is currently loaded! Open a room first.", "No Room Loaded", MessageBoxButtons.OK); return false; }
+            return true;
         }
         public void CreateNewConfig()
         {
@@ -1340,6 +1340,7 @@ namespace SM_ASM_GUI
         }
         private void DataListMenu_Opening(object sender, CancelEventArgs e)
         {
+            StateMenuStrip_Opening(sender, e);
             ListBox A = (ListBox)((sender as ContextMenuStrip).SourceControl);
             string firstletter = A.Name.Substring(0, 1);
             if (firstletter == "P") { ScrollPLMedit.Visible = true; }
@@ -1822,6 +1823,7 @@ namespace SM_ASM_GUI
 
         private void ASMbutton_Click(object sender, EventArgs e)
         {
+            if (!RoomLoaded()) { return; }
             string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
             List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
             if(smasmSpace == null) { return; }
@@ -2564,6 +2566,7 @@ namespace SM_ASM_GUI
 
         private void RefreshExport_Click(object sender, EventArgs e)
         {
+            if (!RoomLoaded()) { return; }
             //load room based on current address in Headerbox.
             string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
             uint headerAddr = uint.Parse(headerNumbers, NumberStyles.HexNumber);
@@ -3428,6 +3431,7 @@ namespace SM_ASM_GUI
 
         private void ExportCurrentTileset_Click(object sender, EventArgs e)
         {
+            if (TilesetBox.Text == "") { MessageBox.Show("No room is currently loaded! Open a room first.", "No Room Loaded", MessageBoxButtons.OK); return; }
             Tilesets2folders(true, true, true, int.Parse(TilesetBox.Text, NumberStyles.HexNumber));
             AppendStatus("Exported Tileset " + TilesetBox.Text + " from ROM to folders.");
         }
@@ -3448,6 +3452,7 @@ namespace SM_ASM_GUI
 
         private void RoomPicture_MouseMove(object sender, MouseEventArgs e)
         {
+            if (!RoomLoaded()) { return; }
             PictureBox A = (PictureBox)sender;
             switch (e.Button)
             {
@@ -3490,6 +3495,7 @@ namespace SM_ASM_GUI
 
         private void ZoomPicIn_Click(object sender, EventArgs e)
         {
+            if (!RoomLoaded()) { return; }
             if (imageScale >= 4) { return; }
             Bitmap original = roomPic;
             roomPic = new Bitmap(original, new Size(original.Width * 2, original.Height *2));
@@ -3499,6 +3505,7 @@ namespace SM_ASM_GUI
 
         private void ZoomPicOut_Click(object sender, EventArgs e)
         {
+            if (!RoomLoaded()) { return; }
             if (imageScale <= 1) { return; }
             Bitmap original = roomPic;
             roomPic = new Bitmap(original, new Size(original.Width / 2, original.Height / 2));

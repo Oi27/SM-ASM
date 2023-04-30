@@ -259,6 +259,7 @@ namespace SM_ASM_GUI
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Visible = false;
             // 
             // walkthoughToolStripMenuItem
             // 
@@ -521,34 +522,34 @@ namespace SM_ASM_GUI
             this.NewItem,
             this.ScrollPLMedit});
             this.DataListMenu.Name = "contextMenuStrip1";
-            this.DataListMenu.Size = new System.Drawing.Size(159, 92);
+            this.DataListMenu.Size = new System.Drawing.Size(181, 114);
             this.DataListMenu.Opening += new System.ComponentModel.CancelEventHandler(this.DataListMenu_Opening);
             // 
             // DeleteButton
             // 
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(158, 22);
+            this.DeleteButton.Size = new System.Drawing.Size(180, 22);
             this.DeleteButton.Text = "Delete Item";
             this.DeleteButton.Click += new System.EventHandler(this.BlockDelete_Click);
             // 
             // BlockCopy
             // 
             this.BlockCopy.Name = "BlockCopy";
-            this.BlockCopy.Size = new System.Drawing.Size(158, 22);
+            this.BlockCopy.Size = new System.Drawing.Size(180, 22);
             this.BlockCopy.Text = "Duplicate";
             this.BlockCopy.Click += new System.EventHandler(this.BlockCopy_Click);
             // 
             // NewItem
             // 
             this.NewItem.Name = "NewItem";
-            this.NewItem.Size = new System.Drawing.Size(158, 22);
+            this.NewItem.Size = new System.Drawing.Size(180, 22);
             this.NewItem.Text = "New Item";
             this.NewItem.Click += new System.EventHandler(this.NewItem_Click);
             // 
             // ScrollPLMedit
             // 
             this.ScrollPLMedit.Name = "ScrollPLMedit";
-            this.ScrollPLMedit.Size = new System.Drawing.Size(158, 22);
+            this.ScrollPLMedit.Size = new System.Drawing.Size(180, 22);
             this.ScrollPLMedit.Text = "Edit Scroll PLMs";
             this.ScrollPLMedit.Visible = false;
             this.ScrollPLMedit.Click += new System.EventHandler(this.ScrollPLMedit_Click);
@@ -790,6 +791,7 @@ namespace SM_ASM_GUI
             this.EditLevelScrollsButton});
             this.LevelPicMenu.Name = "contextMenuStrip1";
             this.LevelPicMenu.Size = new System.Drawing.Size(162, 26);
+            this.LevelPicMenu.Opening += new System.ComponentModel.CancelEventHandler(this.StateMenuStrip_Opening);
             // 
             // EditLevelScrollsButton
             // 
@@ -913,6 +915,7 @@ namespace SM_ASM_GUI
             this.testbutton.Text = "test";
             this.testbutton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.testbutton.UseVisualStyleBackColor = true;
+            this.testbutton.Visible = false;
             this.testbutton.Click += new System.EventHandler(this.testbutton_Click);
             // 
             // SMASM

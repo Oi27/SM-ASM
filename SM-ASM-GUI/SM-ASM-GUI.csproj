@@ -191,6 +191,7 @@
     <Content Include="Bitmap1.bmp" />
     <Content Include="enemylist.txt" />
     <Content Include="filefolder.bmp" />
+    <Content Include="logo_large.png" />
     <Content Include="plmlist.txt" />
     <Content Include="s0.png" />
     <Content Include="s1.png" />
