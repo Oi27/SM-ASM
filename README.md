@@ -10,11 +10,6 @@
 *********************************************************************
 README V.1.0.0
 ****************
-TABLE OF CONTENTS
-****************
-INTRO - 
-
-****************
 INTRO
 ****************
 SM-ASM is an open-source data management tool for use alongside SMILE RF with the ASAR assembler.
