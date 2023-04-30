@@ -939,6 +939,7 @@ namespace SM_ASM_GUI
         {
             InitializeComponent();
             DbLocation = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
+            CreateImages();
             //Console.WriteLine(DbLocation);
             //if config does not exist, create it
             if (!File.Exists(DbLocation + "config.xml")) 
@@ -960,6 +961,11 @@ namespace SM_ASM_GUI
             //if (!LUNAR.OpenFile(az)) { MessageBox.Show ("LUNAR rom load failed"); }
         }
 
+        private void CreateImages()
+        {
+            //generate the s1s2s3... bitmaps for the scroll editor
+            
+        }
         public void CreateNewConfig()
         {
             XmlWriterSettings settings = new XmlWriterSettings();
@@ -2936,7 +2942,10 @@ namespace SM_ASM_GUI
         private void ImportTilesets_Click(object sender, EventArgs e)
         {
             //Thread t = new Thread(new ThreadStart(this.ImportTileSets()));
+            string tilesetFolder = GetTilesetDir();
+            if (!Directory.Exists(tilesetFolder)) { MessageBox.Show("No tileset folder found!\nUse Export Tileset from ROM first"); }
             ImportTileSets();
+            AppendStatus("Tileset Folders imported to ASM.");
         }
 
         public void ImportTileSets(int singleSet = -1)

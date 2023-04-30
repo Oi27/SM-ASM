@@ -1,0 +1,160 @@
+CEBF,norfair,crateria,boyon,goop,yellow
+CEFF,unused,mini,crocomire,stoke,red
+CF3F,maridia,mama,turtle,kame,shell,brown,yellow
+CF7F,maridia,mini,turtle,beetle,shell,brown,yellow
+CFBF,maridia,norfair,brinstar,puyo,egg,yellow
+CFFF,maridia,brinstar,cacattac,super missiles,needles,green
+D03F,maridia,toge,shell,snail,spikes,brown,yellow
+D07F,crateria,ship,brown,green
+D0BF,crateria,ship,brown,green
+D0FF,crateria,mero,bug,fly,torizo,purple,red
+D13F,norfair,mella,bug,fly,fire,red
+D17F,maridia,memu,bug,fly,yellow,gray
+D1BF,norfair,multiviola,viola,orb,ball,red
+D1FF,norfair,rocks,particles,lava,rising,brown
+D23F,tourian,rinka,ring,red
+D27F,brinstar,crateria,rio,bird,bug,swoop,green,yellow
+D2BF,norfair,squeewpt,lava,hopper,hop,jump,red
+D2FF,norfair,geruda,swoop,rio,red,brown
+D33F,norfair,lower,holtz,rio,swoop,blue,red,purple
+D37F,maridia,oum,shell,roll,platform,green,red
+D3BF,crateria,maridia,hiru,jump,thin,yellow
+D3FF,crateria,norfair,grapple,ripper,skeleton,gray,yellow
+D43F,norfair,lower,ripper,rocket,red
+D47F,crateria,brinstar,ripper,brown
+D4BF,norfair,seahorse,dragon,lava,red
+D4FF,norfair,crateria,brinstar,shutter,auto,gray
+D53F,norfair,crateria,brinstar,shutter,normal,gray
+D57F,norfair,crateria,brinstar,unused,shutter,horizontal,gray
+D5BF,norfair,crateria,brinstar,tourian,shutter,destructible,gray
+D5FF,norfair,wrecked ship,platform,yellow,gray
+D63F,brinstar,norfair,waver,purple,red
+D67F,brinstar,skree,metal,yellow,gray
+D6BF,brinstar,norfair,lower,fireflea,bug,red,blue
+D6FF,crateria,wrecked ship,fish,skeleton,spikes,gray,blue
+D73F,elevator,yellow
+D77F,crateria,maridia,battle,crab,kani,red
+D7BF,brinstar,slug,worm,powerbomb,green,red
+D7FF,crateria,norfair,kamer,platform,green
+D83F,norfair,kamer,platform,yellow,gray
+D87F,brinstar,crateria,wrecked ship,sbug,bug,cosmetic,green
+D8FF,maridia,mochtroid,metroid,green,red
+D93F,brinstar,sidehopper,legs,yellow
+D97F,norfair,dessgeega,sidehopper,red,purple,blue
+D9BF,brinstar,big,sidehopper,yellow
+D9FF,tourian,big,sidehopper,blue
+DA3F,norfair,lower,dessgeega,big,sidehopper,red,purple,blue
+DA7F,maridia,farm,bug,zoa,gray,blue
+DABF,norfair,powerbomb,viola,orb,ball,blue
+DB3F,unused,bang,orb,ball,blue,red
+DB7F,crateria,skree,green
+DBBF,maridia,snail,shell,shy,green,gray
+DBFF,unused,reflec,mirror,red,gray
+DC3F,wrecked ship,zoomer,geemer,orange zoomer,orange
+DC7F,brinstar,zeela,zoomer,geemer,kraid,green,brown
+DCBF,norfair,fire,zoomer,geemer,nova,red
+DCFF,crateria,zoomer,geemer,purple,blue
+DD3F,crateria,zoomer,geemer,metal zoomer,gray
+DD7F,tourian,metroid,green,red
+DDBF,norfair,crocomire,red
+DDFF,norfair,crocomore,red
+DE3F,maridia,draygon,green
+DE7F,maridia,draygon,green
+DEBF,maridia,draygon,green
+DEFF,maridia,draygon,green
+DF3F,brinstar,spore spawn,green
+DF7F,brinstar,spore spawn,green
+DFBF,norfair,lower,rocks,boulders,gray
+DFFF,norfair,lower,wrecked ship,kzan,platform,gray
+E03F,norfair,lower,wrecked ship,kzan,platform,gray
+E07F,norfair,lower,fire,steam,red
+E0BF,norfair,lower,fire,steam,red
+E0FF,brinstar,mini kraid,green
+E13F,ceres,ridley,brown,red
+E17F,norfair,lower,ridley,brown,red
+E1FF,crateria,ceres,smoke,steam,gray
+E23F,ceres,door,blue
+E2BF,brinstar,kraid,green
+E2FF,brinstar,kraid,green
+E33F,brinstar,kraid,green
+E37F,brinstar,kraid,green
+E3BF,brinstar,kraid,green
+E3FF,brinstar,kraid,green
+E43F,brinstar,kraid,green
+E47F,brinstar,kraid,green
+E4BF,wrecked ship,phantoon,yellow
+E4FF,wrecked ship,phantoon,yellow
+E53F,wrecked ship,phantoon,yellow
+E57F,wrecked ship,phantoon,yellow
+E5BF,brinstar,etecoon,animal,green
+E5FF,brinstar,dachora,animal,green
+E63F,maridia,mini draygon,evir,yellow
+E67F,maridia,mini draygon,evir,yellow
+E6BF,crateria,eye,morph ball,guard,camera,blue
+E6FF,norfair,lower,fune,face,wall,yellow
+E73F,norfair,lower,fune,nami,face,wall,yellow
+E77F,wrecked ship,gai,ghost,yellow,green
+E7BF,crateria,brinstar,hand,yapping maw,yellow,gray
+E7FF,crateria,norfair,kago,farm,bug,platform,red,yellow
+E83F,norfair,lavaman,red
+E87F,crateria,brinstar,norfair,nomi,hopper,yellow
+E8BF,maridia,puu,balloon,float,grapple,yellow
+E8FF,wrecked ship,robot,worker,platform,yellow
+E93F,wrecked ship,robot,worker,platform,yellow
+E97F,maridia,wrecked ship,pipe,puffer,powerbomb,green
+E9BF,norfair,ndra,seahorse,walking,red
+E9FF,wrecked ship,atomic,blue
+EA3F,wrecked ship,sparks,green
+EA7F,brinstar,koma,face,blue
+EABF,brinstar,crateria,kihunter,hachi,green
+EAFF,brinstar,crateria,kihunter,hachi,wings,green
+EB3F,wrecked ship,kihunter,hachi,yellow
+EB7F,wrecked ship,kihunter,hachi,wings,yellow
+EBBF,norfair,lower,kihunter,hachi,musketeer,red
+EBFF,norfair,lower,kihunter,hachi,musketeer,wings,red
+EC3F,tourian,mother,brain,red
+EC7F,tourian,mother,brain,red
+ECBF,tourian,baby,metroid,green,red
+ECFF,tourian,mother,brain,red
+ED3F,tourian,dust,torizo,gray
+ED7F,tourian,dust,sidehopper,gray
+EDBF,tourian,dust,technical,gray,blue
+EDFF,tourian,dust,geemer,gray
+EE3F,tourian,dust,ripper,gray
+EE7F,tourian,dust,skree,gray
+EEBF,tourian,baby,metroid,giant,cutscene,green,red
+EEFF,crateria,norfair,lower,gt,gold,torizo,bt,bomb,silver,statue,yellow
+EF3F,crateria,norfair,lower,gt,gold,torizo,bt,bomb,silver,statue,technical,yellow
+EF7F,crateria,norfair,lower,gt,gold,torizo,bt,bomb,silver,statue,yellow
+EFBF,crateria,norfair,lower,gt,gold,torizo,bt,bomb,silver,statue,technical,yellow
+EFFF,crateria,G4,ghost,technical,yellow,gold
+F03F,crateria,G4,ghost,technical,yellow,gold
+F07F,maridia,shaktool,digger,robot,dig,break,gray
+F0BF,brinstar,maridia,tube,cracks,noob,n00b,technical,blue,white
+F0FF,wrecked ship,walking,statue,bowling,technical,torizo,gray
+F153,unused,colorless
+F193,crateria,farm,bug,zeb,red
+F1D3,crateria,maridia,farm,bug,zebbo,green,red
+F213,norfair,farm,bug,stack,gamet,red
+F253,brinstar,farm,bug,geega,yellow
+F293,maridia,botwoon,yellow,orange
+F2D3,crateria,brinstar,escape,etecoon,animals,green
+F313,crateria,brinstar,escape,dachora,animals,green
+F353,space,pirate,batta,crateria,wall,gray
+F393,space,pirate,batta,crateria,brinstar,wall,unused,green
+F3D3,space,pirate,batta,wall,norfair,red
+F413,space,pirate,batta,wall,norfair,lower,yellow
+F453,space,pirate,batta,wall,maridia,plasma,pink,red
+F493,space,pirate,batta,wall,escape,tourian,gray
+F4D3,space,pirate,batta,fighter,crateria,unused,gray
+F513,space,pirate,batta,fighter,brinstar,unused,green
+F553,space,pirate,batta,fighter,norfair,unused,red
+F593,space,pirate,batta,fighter,norfair,lower,metal,gray
+F5D3,space,pirate,batta,fighter,maridia,unused,red,pink
+F613,space,pirate,batta,fighter,crateria,escape,gray
+F653,space,pirate,batta,walking,crateria,gray
+F693,space,pirate,batta,walking,crateria,brinstar,green
+F6D3,space,pirate,batta,walking,norfair,red
+F713,space,pirate,batta,walking,norfair,lower,yellow
+F753,space,pirate,batta,walking,maridia,red,pink
+F793,space,pirate,batta,walking,crateria,tourian,escape,gray

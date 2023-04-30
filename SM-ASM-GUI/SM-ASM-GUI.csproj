@@ -171,7 +171,6 @@
     <EmbeddedResource Include="Tilesets_Settings.resx">
       <DependentUpon>Tilesets_Settings.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -186,8 +185,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="0.png" />
+    <Content Include="1.png" />
+    <Content Include="2.png" />
     <Content Include="Bitmap1.bmp" />
+    <Content Include="enemylist.txt" />
     <Content Include="filefolder.bmp" />
+    <Content Include="plmlist.txt" />
+    <Content Include="s0.png" />
+    <Content Include="s1.png" />
+    <Content Include="s2.png" />
     <Content Include="SmasmLogo.ico" />
     <Content Include="LunarDLL.cpp" />
     <Content Include="LunarDLL.h" />
