@@ -20,7 +20,6 @@ namespace SM_ASM_GUI
     public struct Tile
     {
         //tile in the context of the map drawing tool
-        //BTS unused for now, but could be used to draw super missile blocks differently from others/ etc.
         //the endianness of the tiledata must be correct prior to calling.
         public Tile(uint tileIndex, byte[]levelDataUncompressed)
         {
@@ -1267,7 +1266,7 @@ namespace SM_ASM_GUI
         private void Duplicate_Item(object sender, MouseEventArgs e)
         {
             ListBox A = (ListBox)sender;
-
+            if(A.Items.Count == 0) {return;}
             //disallow copy if max limit reached
             //determine data type based on first letter of control name
             //Enemies, GFX, PLM, FX, Doors, State
