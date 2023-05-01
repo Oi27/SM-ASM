@@ -92,8 +92,8 @@ Starting with a clean ROM:
 0. Make sure you have backups of everything first!
 1. Put it in a folder by itself & name it whatever your hack is called
 2. Go to your installation of SMILE and make a Custom Folder for the hack.
-    >Path is ./SMILE RF/Files/Custom/[yourHack]/
-3. Put a copy of the vanilla MDB in [yourHack]/mdb.txt
+    >Path is ./SMILE RF/Files/Custom/[yourHack]
+3. Put a copy of the vanilla MDB in [yourHack]/Data/mdb.txt
 4. Open SMASM and pick file paths as prompted.
     >ROM
     >ASM - Leaving the ASM path blank will create a new .asm in the same folder as the ROM. Recommended for first time.
@@ -157,7 +157,14 @@ Modifying Rooms:
     >Apply to ROM
 
     Other room contents (doors, FX, etc.) work the same way.
-
+    
+    
+    To keep door links made in SMILE:
+    >Link the doors
+    >Export both rooms to ASM
+    >Apply to ROM
+    
+          
 
 Room States:
     Load room and right-click the state selector.
