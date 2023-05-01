@@ -1332,7 +1332,7 @@ namespace SM_ASM_GUI
             }
             else if (A.Name.Substring(0, 1) == "S" && A.Items.Count < MaxStates)
             {
-                MessageBox.Show("State addition not yet supported!");
+                //MessageBox.Show("State addition not yet supported!");
             }
 
 
