@@ -425,7 +425,6 @@ namespace SM_ASM_GUI
             }
             return fxdata;
         }
-
         public static string ASMA1(roomdata r)
         {
             string enemydata =

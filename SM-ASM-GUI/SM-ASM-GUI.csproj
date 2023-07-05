@@ -87,6 +87,12 @@
     <Compile Include="ScrollEditor.Designer.cs">
       <DependentUpon>ScrollEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="SpecialDoorID.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpecialDoorID.Designer.cs">
+      <DependentUpon>SpecialDoorID.cs</DependentUpon>
+    </Compile>
     <Compile Include="StateConfig.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,6 +164,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpecialDoorID.resx">
+      <DependentUpon>SpecialDoorID.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StateConfig.resx">
       <DependentUpon>StateConfig.cs</DependentUpon>

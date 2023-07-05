@@ -95,7 +95,6 @@ namespace SM_ASM_GUI
             this.ImportCurrentTileset = new System.Windows.Forms.Button();
             this.ExportCurrentTileset = new System.Windows.Forms.Button();
             this.RefreshExport = new System.Windows.Forms.Button();
-            this.RoomLoadTimeStamp = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.TilesetBox = new System.Windows.Forms.TextBox();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
@@ -112,11 +111,14 @@ namespace SM_ASM_GUI
             this.HeaderDropdown = new System.Windows.Forms.ComboBox();
             this.OpenMDB = new System.Windows.Forms.Button();
             this.testbutton = new System.Windows.Forms.Button();
+            this.HeaderInfo = new System.Windows.Forms.GroupBox();
+            this.specialDoorIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.StateMenuStrip.SuspendLayout();
             this.DataListMenu.SuspendLayout();
             this.LevelPicMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).BeginInit();
+            this.HeaderInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -131,7 +133,8 @@ namespace SM_ASM_GUI
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(684, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(682, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -140,7 +143,8 @@ namespace SM_ASM_GUI
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.currentRoomToNewASMToolStripMenuItem,
             this.mergeRoomFilesToolStripMenuItem,
-            this.mDBListToASMToolStripMenuItem});
+            this.mDBListToASMToolStripMenuItem,
+            this.specialDoorIDToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.fileToolStripMenuItem.Text = "ASM";
@@ -177,7 +181,7 @@ namespace SM_ASM_GUI
             // filePathsToolStripMenuItem
             // 
             this.filePathsToolStripMenuItem.Name = "filePathsToolStripMenuItem";
-            this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.filePathsToolStripMenuItem.Text = "File Paths";
             this.filePathsToolStripMenuItem.Click += new System.EventHandler(this.FilePaths_Open);
             // 
@@ -217,7 +221,7 @@ namespace SM_ASM_GUI
             this.slimGUIToolStripMenuItem.CheckOnClick = true;
             this.slimGUIToolStripMenuItem.Enabled = false;
             this.slimGUIToolStripMenuItem.Name = "slimGUIToolStripMenuItem";
-            this.slimGUIToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.slimGUIToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.slimGUIToolStripMenuItem.Text = "Slim GUI";
             // 
             // editToolStripMenuItem
@@ -287,7 +291,7 @@ namespace SM_ASM_GUI
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 83);
+            this.label1.Location = new System.Drawing.Point(17, 84);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 12;
@@ -295,7 +299,7 @@ namespace SM_ASM_GUI
             // 
             // RoomIndex
             // 
-            this.RoomIndex.Location = new System.Drawing.Point(12, 99);
+            this.RoomIndex.Location = new System.Drawing.Point(8, 18);
             this.RoomIndex.MaxLength = 2;
             this.RoomIndex.Name = "RoomIndex";
             this.RoomIndex.Size = new System.Drawing.Size(29, 20);
@@ -308,7 +312,7 @@ namespace SM_ASM_GUI
             // 
             this.MapXLabel.AutoSize = true;
             this.MapXLabel.Enabled = false;
-            this.MapXLabel.Location = new System.Drawing.Point(9, 121);
+            this.MapXLabel.Location = new System.Drawing.Point(17, 123);
             this.MapXLabel.Name = "MapXLabel";
             this.MapXLabel.Size = new System.Drawing.Size(38, 13);
             this.MapXLabel.TabIndex = 14;
@@ -317,18 +321,20 @@ namespace SM_ASM_GUI
             // MapX
             // 
             this.MapX.Enabled = false;
-            this.MapX.Location = new System.Drawing.Point(12, 137);
+            this.MapX.Location = new System.Drawing.Point(8, 56);
             this.MapX.MaxLength = 2;
             this.MapX.Name = "MapX";
             this.MapX.Size = new System.Drawing.Size(29, 20);
             this.MapX.TabIndex = 13;
+            this.MapX.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.MapX.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.MapX.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Enabled = false;
-            this.label5.Location = new System.Drawing.Point(9, 162);
+            this.label5.Location = new System.Drawing.Point(17, 163);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(35, 13);
             this.label5.TabIndex = 16;
@@ -337,18 +343,20 @@ namespace SM_ASM_GUI
             // RoomWidth
             // 
             this.RoomWidth.Enabled = false;
-            this.RoomWidth.Location = new System.Drawing.Point(12, 178);
+            this.RoomWidth.Location = new System.Drawing.Point(8, 97);
             this.RoomWidth.MaxLength = 2;
             this.RoomWidth.Name = "RoomWidth";
             this.RoomWidth.Size = new System.Drawing.Size(29, 20);
             this.RoomWidth.TabIndex = 15;
+            this.RoomWidth.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.RoomWidth.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.RoomWidth.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Enabled = false;
-            this.label6.Location = new System.Drawing.Point(9, 210);
+            this.label6.Location = new System.Drawing.Point(17, 211);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 13);
             this.label6.TabIndex = 18;
@@ -357,18 +365,20 @@ namespace SM_ASM_GUI
             // UpScroller
             // 
             this.UpScroller.Enabled = false;
-            this.UpScroller.Location = new System.Drawing.Point(12, 226);
+            this.UpScroller.Location = new System.Drawing.Point(8, 145);
             this.UpScroller.MaxLength = 2;
             this.UpScroller.Name = "UpScroller";
             this.UpScroller.Size = new System.Drawing.Size(29, 20);
             this.UpScroller.TabIndex = 17;
+            this.UpScroller.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.UpScroller.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.UpScroller.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Enabled = false;
-            this.label7.Location = new System.Drawing.Point(9, 253);
+            this.label7.Location = new System.Drawing.Point(17, 254);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(66, 13);
             this.label7.TabIndex = 20;
@@ -377,18 +387,20 @@ namespace SM_ASM_GUI
             // SpecialGFX
             // 
             this.SpecialGFX.Enabled = false;
-            this.SpecialGFX.Location = new System.Drawing.Point(12, 269);
+            this.SpecialGFX.Location = new System.Drawing.Point(8, 188);
             this.SpecialGFX.MaxLength = 2;
             this.SpecialGFX.Name = "SpecialGFX";
             this.SpecialGFX.Size = new System.Drawing.Size(29, 20);
             this.SpecialGFX.TabIndex = 19;
+            this.SpecialGFX.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.SpecialGFX.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.SpecialGFX.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Enabled = false;
-            this.label9.Location = new System.Drawing.Point(80, 210);
+            this.label9.Location = new System.Drawing.Point(88, 211);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(53, 13);
             this.label9.TabIndex = 28;
@@ -397,18 +409,20 @@ namespace SM_ASM_GUI
             // DnScroller
             // 
             this.DnScroller.Enabled = false;
-            this.DnScroller.Location = new System.Drawing.Point(83, 226);
+            this.DnScroller.Location = new System.Drawing.Point(79, 145);
             this.DnScroller.MaxLength = 2;
             this.DnScroller.Name = "DnScroller";
             this.DnScroller.Size = new System.Drawing.Size(29, 20);
             this.DnScroller.TabIndex = 27;
+            this.DnScroller.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.DnScroller.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.DnScroller.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Enabled = false;
-            this.label10.Location = new System.Drawing.Point(80, 162);
+            this.label10.Location = new System.Drawing.Point(88, 163);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(38, 13);
             this.label10.TabIndex = 26;
@@ -417,18 +431,20 @@ namespace SM_ASM_GUI
             // RoomHeight
             // 
             this.RoomHeight.Enabled = false;
-            this.RoomHeight.Location = new System.Drawing.Point(83, 178);
+            this.RoomHeight.Location = new System.Drawing.Point(79, 97);
             this.RoomHeight.MaxLength = 2;
             this.RoomHeight.Name = "RoomHeight";
             this.RoomHeight.Size = new System.Drawing.Size(29, 20);
             this.RoomHeight.TabIndex = 25;
+            this.RoomHeight.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.RoomHeight.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.RoomHeight.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // MapYLabel
             // 
             this.MapYLabel.AutoSize = true;
             this.MapYLabel.Enabled = false;
-            this.MapYLabel.Location = new System.Drawing.Point(80, 121);
+            this.MapYLabel.Location = new System.Drawing.Point(88, 123);
             this.MapYLabel.Name = "MapYLabel";
             this.MapYLabel.Size = new System.Drawing.Size(38, 13);
             this.MapYLabel.TabIndex = 24;
@@ -437,17 +453,19 @@ namespace SM_ASM_GUI
             // MapY
             // 
             this.MapY.Enabled = false;
-            this.MapY.Location = new System.Drawing.Point(83, 137);
+            this.MapY.Location = new System.Drawing.Point(79, 56);
             this.MapY.MaxLength = 2;
             this.MapY.Name = "MapY";
             this.MapY.Size = new System.Drawing.Size(29, 20);
             this.MapY.TabIndex = 23;
+            this.MapY.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.MapY.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
+            this.MapY.Validated += new System.EventHandler(this.RoomHeader_Change);
             // 
             // AreaLabel
             // 
             this.AreaLabel.AutoSize = true;
-            this.AreaLabel.Location = new System.Drawing.Point(80, 83);
+            this.AreaLabel.Location = new System.Drawing.Point(86, 84);
             this.AreaLabel.Name = "AreaLabel";
             this.AreaLabel.Size = new System.Drawing.Size(58, 13);
             this.AreaLabel.TabIndex = 22;
@@ -455,7 +473,7 @@ namespace SM_ASM_GUI
             // 
             // AreaIndex
             // 
-            this.AreaIndex.Location = new System.Drawing.Point(83, 99);
+            this.AreaIndex.Location = new System.Drawing.Point(79, 18);
             this.AreaIndex.MaxLength = 2;
             this.AreaIndex.Name = "AreaIndex";
             this.AreaIndex.Size = new System.Drawing.Size(29, 20);
@@ -522,34 +540,34 @@ namespace SM_ASM_GUI
             this.NewItem,
             this.ScrollPLMedit});
             this.DataListMenu.Name = "contextMenuStrip1";
-            this.DataListMenu.Size = new System.Drawing.Size(181, 114);
+            this.DataListMenu.Size = new System.Drawing.Size(159, 92);
             this.DataListMenu.Opening += new System.ComponentModel.CancelEventHandler(this.DataListMenu_Opening);
             // 
             // DeleteButton
             // 
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(180, 22);
+            this.DeleteButton.Size = new System.Drawing.Size(158, 22);
             this.DeleteButton.Text = "Delete Item";
             this.DeleteButton.Click += new System.EventHandler(this.BlockDelete_Click);
             // 
             // BlockCopy
             // 
             this.BlockCopy.Name = "BlockCopy";
-            this.BlockCopy.Size = new System.Drawing.Size(180, 22);
+            this.BlockCopy.Size = new System.Drawing.Size(158, 22);
             this.BlockCopy.Text = "Duplicate";
             this.BlockCopy.Click += new System.EventHandler(this.BlockCopy_Click);
             // 
             // NewItem
             // 
             this.NewItem.Name = "NewItem";
-            this.NewItem.Size = new System.Drawing.Size(180, 22);
+            this.NewItem.Size = new System.Drawing.Size(158, 22);
             this.NewItem.Text = "New Item";
             this.NewItem.Click += new System.EventHandler(this.NewItem_Click);
             // 
             // ScrollPLMedit
             // 
             this.ScrollPLMedit.Name = "ScrollPLMedit";
-            this.ScrollPLMedit.Size = new System.Drawing.Size(180, 22);
+            this.ScrollPLMedit.Size = new System.Drawing.Size(158, 22);
             this.ScrollPLMedit.Text = "Edit Scroll PLMs";
             this.ScrollPLMedit.Visible = false;
             this.ScrollPLMedit.Click += new System.EventHandler(this.ScrollPLMedit_Click);
@@ -746,20 +764,11 @@ namespace SM_ASM_GUI
             this.RefreshExport.UseVisualStyleBackColor = true;
             this.RefreshExport.Click += new System.EventHandler(this.RefreshExport_Click);
             // 
-            // RoomLoadTimeStamp
-            // 
-            this.RoomLoadTimeStamp.AutoSize = true;
-            this.RoomLoadTimeStamp.Location = new System.Drawing.Point(116, 131);
-            this.RoomLoadTimeStamp.Name = "RoomLoadTimeStamp";
-            this.RoomLoadTimeStamp.Size = new System.Drawing.Size(37, 13);
-            this.RoomLoadTimeStamp.TabIndex = 58;
-            this.RoomLoadTimeStamp.Text = "          ";
-            // 
             // label16
             // 
             this.label16.AutoSize = true;
             this.label16.Enabled = false;
-            this.label16.Location = new System.Drawing.Point(77, 253);
+            this.label16.Location = new System.Drawing.Point(86, 254);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(38, 13);
             this.label16.TabIndex = 62;
@@ -768,11 +777,12 @@ namespace SM_ASM_GUI
             // TilesetBox
             // 
             this.TilesetBox.Enabled = false;
-            this.TilesetBox.Location = new System.Drawing.Point(83, 269);
+            this.TilesetBox.Location = new System.Drawing.Point(79, 188);
             this.TilesetBox.MaxLength = 2;
             this.TilesetBox.Name = "TilesetBox";
             this.TilesetBox.Size = new System.Drawing.Size(29, 20);
             this.TilesetBox.TabIndex = 61;
+            this.TilesetBox.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             // 
             // label17
             // 
@@ -918,27 +928,62 @@ namespace SM_ASM_GUI
             this.testbutton.Visible = false;
             this.testbutton.Click += new System.EventHandler(this.testbutton_Click);
             // 
+            // HeaderInfo
+            // 
+            this.HeaderInfo.Controls.Add(this.TilesetBox);
+            this.HeaderInfo.Controls.Add(this.DnScroller);
+            this.HeaderInfo.Controls.Add(this.RoomHeight);
+            this.HeaderInfo.Controls.Add(this.MapY);
+            this.HeaderInfo.Controls.Add(this.AreaIndex);
+            this.HeaderInfo.Controls.Add(this.SpecialGFX);
+            this.HeaderInfo.Controls.Add(this.UpScroller);
+            this.HeaderInfo.Controls.Add(this.RoomWidth);
+            this.HeaderInfo.Controls.Add(this.MapX);
+            this.HeaderInfo.Controls.Add(this.RoomIndex);
+            this.HeaderInfo.Location = new System.Drawing.Point(12, 81);
+            this.HeaderInfo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.HeaderInfo.Name = "HeaderInfo";
+            this.HeaderInfo.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.HeaderInfo.Size = new System.Drawing.Size(128, 211);
+            this.HeaderInfo.TabIndex = 69;
+            this.HeaderInfo.TabStop = false;
+            // 
+            // specialDoorIDToolStripMenuItem
+            // 
+            this.specialDoorIDToolStripMenuItem.Name = "specialDoorIDToolStripMenuItem";
+            this.specialDoorIDToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.specialDoorIDToolStripMenuItem.Text = "Special Door ID";
+            this.specialDoorIDToolStripMenuItem.Click += new System.EventHandler(this.specialDoorIDToolStripMenuItem_Click);
+            // 
             // SMASM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 411);
+            this.ClientSize = new System.Drawing.Size(682, 410);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.testbutton);
+            this.Controls.Add(this.MapYLabel);
             this.Controls.Add(this.OpenMDB);
             this.Controls.Add(this.HeaderDropdown);
             this.Controls.Add(this.ZoomPicOut);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.ZoomPicIn);
             this.Controls.Add(this.RoomPicture);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label17);
-            this.Controls.Add(this.label16);
-            this.Controls.Add(this.TilesetBox);
             this.Controls.Add(this.RefreshExport);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.ExportCurrentTileset);
             this.Controls.Add(this.ImportCurrentTileset);
+            this.Controls.Add(this.MapXLabel);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.LevelBuffer);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.DelMDB);
             this.Controls.Add(this.StatusBox);
+            this.Controls.Add(this.AreaLabel);
             this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.PlmBox);
             this.Controls.Add(this.label15);
@@ -953,32 +998,14 @@ namespace SM_ASM_GUI
             this.Controls.Add(this.label8);
             this.Controls.Add(this.StateBox);
             this.Controls.Add(this.ASMbutton);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.DnScroller);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.RoomHeight);
-            this.Controls.Add(this.MapYLabel);
-            this.Controls.Add(this.MapY);
-            this.Controls.Add(this.AreaLabel);
-            this.Controls.Add(this.AreaIndex);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.SpecialGFX);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.UpScroller);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.RoomWidth);
-            this.Controls.Add(this.MapXLabel);
-            this.Controls.Add(this.MapX);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.RoomIndex);
             this.Controls.Add(this.HeaderLabel);
             this.Controls.Add(this.alltopCheckbox);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.RoomLoadTimeStamp);
+            this.Controls.Add(this.HeaderInfo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(700, 450);
-            this.MinimumSize = new System.Drawing.Size(420, 450);
+            this.MaximumSize = new System.Drawing.Size(699, 449);
+            this.MinimumSize = new System.Drawing.Size(420, 449);
             this.Name = "SMASM";
             this.Text = "SM-ASM";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SMASM_FormClosing);
@@ -988,6 +1015,8 @@ namespace SM_ASM_GUI
             this.DataListMenu.ResumeLayout(false);
             this.LevelPicMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).EndInit();
+            this.HeaderInfo.ResumeLayout(false);
+            this.HeaderInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1044,7 +1073,6 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.Button ImportCurrentTileset;
         private System.Windows.Forms.Button ExportCurrentTileset;
         private System.Windows.Forms.Button RefreshExport;
-        private System.Windows.Forms.Label RoomLoadTimeStamp;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox TilesetBox;
         private System.Windows.Forms.ToolStripMenuItem tilesetsToolStripMenuItem;
@@ -1075,6 +1103,8 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem walkthoughToolStripMenuItem;
         private System.Windows.Forms.Button OpenMDB;
         private System.Windows.Forms.Button testbutton;
+        private System.Windows.Forms.GroupBox HeaderInfo;
+        private System.Windows.Forms.ToolStripMenuItem specialDoorIDToolStripMenuItem;
     }
 }
 

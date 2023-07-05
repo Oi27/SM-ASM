@@ -479,9 +479,9 @@ namespace SM_ASM_GUI
         public uint StateArg { get; set; }
         public int Bytes8F { get; set; }
 
-        public uint[] Scrolls { get; }
-        public uint LevelDataSizeUC { get; }
-        public uint LevelDataSizeC { get; }
+        public uint[] Scrolls { get; set; }
+        public uint LevelDataSizeUC { get; set; }
+        public uint LevelDataSizeC { get; set; }
         public uint pLevelData { get; set; }
         public uint TileSet { get; set; }
         public uint SongSet { get; set; }
@@ -497,8 +497,8 @@ namespace SM_ASM_GUI
         public uint pPLMset { get; set; }
         public uint pBackground { get; set; }
         public uint pSetupASM { get; set; }
-        public byte[] LevelDataUC { get; }
-        public byte[] LevelDataC { get; }
+        public byte[] LevelDataUC { get; set; }
+        public byte[] LevelDataC { get; set; }
         public List<EnemyData> Enemies { get; set; }
         public uint EnemyCount { get; set; }
         public List<EnemyGFX> EnemiesAllowed { get; set; }
@@ -754,6 +754,135 @@ namespace SM_ASM_GUI
         }
     }
 
+    public struct DoorLink
+    {
+        //PLM matching needs to go off the door cap location because this can't see the level data...
+        //this would need to start with map location of the room header and work down to the block.
+        //No it doesn't!
+        //when we find the matching door that points BACK at door A, we can use door B's screen x/y and door location to look for matches in the PLM list.
+
+        //If a PLM is not found, its ID will be -1. Calling routine will use this to figure out what to ID.
+        //PLM Group is assigned at the time of the door ID process.
+        public DoorLink(ROM sm, roomdata startingRoom, int doorIndex)
+        {
+            //set default values in case room B data is not found:
+            OneWay = true;
+            DoorB = new DoorData();
+            PLMb = new PLMdata() { ID = 0x0000, PosX = 0, PosY = 0, Index = -1, Variable = 0 };
+            PLMa = new PLMdata() { ID = 0x0000, PosX = 0, PosY = 0, Index = -1, Variable = 0 };
+            PlmIndexA = -1;
+            PlmIndexB = -1;
+            GroupA = null;
+            GroupB = null;
+            KeepHiByteA = false;
+            KeepHiByteB = false;
+
+            LinkPLMs = LinkPLMS.None;
+            HeaderA = startingRoom.Header & 0xFFFF;
+            DoorA = startingRoom.Doors[doorIndex];
+            HeaderB = DoorA.Destination;
+
+            //handle if it encounters the fake elevator door blocks
+            if (HeaderB < 0x8000) { return; }
+            roomdata destination = new roomdata(sm, HeaderB + 0x70000);
+            if (destination.States == null) { return; }
+            bool startingPLMfound = false;
+            bool destinationPLMfound = false;
+
+
+
+            foreach (DoorData door in destination.Doors)
+            {
+                if (door.Destination == HeaderA)
+                {
+                    //room header match found, but there could be multiple doors between rooms.
+                    //So, now it needs to find a PLM whose coordinates match the door cap out
+                    //of the RoomB destination in RoomA PLM set.
+                    //conveniently, the doorcap xy is literally a PLM coordinate.
+                    DoorB = door;
+                    OneWay = false;
+                    int i = 0;
+                    foreach (PLMdata plm in startingRoom.States[startingRoom.StateCount].PLMs)
+                    {
+                        if (plm.PosX == DoorB.CapX && plm.PosY == DoorB.CapY)
+                        {
+                            startingPLMfound = true;
+                            PLMa = plm;
+                            PlmIndexA = i;
+                            break;
+                        }
+                        i++;
+                    }
+                }
+            }
+
+            if (OneWay)
+            {
+                //do cleanup in case the destination does not have a door that points back at the start.
+                //eg. sandpits or other places you come out of solid blocks.
+
+                //this makes it so we don't know the PLM ID or position in Room A.
+                //So if it's one-way we should just quit?
+                //The routine processing can skip this link if this happens.
+                return;
+            }
+
+            foreach (DoorData door in startingRoom.Doors)
+            {
+                if (door.Destination == HeaderB)
+                {
+                    int i = 0;
+                    foreach (PLMdata plm in destination.States[destination.StateCount].PLMs)
+                    {
+                        if (plm.PosX == DoorA.CapX && plm.PosY == DoorA.CapY)
+                        {
+                            destinationPLMfound = true;
+                            PLMb = plm;
+                            PlmIndexB = i;
+                            break;
+                        }
+                        i++;
+                    }
+                }
+            }
+
+            //if none of these conditions are true then it defaults to None
+            if (destinationPLMfound && startingPLMfound)
+            {
+                LinkPLMs = LinkPLMS.DoubleSided;
+            }
+            else if (destinationPLMfound)
+            {
+                LinkPLMs = LinkPLMS.SideB;
+            }
+            else if (startingPLMfound)
+            {
+                LinkPLMs = LinkPLMS.SideA;
+            }
+
+        }
+        public string GroupA { set; get; }
+        public string GroupB { set; get; }
+        public uint HeaderA { set; get; }
+        public uint HeaderB { get; set; }
+        public int PlmIndexA { get; set; }
+        public int PlmIndexB { get; set; }
+        public PLMdata PLMa { get; set; }
+        public PLMdata PLMb { get; set; }
+        public DoorData DoorA { set; get; }
+        public DoorData DoorB { set; get; }
+        public bool OneWay { set; get; }
+        public LinkPLMS LinkPLMs { set; get; }
+        public bool KeepHiByteA {set; get;}
+        public bool KeepHiByteB {set; get;}
+    }
+    public enum LinkPLMS
+    {
+        None = -1,
+        SideA = 0,
+        SideB = 1,
+        DoubleSided = 2
+    }
     public struct DoorData
     {//this type will store each of the door entries. Input short pointer.
      //   ;Map/Elevator Bitflag  Cap X    scrn x      spawn dist.
@@ -2322,14 +2451,257 @@ namespace SM_ASM_GUI
         {
             if(
                 RoomIndex.Text.Length < 2 
-                && 
+                || 
                 AreaIndex.Text.Length < 2
                 ||
                 thisroom.States == null
                 ) { return; }
             thisroom.Rename(uint.Parse(RoomIndex.Text, NumberStyles.HexNumber), uint.Parse(AreaIndex.Text, NumberStyles.HexNumber));
+            UpdateRoomHeader();
         }
 
+        private void RoomHeader_Change(object sender, EventArgs e)
+        {
+            if (
+                RoomIndex.Text.Length < 2
+                &&
+                AreaIndex.Text.Length < 2
+                ||
+                thisroom.States == null
+                ) { return; }
+            UpdateRoomHeader();
+        }
+
+        private void UpdateRoomHeader()
+        {
+            //6.28.23 updating the level width was too hard to do...
+            //got like 80% of the way there but had trouble inserting the level data to the correct indexes.
+            //coming back to this later...
+            return;
+            //write the level header textboxes to the room object
+            //validate all: headerInfo group should contain only Textboxes.
+            //foreach (Control item in HeaderInfo.Controls)
+            //{
+            //    if (item.Text == "") 
+            //    { 
+            //        MessageBox.Show("Room Header values cannot be left blank! Fix it.");
+            //        return;
+            //    }
+            //}
+            //try
+            //{
+                thisroom.RoomIndex = uint.Parse(this.RoomIndex.Text, NumberStyles.HexNumber);
+                thisroom.AreaIndex = uint.Parse(this.AreaIndex.Text, NumberStyles.HexNumber);
+                thisroom.MapX = uint.Parse(this.MapX.Text, NumberStyles.HexNumber);
+                thisroom.MapY = uint.Parse(this.MapY.Text, NumberStyles.HexNumber);
+                uint newWidth = uint.Parse(this.RoomWidth.Text, NumberStyles.HexNumber);
+                uint newHeight = uint.Parse(this.RoomHeight.Text, NumberStyles.HexNumber);
+                thisroom.UpScroller = uint.Parse(this.UpScroller.Text, NumberStyles.HexNumber);
+                thisroom.DnScroller = uint.Parse(this.DnScroller.Text, NumberStyles.HexNumber);
+                thisroom.SpecialGFX = uint.Parse(this.SpecialGFX.Text, NumberStyles.HexNumber);
+                UpdateRoomSize(newWidth, newHeight);
+                //update room pic
+            //}
+            //catch
+            //{
+            //    MessageBox.Show("There was a problem found with the given room header values.");
+            //}
+
+        }
+        private unsafe void UpdateRoomSize(uint newWidth, uint newHeight)
+        {
+            //expand scrolls array to match the stated dimensions of the room, for all states.
+            //also needs to change the leveldataUC to match...
+            //ALSO needs handling for if the new dimensions are smaller than the old ones.
+            uint oldSize = thisroom.Width * thisroom.Height;
+            uint newSize = newWidth * newHeight;
+            if (oldSize < newSize)
+            {
+                //newSize larger
+
+            }
+            else if (newSize < oldSize)
+            {
+                //oldSize larger
+            }
+            else
+            {
+                //else, they were the same.
+                //return;
+            }
+
+            //also needs to do some math to prevent the level and scroll arrays from getting messed up due to the fact that it needs interlaced.
+            //..................
+            int widthDifference = (int)(newWidth - thisroom.Width);
+            int heightDifference = (int)(newHeight - thisroom.Height);
+            InsertLevelWidth(widthDifference);
+            thisroom.Width = newWidth;
+            InsertLevelHeight(heightDifference);
+            thisroom.Height = newHeight;
+            //need to recompress the level data after this and replace state[i].leveldataC
+
+            state A;
+            for(int i = 0; i < thisroom.States.Count; i++)
+            {
+                byte[] source = thisroom.States[i].LevelDataUC;
+                uint dataSize = (uint)source.Length;
+
+                byte[] compress = new byte[0x10000];
+                uint compSize;
+
+                fixed (void* sourcePtr = source)
+                fixed (void* destPtr = compress)
+                compSize = LUNAR.Compress(sourcePtr, destPtr, dataSize);
+                
+                //truncate compressed data array down to the size that the data occupies
+                Array.Resize(ref compress, (int)compSize);
+                A = thisroom.States[i];
+                A.LevelDataC = compress;
+                A.LevelDataSizeC = compSize;
+                thisroom.States[i] = A;
+            }
+
+        }
+        private void InsertLevelWidth(int widthDifference)
+        {
+            //add or remove level width:
+            //For each Y row of the level,
+            //  insert $10 byte at
+            //      (oldWidthScreens * $10 * [current Y row]) + ($10*current Y row)
+            //
+            //  The first $10 converts the screen width into a level data offset.
+            //  The addition at the end is to account for the inserted material changing the offsets.
+            //
+            //  Also needs to insert to BTS and L2 arrays
+            if(widthDifference == 0) { return; }
+            uint yRows = thisroom.Height * 0x10;
+            byte[] fillGraphics = new byte[0x20];
+            byte[] fillbts = new byte[0x10];
+            List<byte> fillBytes = new List<byte>(fillGraphics);
+            List<byte> fillBTS = new List<byte>(fillbts);
+            state A;
+            for (int i = 0; i < thisroom.States.Count; i++) 
+            {
+                uint oldLevelSize = thisroom.States[i].LevelDataSizeUC;
+                List<byte> levelDataList = new List<byte>(thisroom.States[i].LevelDataUC);
+                List<uint> scrolls = new List<uint>(thisroom.States[i].Scrolls);
+                for (int currentYrow = 0; currentYrow < yRows; currentYrow++)
+                {
+                    //indexer:
+                    //1. locate base of current row, $20/r
+                    //2. adjust to be the end of the current row
+                    //3. add offset to account for prior insertions.
+                    int levelIndexer = 
+                        (int)(thisroom.Width * 0x20 * currentYrow) +
+                        (int)(thisroom.Width * 0x20) + 
+                        (fillBytes.Count * currentYrow * widthDifference)
+                        ;
+                    //BTS indexer:
+                    //1.locate base of current row, $10/r
+                    //2.add the level data size of L1.
+                    //3.add offset for prior insertions incl. level data increases.
+                    int btsIndexer = 
+                        (int)(thisroom.Width * 0x10 * currentYrow) +
+                        (int)(thisroom.Width * 0x10) +
+                        (int)oldLevelSize +
+                        (fillBytes.Count * currentYrow * widthDifference) +
+                        (fillBTS.Count * currentYrow * widthDifference)
+                        ;
+                    for(int k = 0; k < widthDifference; k++)
+                    {
+                        //index does not need adjusted for each iteration because another set of inserted bytes will push the first set forward.
+                        //BTS is placed immediately after L1 data, so oldLevelSize is the indexer.
+                        levelDataList.InsertRange(levelIndexer + 2, fillGraphics);
+                        levelDataList.InsertRange((btsIndexer + 2), fillBTS);
+                    }
+                }
+
+                for (int currentYscreen = 0; currentYscreen < thisroom.Height; currentYscreen++)
+                {
+                    //for each Y screen insert the width difference of scrolls at the end.
+                    //indexer:
+                    //1. locate base of current row
+                    //2. adjust to be the end of the current row
+                    //3. add offset to account for prior insertions.
+                    int scrollIndexer = 
+                        (int)(thisroom.Width * currentYscreen) +
+                        (int)thisroom.Width +
+                        (int)(widthDifference * currentYscreen)
+                        ;
+                    for (int k = 0; k < widthDifference; k++)
+                    {
+                        scrolls.Insert(scrollIndexer, 0);
+                    }
+                }
+
+                int dataSizeDifference = (int)(widthDifference * thisroom.Height * 256 * 2);
+                //uint oldLevelSize = thisroom.States[i].LevelDataSizeUC;
+                uint newLevelSize = (uint)(oldLevelSize + dataSizeDifference);
+                byte sizeByteH, sizeByteL;
+                sizeByteH = (byte)((newLevelSize & 0xFF00) >> 8);
+                sizeByteL = (byte)(newLevelSize & 0x00FF);
+                levelDataList[0] = sizeByteL;
+                levelDataList[1] = sizeByteH;
+
+
+
+                A = thisroom.States[i];
+                A.LevelDataUC = levelDataList.ToArray();
+                A.Scrolls = scrolls.ToArray();
+                thisroom.States[i] = A;
+            }
+            
+        }
+        private void InsertLevelHeight(int heightDifference)
+        {
+            //level height is simple - add or remove bytes from the end of the level data.
+            if(heightDifference == 0) { return; }
+            state A = new state();
+            int dataSizeDifference = (int)(heightDifference * thisroom.Width * 256 * 2);
+            for (int i = 0; i < thisroom.States.Count; i++)
+            {
+                uint oldLevelSize = thisroom.States[i].LevelDataSizeUC;
+                uint newLevelSize = (uint)(oldLevelSize + dataSizeDifference);
+                byte[] levels = thisroom.States[i].LevelDataUC;
+                Array.Resize(ref levels, (int)newLevelSize + 2);
+                byte sizeByteH, sizeByteL;
+                sizeByteH = (byte)(newLevelSize & 0xFF00);
+                sizeByteL = (byte)(newLevelSize & 0x00FF);
+                levels[0] = sizeByteL;
+                levels[1] = sizeByteH;
+
+                A = thisroom.States[i];
+                A.LevelDataUC = levels;
+                A.LevelDataSizeUC = newLevelSize;
+                thisroom.States[i] = A;
+            }
+
+            int newSize = (int) (thisroom.Width * (thisroom.Height + heightDifference));
+            List<uint[]> stateScrollsNew = new List<uint[]>();
+            foreach (state item in thisroom.States)
+            {
+                //copy scrolls to new list until EITHER all existing scrolls are recorded OR the new size is reached.
+                uint[] newScrolls = new uint[newSize];
+                for (int i = 0; (i < item.Scrolls.Length); i++)
+                {
+                    if (i >= newSize) { break; }
+                    newScrolls[i] = item.Scrolls[i];
+                }
+                stateScrollsNew.Add(newScrolls);
+            }
+            //stateScrollsNew is a list of scroll byte arrays so yes this is valid for height changes.
+            for (int i = 0; i < stateScrollsNew.Count; i++)
+            {
+                A = thisroom.States[i];
+                A.Scrolls = stateScrollsNew[i];
+                thisroom.States[i] = A;
+            }
+
+            return;
+            //the most basic way to expand the level data is just to add that number onto the array
+            //levelDataSizeUC is what got pulled from the 0th byte in the uncompressed array - it matches our size*256 calcs! Byte, so it's really. size*256*2.
+
+        }
         private void BlockCopy_Click(object sender, EventArgs e)
         {
             ListBox A = (ListBox)DataListMenu.SourceControl;
@@ -3000,7 +3372,7 @@ namespace SM_ASM_GUI
         private void ImportCurrentTileset_Click(object sender, EventArgs e)
         {
             if(TilesetBox.Text == "") { MessageBox.Show("No room is currently loaded! Open a room first.", "No Room Loaded", MessageBoxButtons.OK); return; }
-            ImportTileSets(int.Parse(TilesetBox.Text));
+            ImportTileSets(int.Parse(TilesetBox.Text, NumberStyles.HexNumber));
             AppendStatus("Imported Tileset " + TilesetBox.Text + " from folders.");
         }
 
@@ -3118,11 +3490,22 @@ namespace SM_ASM_GUI
             roomPic = DrawPLMs(roomPic,room, room.StateCount);
             return roomPic;
         }
+        public List<string> GetPLMentries()
+        {
+            string PLMListPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "\\plmlist.txt";
+            return File.ReadAllLines(PLMListPath).ToList();
+        }
+        public string[] GetPLMtags(string taggedPLMentry, out string[] mapProperties)
+        {
+            string[] tags;
+            tags = taggedPLMentry.Split(',');              
+            mapProperties = tags[tags.Length - 1].Split(':');
+            return tags;
+        }
          Bitmap DrawPLMs(Bitmap roomPic, roomdata room, int statenumber)
         {
             //final tag in list should have mapProperties info
-            string PLMListPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "\\plmlist.txt";
-            List<string> plmTagList = File.ReadAllLines(PLMListPath).ToList();
+            List<string> plmTagList = GetPLMentries();
             foreach (PLMdata plm in room.States[statenumber].PLMs)
             {
                 bool plmInList = false;
@@ -3564,7 +3947,7 @@ namespace SM_ASM_GUI
             roomdata origRoom = thisroom;
             string saveFolder = Path.GetDirectoryName(sm.Path);
             string mdbPath = getMDBpath(out bool mdbexists);
-            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); Process.Start("explorer.exe", Path.GetDirectoryName(mdbPath)); return; }
             List<string> mdb = File.ReadAllLines(mdbPath).ToList();
             //need to make lists of each area in the game... a new data type?
             //but first i need a uint list of all the unique area numbers found in the MDB.
@@ -3965,13 +4348,13 @@ namespace SM_ASM_GUI
             //thisroom = origRoom;
             //AppendStatus("File saved to:\n" + savePath);
         }
-        private void QuickMDBtoASM()
+        public void QuickMDBtoASM()
         {
             roomdata origRoom = thisroom;
             string saveFolder = Path.GetDirectoryName(sm.Path);
             string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "_rooms.asm";
             string mdbPath = getMDBpath(out bool mdbexists);
-            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); Process.Start("explorer.exe", Path.GetDirectoryName(mdbPath)); return; }
             List<string> mdb = File.ReadAllLines(mdbPath).ToList();
             StringBuilder asmFile = new StringBuilder(5000);
 
@@ -4093,7 +4476,7 @@ namespace SM_ASM_GUI
             //fill HeaderDropdown with contents of given MDB, including room labels.
             HeaderDropdown.Items.Clear();
             string mdbPath = getMDBpath(out bool mdbexists);
-            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); return; }
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); Process.Start("explorer.exe", Path.GetDirectoryName(mdbPath)); return; }
             List<string> mdb = File.ReadAllLines(mdbPath).ToList();
             foreach (string room in mdb)
             {
@@ -4446,6 +4829,54 @@ namespace SM_ASM_GUI
         private void testThreading()
         {
             
+        }
+
+        private void specialDoorIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //for each room in MDB
+            //Add its door links to a list of global door links if door A is not in the door B list of any other room.
+            //(basing it on the door takes into account the rest of the door data like cap spawn location etc.)
+            //Might want to multithread this later if it's slow:
+            //threads to create doorlink lists for each room
+            //singlethread to merge all those lists into a single one.
+
+            SpecialDoorID doorWindow = new SpecialDoorID(this);
+            doorWindow.ShowDialog();
+            return;
+        }
+        public List<DoorLink> GetMDBdoorLinks()
+        {
+            string mdbPath = getMDBpath(out bool mdbexists);
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); Process.Start("explorer.exe", Path.GetDirectoryName(mdbPath)); return null; }
+            List<string> mdb = File.ReadAllLines(mdbPath).ToList();
+
+            List<DoorLink> globalDoorLinks = new List<DoorLink>();
+            foreach (string entry in mdb)
+            {
+                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                roomdata check = new roomdata(sm, headerAddr);
+                if (check.States == null)
+                {
+                    //encountered invalid room so skip it
+                    continue;
+                }
+                for (int i = 0; i < check.Doors.Count; i++)
+                {
+                    bool addDoorLink = true;
+                    DoorLink A = new DoorLink(sm, check, i);
+                    foreach (DoorLink door in globalDoorLinks)
+                    {
+                        if (door.DoorB.Equals(A.DoorA)) { addDoorLink = false; }
+                    }
+                    if (addDoorLink) { globalDoorLinks.Add(A); }
+                }
+            }
+            return globalDoorLinks;
+            //foreach (DoorLink item in globalDoorLinks)
+            //{
+            //    if (item.LinkPLMs == LinkPLMS.DoubleSided) { AppendStatus(asmFCN.WWord(item.HeaderA) + " - " + asmFCN.WWord(item.HeaderB)); }
+            //}
+            //Console.WriteLine("breakpoint");
         }
     }
 
