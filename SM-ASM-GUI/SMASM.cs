@@ -1797,8 +1797,16 @@ namespace SM_ASM_GUI
                     }
                 }
             }
-
+            //if room already exists then isolate its main & setup ASM pointers to check if they have already been labelled.
+            List<StatePointersASM> oldStatePointers = null;
+            if (roomExists)
+            {
+                List<string> roomText = FindSection(room.Label, smasm8F, out int roomStartline, out int roomEndline);
+                if (roomStartline == 0 || roomEndline == 0) { MessageBox.Show("roomlabel not found!"); }
+                oldStatePointers = GetStatePointersFromASM(room, roomText);
+            }
             string[] export = asmFCN.Room2ASM(room, int.Parse(LevelBuffer.Text));
+            ReplaceMainSetupLabels(oldStatePointers, export, room);
             //export  = 8F, 83d, 83f, A1, B4, LEVELS
             //Place each export at the end of each section.
             if (!roomExists)
@@ -1842,7 +1850,6 @@ namespace SM_ASM_GUI
                 if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
                 smasmLV.RemoveRange(st, ed - st + 2);
                 smasmLV.Insert(st, export[5]);
-
             }
 
             //use loops to compile all these into a single output string for the text file.
@@ -1858,6 +1865,113 @@ namespace SM_ASM_GUI
             {
                 MessageBox.Show("Write to ASM failed. Is it open in another program?", "Write Fail", MessageBoxButtons.OK);
             }
+        }
+        public List<StatePointersASM> GetStatePointersFromASM(roomdata room, List<string> roomSection)
+        {
+            List<StatePointersASM> rtn = new List<StatePointersASM>();
+            for (int state = 0; state < room.StateCount; state++)
+            {
+                rtn.Add(new StatePointersASM(state, roomSection));
+            }
+            //also for default state
+            rtn.Add(new StatePointersASM(-1, roomSection));
+            return rtn;
+        }
+        public string[] ReplaceMainSetupLabels(List<StatePointersASM> oldStatePointers, string[] export, roomdata room)
+        {
+            if(oldStatePointers == null) { return export; }
+            List<string> roomSection = export[0].Split('\n').ToList();
+            //at this point $8F is populated with the exported room; the labels have been erased and it's pulling new numbers from the ROM.
+            //for each state, if it had a label, perform the replacements.
+            for (int stateNumber = 0; stateNumber < room.StateCount; stateNumber++)
+            {                                                                                                                           //this number is the index of the label into the state pointers dw array.
+                if (oldStatePointers[stateNumber].MainIsLabel)  { roomSection = ReplaceLabels(stateNumber, roomSection, oldStatePointers, 6, true) ; }
+                if (oldStatePointers[stateNumber].SetupIsLabel) { roomSection = ReplaceLabels(stateNumber, roomSection, oldStatePointers, 9, false); }
+            }
+            if (oldStatePointers[oldStatePointers.Count-1].MainIsLabel)  { roomSection = ReplaceLabels(-1, roomSection, oldStatePointers, 6, true); }
+            if (oldStatePointers[oldStatePointers.Count-1].SetupIsLabel) { roomSection = ReplaceLabels(-1, roomSection, oldStatePointers, 9, false); }
+            //roomsection is populated with any label replacements - need to format it back into export[0].
+            StringBuilder newExportZero = new StringBuilder(500);
+            foreach (string line in roomSection)
+            {
+                newExportZero.Append(line + '\n');
+            }
+            //get rid of the extra line return introduced.
+            newExportZero.Remove(newExportZero.Length - 1, 1);
+            export[0] = newExportZero.ToString();
+            return export;
+        }
+
+        public List<string> ReplaceLabels(int stateNumber, List<string> roomSection, List<StatePointersASM> oldStatePointers, int destinationIndex, bool isMain)
+        {
+            //replace the given state's numbers with labels.
+            //BOOL if not main label then is setup label to be replaced. This is not a good way to do this...
+            string stateLabel;
+            if (stateNumber < 0) 
+            { 
+                stateLabel = "..default"; 
+                stateNumber = oldStatePointers.Count-1; 
+            }
+            else { stateLabel = "..state" + stateNumber; }
+
+            int labelLine = 0;
+            foreach (string line in roomSection)
+            {
+                if (line.Trim() == stateLabel) { labelLine++; break; }
+                labelLine++;
+            }
+            string[] dLdBdW = roomSection[labelLine].Split(':');
+            string[] statePointers = dLdBdW[2].Split(',');
+            if (isMain) { statePointers[destinationIndex] = " " + oldStatePointers[stateNumber].MainASM; }
+            else { statePointers[destinationIndex] = " " + oldStatePointers[stateNumber].SetupASM; }
+            //now we need to go back from statepointers[] to the roomSection list...
+            StringBuilder LineWithReplacements = new StringBuilder(500);
+            StringBuilder replacedDW = new StringBuilder(100);
+            foreach (string item in statePointers)
+            {
+                replacedDW.Append(item + ',');
+            }
+            //needs to get rid of the final comma
+            replacedDW.Remove(replacedDW.Length - 1, 1);
+            LineWithReplacements.Append(dLdBdW[0] + ":" + dLdBdW[1] + ":" + replacedDW.ToString());
+            roomSection[labelLine] = LineWithReplacements.ToString();
+            return roomSection;
+        }
+
+        public struct StatePointersASM
+        {
+            //this struct exists so we can keep the setup asm and the main ASM pointers next to each other.
+            //pass stateNumber -1 for default state
+            public StatePointersASM(int stateNumber, List<string> roomSection)
+            {
+                MainIsLabel = false;
+                SetupIsLabel = false;
+                string stateLabel;
+                if (stateNumber < 0) { stateLabel = "..default"; }
+                else { stateLabel = "..state" + stateNumber; }
+
+                int labelLine = 0;
+                foreach (string line in roomSection)
+                {
+                    if(line.Trim() == stateLabel) { labelLine++; break; }
+                    labelLine++;
+                }
+                //split the pointer list by : and then by ,
+                //0 is the dl
+                //1 is the db
+                //2 is the dw
+                //and of the dw's, we can select the pointers.
+                string[] statePointers = roomSection[labelLine].Split(':')[2].Split(',');
+                MainASM = statePointers[6].Trim();
+                SetupASM = statePointers[9].Trim();
+
+                if(MainASM[0] != '$') { MainIsLabel = true; }
+                if(SetupASM[0] != '$') { SetupIsLabel = true; }
+            }
+            public string MainASM { set; get; }
+            public string SetupASM { set; get; }
+            public bool MainIsLabel { set; get; }
+            public bool SetupIsLabel { set; get; }
         }
         public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite, roomdata room, out string smasmOut)
         {
