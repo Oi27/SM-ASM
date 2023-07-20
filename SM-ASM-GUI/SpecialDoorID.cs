@@ -33,6 +33,7 @@ namespace SM_ASM_GUI
                 string[] tags = Source.GetPLMtags(item, out string[] mapProperties);
                 if (mapProperties[1].Contains("door")) { DoorList.Items.Add(tags[0] + " - " + mapProperties[2]); }
             }
+            
         }
 
 
@@ -49,32 +50,9 @@ namespace SM_ASM_GUI
             {
                 source.Items.Remove(item);
             }
-            SortByPLMheader(destination);
+            Source.SortByPLMheader(destination);
         }
-        private void SortByPLMheader(ListBox needsSorted)
-        {
-            //sort by first 4 charactrers as hex numbers. Non hex values will go to the bottom of the list.
-            //luckily the default comparison for int lists is least>greatest? Nice.
-            List<int> numbers = new List<int>();
-            List<string> entries = new List<string>();
-            foreach (var item in needsSorted.Items)
-            {
-                numbers.Add(int.Parse(item.ToString().Substring(0,4), NumberStyles.HexNumber));
-                entries.Add(item.ToString());
-            }
-            numbers.Sort();
-            needsSorted.Items.Clear();
-            for (int i = 0; i < numbers.Count; i++)
-            {
-                foreach (var item in entries)
-                {
-                    if(int.Parse(item.ToString().Substring(0, 4), NumberStyles.HexNumber) == numbers[i])
-                    {
-                        needsSorted.Items.Add(item);
-                    }
-                }
-            }
-        }
+
 
         private List<DoorLink> AssignDoorGroups(List<DoorLink> doors)
         {

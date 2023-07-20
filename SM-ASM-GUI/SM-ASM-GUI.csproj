@@ -43,6 +43,9 @@
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>SmasmLogo_CoolS.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -92,6 +95,12 @@
     </Compile>
     <Compile Include="SpecialDoorID.Designer.cs">
       <DependentUpon>SpecialDoorID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SpecialItemID.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpecialItemID.Designer.cs">
+      <DependentUpon>SpecialItemID.cs</DependentUpon>
     </Compile>
     <Compile Include="StateConfig.cs">
       <SubType>Form</SubType>
@@ -167,6 +176,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SpecialDoorID.resx">
       <DependentUpon>SpecialDoorID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpecialItemID.resx">
+      <DependentUpon>SpecialItemID.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StateConfig.resx">
       <DependentUpon>StateConfig.cs</DependentUpon>

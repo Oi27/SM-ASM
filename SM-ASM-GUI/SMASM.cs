@@ -383,7 +383,7 @@ namespace SM_ASM_GUI
             for (i = 0; i < 0x20; i++)
             {
                 if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
-                theseenemies.Add(new EnemyData(sm, j));
+                theseenemies.Add(new EnemyData(sm, j, (int)i));
                 j = j + 0x10;
             }
             Enemies = theseenemies;
@@ -403,12 +403,13 @@ namespace SM_ASM_GUI
             EnemiesAllowed = thesegfx;
 
             //parse room PLM set; cap at d.40; 0000 terminator.
+            //special overload of the PLMdata constructor for use in Special Item ID; record PLM index
             j = LUNAR.SNEStoPC(pPLMset + 0x8F0000);
             List<PLMdata> theseplms = new List<PLMdata>();
             for (i = 0; i < 0x28; i++)
             {
                 if (ROM.readWord(j, sm.Rom) == 0x0000) { break; }
-                theseplms.Add(new PLMdata(sm, j));
+                theseplms.Add(new PLMdata(sm, j, (int)i));
                 j += 6;
             }
             PLMs = theseplms;
@@ -939,7 +940,21 @@ namespace SM_ASM_GUI
             SpecGFX = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
             Speed1 = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
             Speed2 = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            Index = -1;
         }
+        public EnemyData(ROM sm, uint pointer, int index)
+        {
+            ID = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            PosX = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            PosY = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            TileMap = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            Special = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            SpecGFX = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            Speed1 = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            Speed2 = ROM.readWord(pointer, sm.Rom); pointer = pointer + 2;
+            Index = index;
+        }
+        public int Index { set; get; }
         public uint ID { get; set; }
         public uint PosX { get; set; }
         public uint PosY { get; set; }
@@ -967,7 +982,23 @@ namespace SM_ASM_GUI
             //that seems more reasonable tbh
             ScrollData = ReadScrollPLM(ID, Variable, sm);
         }
-        
+        public PLMdata(ROM sm, uint pointer, int index)
+        {
+            ID = ROM.readWord(pointer, sm.Rom); pointer += 2;
+            PosX = sm.Rom[pointer]; pointer++;
+            PosY = sm.Rom[pointer]; pointer++;
+            Variable = ROM.readWord(pointer, sm.Rom);
+            ScrollData = null;
+            Index = index;
+            //index is initialized during some operations
+            //  -export to ASM
+            ScrollLabel = "";
+            //scrolldata will be intialialized once control returns to SMASM itself, since we need to reference config to know what the scroll PLM is...
+            //unless we read from ROM to check the instruction list for scroll PLM things??
+            //that seems more reasonable tbh
+            ScrollData = ReadScrollPLM(ID, Variable, sm);
+        }
+
         byte[] ReadScrollPLM(uint id, uint variable, ROM sm)
         {
             //read the instruction list to see if it's a scroll PLM (contains pointer 0x8B55)
@@ -2854,6 +2885,30 @@ namespace SM_ASM_GUI
 
 
             StateBox_SelectedIndexChanged(sender, e);
+        }
+        public void SortByPLMheader(ListBox needsSorted)
+        {
+            //sort by first 4 charactrers as hex numbers. Non hex values will go to the bottom of the list.
+            //luckily the default comparison for int lists is least>greatest? Nice.
+            List<int> numbers = new List<int>();
+            List<string> entries = new List<string>();
+            foreach (var item in needsSorted.Items)
+            {
+                numbers.Add(int.Parse(item.ToString().Substring(0, 4), NumberStyles.HexNumber));
+                entries.Add(item.ToString());
+            }
+            numbers.Sort();
+            needsSorted.Items.Clear();
+            for (int i = 0; i < numbers.Count; i++)
+            {
+                foreach (var item in entries)
+                {
+                    if (int.Parse(item.ToString().Substring(0, 4), NumberStyles.HexNumber) == numbers[i])
+                    {
+                        needsSorted.Items.Add(item);
+                    }
+                }
+            }
         }
         private void NewItem_Click(object sender, EventArgs e)
         {
@@ -4986,11 +5041,32 @@ namespace SM_ASM_GUI
                 }
             }
             return globalDoorLinks;
-            //foreach (DoorLink item in globalDoorLinks)
-            //{
-            //    if (item.LinkPLMs == LinkPLMS.DoubleSided) { AppendStatus(asmFCN.WWord(item.HeaderA) + " - " + asmFCN.WWord(item.HeaderB)); }
-            //}
-            //Console.WriteLine("breakpoint");
+        }
+
+
+        private void specialItemIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SpecialItemID specialItemID = new SpecialItemID(this);
+            specialItemID.ShowDialog();
+        }
+        public List<string> ListPLMsByMapShape(string shape)
+        {
+            //if looking for doors, return the door color as well.
+            bool lookingForDoors = false;
+            if(shape == "door") { lookingForDoors = true; }
+            List<string> rtn = new List<string>();
+            List<string> plms = GetPLMentries();
+            foreach (string item in plms)
+            {
+                string[] tags = GetPLMtags(item, out string[] mapProperties);
+                string doorColor = "";
+                if (lookingForDoors && mapProperties[1].Contains(shape)) { doorColor = " - " + mapProperties[2]; }
+                if (mapProperties[1].Contains(shape)) 
+                { 
+                    rtn.Add(tags[0] + doorColor); 
+                }
+            }
+            return rtn;
         }
     }
 
