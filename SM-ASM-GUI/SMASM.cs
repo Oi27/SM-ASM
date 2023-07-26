@@ -5022,7 +5022,11 @@ namespace SM_ASM_GUI
             List<DoorLink> globalDoorLinks = new List<DoorLink>();
             foreach (string entry in mdb)
             {
-                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                if (!uint.TryParse(entry.Substring(0, 5), NumberStyles.HexNumber, null, out uint headerAddr))
+                {
+                    //parse can fail in case of vanilla MDB file, where there are a bunch of blanks and area names.
+                    continue;
+                }
                 roomdata check = new roomdata(sm, headerAddr);
                 if (check.States == null)
                 {

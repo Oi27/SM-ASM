@@ -36,9 +36,9 @@ namespace SM_ASM_GUI
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.IdTilemap = new System.Windows.Forms.RadioButton();
+            this.IdSpeed2 = new System.Windows.Forms.RadioButton();
+            this.IdSpeed1 = new System.Windows.Forms.RadioButton();
             this.StartButton = new System.Windows.Forms.Button();
             this.ListBoxRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,9 +91,9 @@ namespace SM_ASM_GUI
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.radioButton3);
-            this.groupBox1.Controls.Add(this.radioButton2);
-            this.groupBox1.Controls.Add(this.radioButton1);
+            this.groupBox1.Controls.Add(this.IdTilemap);
+            this.groupBox1.Controls.Add(this.IdSpeed2);
+            this.groupBox1.Controls.Add(this.IdSpeed1);
             this.groupBox1.Location = new System.Drawing.Point(224, 40);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(101, 110);
@@ -101,37 +101,37 @@ namespace SM_ASM_GUI
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ID in:";
             // 
-            // radioButton3
+            // IdTilemap
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(6, 75);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(79, 21);
-            this.radioButton3.TabIndex = 2;
-            this.radioButton3.Text = "TileMap";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.IdTilemap.AutoSize = true;
+            this.IdTilemap.Location = new System.Drawing.Point(6, 75);
+            this.IdTilemap.Name = "IdTilemap";
+            this.IdTilemap.Size = new System.Drawing.Size(79, 21);
+            this.IdTilemap.TabIndex = 2;
+            this.IdTilemap.Text = "TileMap";
+            this.IdTilemap.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // IdSpeed2
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(6, 48);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(78, 21);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "Speed2";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.IdSpeed2.AutoSize = true;
+            this.IdSpeed2.Location = new System.Drawing.Point(6, 48);
+            this.IdSpeed2.Name = "IdSpeed2";
+            this.IdSpeed2.Size = new System.Drawing.Size(78, 21);
+            this.IdSpeed2.TabIndex = 1;
+            this.IdSpeed2.Text = "Speed2";
+            this.IdSpeed2.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // IdSpeed1
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(6, 21);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(78, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Speed1";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.IdSpeed1.AutoSize = true;
+            this.IdSpeed1.Checked = true;
+            this.IdSpeed1.Location = new System.Drawing.Point(6, 21);
+            this.IdSpeed1.Name = "IdSpeed1";
+            this.IdSpeed1.Size = new System.Drawing.Size(78, 21);
+            this.IdSpeed1.TabIndex = 0;
+            this.IdSpeed1.TabStop = true;
+            this.IdSpeed1.Text = "Speed1";
+            this.IdSpeed1.UseVisualStyleBackColor = true;
             // 
             // StartButton
             // 
@@ -198,9 +198,9 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton IdTilemap;
+        private System.Windows.Forms.RadioButton IdSpeed2;
+        private System.Windows.Forms.RadioButton IdSpeed1;
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.ContextMenuStrip ListBoxRightClick;
         private System.Windows.Forms.ToolStripMenuItem addItemToolStripMenuItem;

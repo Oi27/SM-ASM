@@ -18,6 +18,7 @@ namespace SM_ASM_GUI
         public SMASM Source { get; set; }
         public SpecialItemID(SMASM source)
         {
+            //initializes PLM list with all the "items" in plmlist.txt
             InitializeComponent();
             Source = source;
             List<string> itemPLMs = source.ListPLMsByMapShape("item");
@@ -36,9 +37,76 @@ namespace SM_ASM_GUI
         }
         private void Execute_ItemID()
         {
+            //Get lists of every PLM & enemy that will recieve an ID
+            //ID plms first & enemies second
+            //the enemyVariableOffset is the position in enemy data to write to.
+            uint plmVariableOffset = 4;
+            uint enemyVariableOffset = 0;
+            if (this.IdTilemap.Checked) { enemyVariableOffset = 3 * 2; }
+            if (this.IdSpeed1.Checked) { enemyVariableOffset = 6 * 2; }
+            if (this.IdSpeed2.Checked) { enemyVariableOffset = 7 * 2; }
             List<PLM4ID> PLMs = GetMDBplms4id();
             List<Enemy4ID> enemies = GetMDBenemies4id();
+            int idCount = 0;
+            for (int i = 0; i < PLMs.Count; i++)
+            {
+                PLM4ID A = PLMs[i];
+                A.ID = idCount;
+                PLMs[i] = A;
+                idCount++;
+            }
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                Enemy4ID A = enemies[i];
+                A.ID = idCount;
+                enemies[i] = A;
+                idCount++;
+            }
+            //if there was any additional processing that needed done, it would go here.
+            //these void functions modify Source.sm.rom directly.
+            foreach (PLM4ID plm in PLMs)
+            {
+                WriteItemID2ROM(plm, plmVariableOffset);
+            }
+            foreach (Enemy4ID enemy in enemies)
+            {
+                WriteItemID2ROM(enemy,enemyVariableOffset);
+            }
+            File.WriteAllBytes(Source.sm.Path, Source.sm.Rom);
             Console.WriteLine("A");
+        }
+        private void WriteItemID2ROM(PLM4ID plm, uint variableOffset)
+        {
+            //locate beginning of data using bank, pointer, and index
+            uint bank = 0x70000;
+            uint dataSize = 6;
+
+            uint pointer = (uint)
+                (bank + plm.SetPointer + 
+                dataSize * plm.PLM.Index + 
+                variableOffset);
+
+            byte aLo = (byte)plm.ID;
+            byte aHi = (byte)(plm.ID / 0x100);
+
+            Source.sm.Rom[pointer] = aLo;
+            Source.sm.Rom[pointer+1] = aHi;
+        }
+        private void WriteItemID2ROM(Enemy4ID enemy, uint variableOffset)
+        {
+            uint bank = 0x100000;   //bank $A1 in PC.
+            uint dataSize = 0x10;
+
+            uint pointer = (uint)
+                (bank + enemy.SetPointer +
+                dataSize * enemy.Enemy.Index +
+                variableOffset);
+
+            byte aLo = (byte)enemy.ID;
+            byte aHi = (byte)(enemy.ID / 0x100);
+
+            Source.sm.Rom[pointer] = aLo;
+            Source.sm.Rom[pointer + 1] = aHi;
         }
         public List<Enemy4ID> GetMDBenemies4id()
         {
@@ -49,7 +117,11 @@ namespace SM_ASM_GUI
             List<Enemy4ID> idEnemies = new List<Enemy4ID>();
             foreach (string entry in mdb)
             {
-                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                if (!uint.TryParse(entry.Substring(0, 5), NumberStyles.HexNumber, null, out uint headerAddr))
+                {
+                    //parse can fail in case of vanilla MDB file, where there are a bunch of blanks and area names.
+                    continue;
+                }
                 roomdata check = new roomdata(Source.sm, headerAddr);
                 if (check.States == null)
                 {
@@ -61,7 +133,7 @@ namespace SM_ASM_GUI
                     EnemyData A = check.States[check.StateCount].Enemies[i];
                     if (EnemyOnList(A.ID))
                     {
-                        idEnemies.Add(new Enemy4ID(headerAddr, A));
+                        idEnemies.Add(new Enemy4ID(headerAddr, check.States[check.StateCount].pEnemySet, A));
                     }
                 }
             }
@@ -76,7 +148,11 @@ namespace SM_ASM_GUI
             List<PLM4ID> idPLMs = new List<PLM4ID>();
             foreach (string entry in mdb)
             {
-                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                if(!uint.TryParse(entry.Substring(0, 5), NumberStyles.HexNumber, null, out uint headerAddr))
+                {
+                    //parse can fail in case of vanilla MDB file, where there are a bunch of blanks and area names.
+                    continue;
+                }
                 roomdata check = new roomdata(Source.sm, headerAddr);
                 if (check.States == null)
                 {
@@ -88,7 +164,7 @@ namespace SM_ASM_GUI
                     PLMdata A = check.States[check.StateCount].PLMs[i];
                     if (PLMonList(A.ID))
                     {
-                        idPLMs.Add(new PLM4ID(headerAddr, A));
+                        idPLMs.Add(new PLM4ID(headerAddr, check.States[check.StateCount].pPLMset,A));
                     }
                 }
             }
@@ -116,22 +192,30 @@ namespace SM_ASM_GUI
 
         public struct PLM4ID
         {
-            public PLM4ID(uint roomHeader, PLMdata plm)
+            public PLM4ID(uint roomHeader, uint setPointer, PLMdata plm)
             {
                 Room = roomHeader;
+                SetPointer = setPointer;
                 PLM = plm;
+                ID = -1;
             }
+            public int ID { set; get; }
             public uint Room { set; get; }
+            public uint SetPointer { set; get; }
             public PLMdata PLM { set; get; }   
         }
         public struct Enemy4ID
         {
-            public Enemy4ID(uint roomHeader, EnemyData enemy)
+            public Enemy4ID(uint roomHeader, uint setPointer, EnemyData enemy)
             {
                 Room = roomHeader;
+                SetPointer = setPointer;
                 Enemy = enemy;
+                ID = -1;
             }
+            public int ID { set; get; }
             public uint Room { get; set; }
+            public uint SetPointer { set; get; }
             public EnemyData Enemy { get; set; }
         }
         #endregion
