@@ -353,6 +353,7 @@ namespace SM_ASM_GUI
             //if closing from UI, hide it so that parent form can read data and close it later.
             if (this.Visible == true)
             {
+                //SaveWindowTF();
                 e.Cancel = true;
                 this.Visible = false;
             }
@@ -362,5 +363,69 @@ namespace SM_ASM_GUI
         {
 
         }
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void SaveWindowTF()
+        {
+            this.Controls.Clear();
+            this.saveLabel1 = new System.Windows.Forms.Label();
+            this.saveLabel2 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            this.saveLabel1.AutoSize = true;
+            this.saveLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.saveLabel1.Location = new System.Drawing.Point(10, 13);
+            this.saveLabel1.Name = "label1";
+            this.saveLabel1.Size = new System.Drawing.Size(213, 25);
+            this.saveLabel1.TabIndex = 0;
+            this.saveLabel1.Text = "Scroll Changes Saved.";
+            // 
+            // label2
+            // 
+            this.saveLabel2.AutoSize = true;
+            this.saveLabel2.Location = new System.Drawing.Point(22, 38);
+            this.saveLabel2.Name = "label2";
+            this.saveLabel2.Size = new System.Drawing.Size(184, 17);
+            this.saveLabel2.TabIndex = 1;
+            this.saveLabel2.Text = "(click anywhere to continue)";
+            // 
+            // scrollChangesSaved
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(230, 77);
+            this.Controls.Add(this.saveLabel2);
+            this.Controls.Add(this.saveLabel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Name = "scrollChangesSaved";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "scrollChangesSaved";
+            this.Leave += new System.EventHandler(this.scrollChangesSaved_Leave);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.scrollChangesSaved_MouseDown);
+            this.saveLabel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.scrollChangesSaved_MouseDown);
+            this.saveLabel2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.scrollChangesSaved_MouseDown);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+        private void scrollChangesSaved_Leave(object sender, EventArgs e)
+        {
+            this.Visible = false;
+        }
+
+        private void scrollChangesSaved_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.Visible = false;
+        }
+        #endregion
+
+        private System.Windows.Forms.Label saveLabel1;
+        private System.Windows.Forms.Label saveLabel2;
     }
 }

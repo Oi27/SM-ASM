@@ -73,7 +73,14 @@ namespace SM_ASM_GUI
                 WriteItemID2ROM(enemy,enemyVariableOffset);
             }
             File.WriteAllBytes(Source.sm.Path, Source.sm.Rom);
-            Console.WriteLine("A");
+            Source.AppendStatus(idCount - 1 + " item IDs written to ROM");
+            DialogResult export = MessageBox.Show("Items Assigned. Export MDB to ASM?", "Export to ASM?", MessageBoxButtons.YesNo);
+            if (export == DialogResult.Yes)
+            {
+                this.Enabled = false;
+                Source.QuickMDBtoASM();
+                this.Enabled = true;
+            }
         }
         private void WriteItemID2ROM(PLM4ID plm, uint variableOffset)
         {

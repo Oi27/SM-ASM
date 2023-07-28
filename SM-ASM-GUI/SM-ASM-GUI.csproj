@@ -84,6 +84,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="scrollChangesSaved.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="scrollChangesSaved.Designer.cs">
+      <DependentUpon>scrollChangesSaved.cs</DependentUpon>
+    </Compile>
     <Compile Include="ScrollEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,6 +165,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectPicker.resx">
       <DependentUpon>ObjectPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="scrollChangesSaved.resx">
+      <DependentUpon>scrollChangesSaved.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScrollEditor.resx">
       <DependentUpon>ScrollEditor.cs</DependentUpon>

@@ -37,6 +37,7 @@ namespace SM_ASM_GUI
             this.mergeRoomFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mDBListToASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.specialDoorIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.specialItemIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filePathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tilesetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,7 +114,7 @@ namespace SM_ASM_GUI
             this.OpenMDB = new System.Windows.Forms.Button();
             this.testbutton = new System.Windows.Forms.Button();
             this.HeaderInfo = new System.Windows.Forms.GroupBox();
-            this.specialItemIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteCurrentRoomFromASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.StateMenuStrip.SuspendLayout();
             this.DataListMenu.SuspendLayout();
@@ -143,6 +144,7 @@ namespace SM_ASM_GUI
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.currentRoomToNewASMToolStripMenuItem,
+            this.deleteCurrentRoomFromASMToolStripMenuItem,
             this.mergeRoomFilesToolStripMenuItem,
             this.mDBListToASMToolStripMenuItem,
             this.specialDoorIDToolStripMenuItem,
@@ -154,30 +156,37 @@ namespace SM_ASM_GUI
             // currentRoomToNewASMToolStripMenuItem
             // 
             this.currentRoomToNewASMToolStripMenuItem.Name = "currentRoomToNewASMToolStripMenuItem";
-            this.currentRoomToNewASMToolStripMenuItem.Size = new System.Drawing.Size(271, 26);
+            this.currentRoomToNewASMToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
             this.currentRoomToNewASMToolStripMenuItem.Text = "Current Room to New ASM";
             this.currentRoomToNewASMToolStripMenuItem.Click += new System.EventHandler(this.currentRoomToNewASMToolStripMenuItem_Click);
             // 
             // mergeRoomFilesToolStripMenuItem
             // 
             this.mergeRoomFilesToolStripMenuItem.Name = "mergeRoomFilesToolStripMenuItem";
-            this.mergeRoomFilesToolStripMenuItem.Size = new System.Drawing.Size(271, 26);
+            this.mergeRoomFilesToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
             this.mergeRoomFilesToolStripMenuItem.Text = "Merge Room Files";
             this.mergeRoomFilesToolStripMenuItem.Click += new System.EventHandler(this.mergeRoomFilesToolStripMenuItem_Click);
             // 
             // mDBListToASMToolStripMenuItem
             // 
             this.mDBListToASMToolStripMenuItem.Name = "mDBListToASMToolStripMenuItem";
-            this.mDBListToASMToolStripMenuItem.Size = new System.Drawing.Size(271, 26);
+            this.mDBListToASMToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
             this.mDBListToASMToolStripMenuItem.Text = "MDB List to ASM";
             this.mDBListToASMToolStripMenuItem.Click += new System.EventHandler(this.mDBListToASMToolStripMenuItem_Click);
             // 
             // specialDoorIDToolStripMenuItem
             // 
             this.specialDoorIDToolStripMenuItem.Name = "specialDoorIDToolStripMenuItem";
-            this.specialDoorIDToolStripMenuItem.Size = new System.Drawing.Size(271, 26);
+            this.specialDoorIDToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
             this.specialDoorIDToolStripMenuItem.Text = "Special Door ID";
             this.specialDoorIDToolStripMenuItem.Click += new System.EventHandler(this.specialDoorIDToolStripMenuItem_Click);
+            // 
+            // specialItemIDToolStripMenuItem
+            // 
+            this.specialItemIDToolStripMenuItem.Name = "specialItemIDToolStripMenuItem";
+            this.specialItemIDToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.specialItemIDToolStripMenuItem.Text = "Special Item ID";
+            this.specialItemIDToolStripMenuItem.Click += new System.EventHandler(this.specialItemIDToolStripMenuItem_Click);
             // 
             // configToolStripMenuItem
             // 
@@ -333,7 +342,6 @@ namespace SM_ASM_GUI
             // 
             // MapX
             // 
-            this.MapX.Enabled = false;
             this.MapX.Location = new System.Drawing.Point(11, 69);
             this.MapX.Margin = new System.Windows.Forms.Padding(4);
             this.MapX.MaxLength = 2;
@@ -381,7 +389,6 @@ namespace SM_ASM_GUI
             // 
             // UpScroller
             // 
-            this.UpScroller.Enabled = false;
             this.UpScroller.Location = new System.Drawing.Point(11, 178);
             this.UpScroller.Margin = new System.Windows.Forms.Padding(4);
             this.UpScroller.MaxLength = 2;
@@ -405,7 +412,6 @@ namespace SM_ASM_GUI
             // 
             // SpecialGFX
             // 
-            this.SpecialGFX.Enabled = false;
             this.SpecialGFX.Location = new System.Drawing.Point(11, 231);
             this.SpecialGFX.Margin = new System.Windows.Forms.Padding(4);
             this.SpecialGFX.MaxLength = 2;
@@ -429,7 +435,6 @@ namespace SM_ASM_GUI
             // 
             // DnScroller
             // 
-            this.DnScroller.Enabled = false;
             this.DnScroller.Location = new System.Drawing.Point(105, 178);
             this.DnScroller.Margin = new System.Windows.Forms.Padding(4);
             this.DnScroller.MaxLength = 2;
@@ -477,7 +482,6 @@ namespace SM_ASM_GUI
             // 
             // MapY
             // 
-            this.MapY.Enabled = false;
             this.MapY.Location = new System.Drawing.Point(105, 69);
             this.MapY.Margin = new System.Windows.Forms.Padding(4);
             this.MapY.MaxLength = 2;
@@ -1013,12 +1017,12 @@ namespace SM_ASM_GUI
             this.HeaderInfo.TabIndex = 69;
             this.HeaderInfo.TabStop = false;
             // 
-            // specialItemIDToolStripMenuItem
+            // deleteCurrentRoomFromASMToolStripMenuItem
             // 
-            this.specialItemIDToolStripMenuItem.Name = "specialItemIDToolStripMenuItem";
-            this.specialItemIDToolStripMenuItem.Size = new System.Drawing.Size(271, 26);
-            this.specialItemIDToolStripMenuItem.Text = "Special Item ID";
-            this.specialItemIDToolStripMenuItem.Click += new System.EventHandler(this.specialItemIDToolStripMenuItem_Click);
+            this.deleteCurrentRoomFromASMToolStripMenuItem.Name = "deleteCurrentRoomFromASMToolStripMenuItem";
+            this.deleteCurrentRoomFromASMToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.deleteCurrentRoomFromASMToolStripMenuItem.Text = "Delete Current Room from ASM";
+            this.deleteCurrentRoomFromASMToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentRoomFromASMToolStripMenuItem_Click);
             // 
             // SMASM
             // 
@@ -1172,6 +1176,7 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.GroupBox HeaderInfo;
         private System.Windows.Forms.ToolStripMenuItem specialDoorIDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem specialItemIDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteCurrentRoomFromASMToolStripMenuItem;
     }
 }
 

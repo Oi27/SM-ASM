@@ -999,6 +999,34 @@ namespace SM_ASM_GUI
             ScrollData = ReadScrollPLM(ID, Variable, sm);
         }
 
+        public void PopulateScrolls()
+        {
+            //if this PLM is tagged with "scroll" in plmlist.txt then give it some sample data.
+            //First step is to locate the ID of the scroll PLM, if repointed.
+            //Second step is to check this plm for a match and 
+            string plmListPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "\\plmlist.txt";
+            List<string> plmListContents = File.ReadAllLines(plmListPath).ToList();
+            bool scrollFound = false;
+            uint scrollHeader = 0;
+            foreach (string item in plmListContents)
+            {
+                scrollFound = false;
+                string[] tags = item.Split(',');
+                foreach (string tag in tags)
+                {
+                    if(tag.ToUpper().Trim() == "SCROLL") { scrollFound = true; break; }
+                }
+                if (scrollFound) { scrollHeader = uint.Parse(tags[0],NumberStyles.HexNumber); break; }
+            }
+            //return if no scroll PLM found in plmList.
+            if (!scrollFound) { return; }
+            if (this.ID == scrollHeader) 
+            {
+                this.ScrollData = new byte[] { 0, 0, 0x80 };
+            }
+            return;
+        }
+
         byte[] ReadScrollPLM(uint id, uint variable, ROM sm)
         {
             //read the instruction list to see if it's a scroll PLM (contains pointer 0x8B55)
@@ -1841,7 +1869,7 @@ namespace SM_ASM_GUI
             //export  = 8F, 83d, 83f, A1, B4, LEVELS
             //Place each export at the end of each section.
             if (!roomExists)
-            {
+            {//
                 smasm8F.Insert(smasm8F.Count - 1, export[0]);
                 smasm83d.Insert(smasm83d.Count - 1, export[1]);
                 smasm83f.Insert(smasm83f.Count - 1, export[2]);
@@ -1891,11 +1919,13 @@ namespace SM_ASM_GUI
             try
             {
                 File.WriteAllLines(asmPath, pASM);
+                if (checkRoomOverwrite) { AppendStatus("Exported R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.AreaIndex)); }
             }
             catch
             {
                 MessageBox.Show("Write to ASM failed. Is it open in another program?", "Write Fail", MessageBoxButtons.OK);
             }
+            return;
         }
         public List<StatePointersASM> GetStatePointersFromASM(roomdata room, List<string> roomSection)
         {
@@ -2101,7 +2131,6 @@ namespace SM_ASM_GUI
             List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
             if(smasmSpace == null) { return; }
             Export_Room(smasmSpace, smasmStartLine, smasmEndLine, asmPath, true, thisroom);
-            AppendStatus("Exported R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.AreaIndex));
             return;
         }
         public List<string> FindSection(string query, List<string> fulltext)
@@ -2622,7 +2651,7 @@ namespace SM_ASM_GUI
             //6.28.23 updating the level width was too hard to do...
             //got like 80% of the way there but had trouble inserting the level data to the correct indexes.
             //coming back to this later...
-            return;
+            //return;
             //write the level header textboxes to the room object
             //validate all: headerInfo group should contain only Textboxes.
             //foreach (Control item in HeaderInfo.Controls)
@@ -2644,7 +2673,8 @@ namespace SM_ASM_GUI
                 thisroom.UpScroller = uint.Parse(this.UpScroller.Text, NumberStyles.HexNumber);
                 thisroom.DnScroller = uint.Parse(this.DnScroller.Text, NumberStyles.HexNumber);
                 thisroom.SpecialGFX = uint.Parse(this.SpecialGFX.Text, NumberStyles.HexNumber);
-                UpdateRoomSize(newWidth, newHeight);
+            return;
+                //UpdateRoomSize(newWidth, newHeight);
                 //update room pic
             //}
             //catch
@@ -2938,7 +2968,9 @@ namespace SM_ASM_GUI
                 n = A.Results();
                 A.Close();
                 if (n == null) { return; }
-                thisroom.States[StateBox.SelectedIndex].PLMs.Add(CreatePLM(sm, n[0], n[1], n[2]));
+                PLMdata C = CreatePLM(sm, n[0], n[1], n[2]);
+                C.PopulateScrolls();
+                thisroom.States[StateBox.SelectedIndex].PLMs.Add(C);
             }
             //doors and FX don't have hardcoded maximums but they should probably be limited anyway?
             else if (B.Name.Substring(0, 1) == "F" && B.Items.Count < MaxPLMs)
@@ -4179,6 +4211,9 @@ namespace SM_ASM_GUI
                     A.ShowDialog();
                     thisroom = A.Room;
                     A.Close();
+                    scrollChangesSaved B = new scrollChangesSaved(this);
+                    B.Show();
+                    B.Activate();
                 }
                 catch { }
         }
@@ -4197,6 +4232,9 @@ namespace SM_ASM_GUI
                     A.ShowDialog();
                     thisroom = A.Room;
                     A.Close();
+                    scrollChangesSaved B = new scrollChangesSaved(this);
+                    B.Show();
+                    B.Activate();
                 }
                 catch { }
         }
@@ -4636,7 +4674,11 @@ namespace SM_ASM_GUI
             if(HeaderDropdown.Text.Length < 5) { return; }
             if (tutorialMode) { return; }
             string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
-            uint headerAddr = uint.Parse(headerNumbers, NumberStyles.HexNumber);
+            if (!uint.TryParse(headerNumbers, NumberStyles.HexNumber, null, out uint headerAddr))
+            {
+                //parse can fail in case of vanilla MDB file, where there are a bunch of blanks and area names.
+                return;
+            }
             LoadRoomToGUI(headerAddr);
         }
 
@@ -4977,7 +5019,9 @@ namespace SM_ASM_GUI
         private void OpenMDB_Click(object sender, EventArgs e)
         {
             string mdbPath = getMDBpath(out bool mdbExists);
-            if (!mdbExists) { MessageBox.Show("MDB does not exist.\nCreate one by exporting a room and applying to ROM, or supply an existing one at:\n" + mdbPath, "No MDB", MessageBoxButtons.OK); return; }
+            if (!mdbExists) { MessageBox.Show("MDB plmdata c" +
+                "" +
+                "exist.\nCreate one by exporting a room and applying to ROM, or supply an existing one at:\n" + mdbPath, "No MDB", MessageBoxButtons.OK); return; }
             Process.Start("notepad.exe", mdbPath);
         }
 
@@ -5071,6 +5115,98 @@ namespace SM_ASM_GUI
                 }
             }
             return rtn;
+        }
+
+        private void deleteCurrentRoomFromASMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!RoomLoaded()) { return; }
+            string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
+            if (smasmSpace == null) { return; }
+            DeleteRoomFromASM(smasmSpace, smasmStartLine, smasmEndLine, asmPath, thisroom);
+            return;
+        }
+        public void DeleteRoomFromASM(List<string> smasmSpace, int startline, int endline, string asmPath, roomdata room)
+        {
+            //slightly modified version of export room
+            //find the room section in each SMASM section
+            //Remove those lines from the SMASM section
+            //reassemble and save
+
+            List<string> pASM = ASM2List(asmPath);
+            //newsmasm list of all the lines, which we can now insert things to as needed.
+            //But first, parse out all the separate regions.
+            //$83 is the only one that will need multiple R##A# sublabels per room.
+            List<string> smasm8F = new List<string>();
+            List<string> smasm83d = new List<string>();
+            List<string> smasm83f = new List<string>();
+            List<string> smasmA1 = new List<string>();
+            List<string> smasmB4 = new List<string>();
+            List<string> smasmLV = new List<string>();
+            List<string> smasmTilesets = new List<string>();
+
+            GetSMASMsections(smasmSpace, out smasm8F, out smasm83d, out smasm83f, out smasmA1, out smasmB4, out smasmLV, out smasmTilesets, out List<string> smasmTilesetTable);
+
+            bool roomExists = false;
+            for (int i = startline; i < endline; i++)
+            {
+                if (pASM[i].Trim() == room.Label && !roomExists)
+                //if room already exists in the ASM file, then overwrite it...
+                {
+                    roomExists = true;
+                }
+            }
+            if (!roomExists)
+            {
+                MessageBox.Show("Room not found in ASM! Manual deletion may be required.\n(Open ASM and delete all of its pertaining subsections.)\nDeletion Cancelled.", "Room Not Found", MessageBoxButtons.OK);
+                return;
+            }
+
+                //these are all +2 to delete the closing bracket and the following empty line.
+                FindSection(room.Label, smasm8F, out int st, out int ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
+            else { smasm8F.RemoveRange(st, ed - st + 2); }
+                
+
+                FindSection(room.Label, smasm83d, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
+            else { smasm83d.RemoveRange(st, ed - st + 2); }
+                
+
+                FindSection(room.Label, smasm83f, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
+            else { smasm83f.RemoveRange(st, ed - st + 2); }
+                
+
+                FindSection(room.Label, smasmA1, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
+            else { smasmA1.RemoveRange(st, ed - st + 2); }
+                
+
+                FindSection(room.Label, smasmB4, out st, out ed);
+                if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
+            else { smasmB4.RemoveRange(st, ed - st + 2); }
+                
+
+                FindSection(room.Label, smasmLV, out st, out ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
+            else { smasmLV.RemoveRange(st, ed - st + 2); }
+            
+
+            //use loops to compile all these into a single output string for the text file.
+            string final = ConcatASMsections(smasm8F, smasm83d, smasm83f, smasmA1, smasmB4, smasmLV, smasmTilesets, smasmTilesetTable);
+            pASM.RemoveRange(startline, (endline + 1) - startline);
+            pASM.Insert(startline, final);
+            try
+            {
+                File.WriteAllLines(asmPath, pASM);
+                AppendStatus("Deleted R" + asmFCN.WByte(thisroom.RoomIndex) + "A" + asmFCN.WByte(thisroom.AreaIndex));
+            }
+            catch
+            {
+                MessageBox.Show("Write to ASM failed. Is it open in another program?", "Write Fail", MessageBoxButtons.OK);
+            }
+            return;
         }
     }
 
