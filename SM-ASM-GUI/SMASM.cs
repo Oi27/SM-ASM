@@ -13,6 +13,7 @@ using System.Xml;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 
 namespace SM_ASM_GUI
@@ -2414,18 +2415,46 @@ namespace SM_ASM_GUI
                     patch.StartInfo.Arguments = strCmdText;
                     patch.StartInfo.CreateNoWindow = true;
                     patch.StartInfo.RedirectStandardOutput = true;
+                    patch.StartInfo.RedirectStandardError = true;
                     patch.Start();
                     // This code assumes the process you are starting will terminate itself.
                     // Given that it is started without a window so you cannot terminate it
                     // on the desktop, it must terminate itself or you can do it programmatically
                     // from this application using the Kill method.
                     patch.WaitForExit();
-                    StreamReader a = patch.StandardOutput;
+                    StreamReader prints = patch.StandardOutput;
+                    StreamReader errors = patch.StandardError;
                     //StatusBox.Text = a.ReadToEnd();
-                    string asarOut = a.ReadToEnd();
-                    a.Close();
+                    string asarOut = prints.ReadToEnd();
+                    string asarErr = errors.ReadToEnd();
+                    prints.Close();
+                    errors.Close();
 
+                    //do error handling here - ASAR prints it out in an annoying way...
+                    //each error gets its own line with the file path and a bunch of other info in it
+                    //use regex search for d{n}: error:
+                    //print only the remainder of each line after that.
+                    if (asarErr.Contains("error"))
+                    {
+                        Regex errPattern = new Regex(@"\d*: error:");
+                        List<string> errLines = new List<string>();
+                        string[] rawErr = asarErr.Split('\n');
+                        foreach (string line in rawErr)
+                        {
+                            Match a = errPattern.Match(line);
+                            if (a.Success)
+                            {
+                                errLines.Add(line.Substring(a.Index));
+                            }
+                        }
+                        foreach (string line in errLines)
+                        {
+                            AppendStatus(line);
+                        }
+                        return;
+                    }
 
+                    this.Enabled = false;
                     List<string> sRooms = new List<string>();
                     List<string> sNames = new List<string>();
                     List<string> aRooms = new List<string>();
@@ -2586,11 +2615,8 @@ namespace SM_ASM_GUI
                     sm = new ROM(sm.Path);
                 }
             }
-            //catch (Exception eg)
-            //{
-            //    AppendStatus("Fail");
-            //    Console.WriteLine(eg.Message);
-            //}
+            this.Enabled = true;
+            return;
         }
 
         private string ReplaceAllOccurences(string Source, string Find, string Replace)

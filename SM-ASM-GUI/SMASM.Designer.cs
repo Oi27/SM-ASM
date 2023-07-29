@@ -332,7 +332,6 @@ namespace SM_ASM_GUI
             // MapXLabel
             // 
             this.MapXLabel.AutoSize = true;
-            this.MapXLabel.Enabled = false;
             this.MapXLabel.Location = new System.Drawing.Point(23, 151);
             this.MapXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.MapXLabel.Name = "MapXLabel";
@@ -379,7 +378,6 @@ namespace SM_ASM_GUI
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Enabled = false;
             this.label6.Location = new System.Drawing.Point(23, 260);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
@@ -402,7 +400,6 @@ namespace SM_ASM_GUI
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Enabled = false;
             this.label7.Location = new System.Drawing.Point(23, 313);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
@@ -425,7 +422,6 @@ namespace SM_ASM_GUI
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Enabled = false;
             this.label9.Location = new System.Drawing.Point(117, 260);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
@@ -472,7 +468,6 @@ namespace SM_ASM_GUI
             // MapYLabel
             // 
             this.MapYLabel.AutoSize = true;
-            this.MapYLabel.Enabled = false;
             this.MapYLabel.Location = new System.Drawing.Point(117, 151);
             this.MapYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.MapYLabel.Name = "MapYLabel";
