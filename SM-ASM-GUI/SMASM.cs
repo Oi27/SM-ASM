@@ -1173,6 +1173,9 @@ namespace SM_ASM_GUI
                 writer.WriteElementString("SCROLLPLM", "B703");
                 writer.WriteElementString("ONTOP", "0");
                 writer.WriteElementString("SHOWSETUP", "TRUE");
+                writer.WriteElementString("MaxBackupFiles", "99");
+                writer.WriteElementString("BackupInterval", "2");
+                writer.WriteElementString("CurrentBackupIteration", "0");
                 writer.Close();
             }
             config.Load(DbLocation + "config.xml");
@@ -2394,6 +2397,131 @@ namespace SM_ASM_GUI
             File.WriteAllText(asmPath,asm);
         }
 
+        public void BackupSMASMfiles(out bool allFilesPresent)
+        {
+            //back up the ROM, ASM, MDB before each application.
+            string mdbPath = getMDBpath(out bool mdbExists);
+            string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            string romPath = config.ChildNodes[1].SelectSingleNode("ROM").InnerText;
+
+            bool asmExists = File.Exists(asmPath);
+            bool romExists = File.Exists(romPath);
+
+            allFilesPresent = mdbExists && asmExists && romExists;
+
+            string backupsPath = Path.GetDirectoryName(romPath) + "\\Backups\\";
+            if (!Directory.Exists(backupsPath))
+            {
+                Directory.CreateDirectory(backupsPath);
+            }
+            //backupsPath is not guaranteed to exist.
+            //read backups config to see what needs done with the files.
+            try
+            {
+                int maxBackupFiles = int.Parse(config.ChildNodes[1].SelectSingleNode("MaxBackupFiles").InnerText);
+                int backupInterval = int.Parse(config.ChildNodes[1].SelectSingleNode("BackupInterval").InnerText);
+                int currentIteration = int.Parse(config.ChildNodes[1].SelectSingleNode("CurrentBackupIteration").InnerText);
+
+                //iteration is increased first so that a backupInterval of 1 will backup on iteration 0.
+                currentIteration++;
+                if (currentIteration >= backupInterval)
+                {
+                    //execute backup & reset currentIteration to 0
+                    currentIteration = 0;
+                    config.ChildNodes[1].SelectSingleNode("CurrentBackupIteration").InnerText = currentIteration.ToString();
+                    config.Save(DbLocation + "config.xml");
+                }
+                else
+                {
+                    //write the increased iteration to config & return
+                    config.ChildNodes[1].SelectSingleNode("CurrentBackupIteration").InnerText = currentIteration.ToString();
+                    config.Save(DbLocation + "config.xml");
+                    return;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Backup Parameters in \"config.xml\" are invalid or missing. Skipping backup creation.", "Invalid Backup Parameters", MessageBoxButtons.OK);
+                return;
+            }
+
+            //all config checks succeeded so proceed to doing the copy.
+            //force a unique ID even if the rand number generator makes the same number as a past one.
+            string versionID = "";
+            bool versionUnique = false;
+            while (!versionUnique)
+            {
+                versionID = MakeVersionID(9);
+                versionUnique = true;
+                foreach (string item in Directory.GetFiles(backupsPath))
+                {
+                    if (!item.Contains(versionID)) { continue; }
+                    versionUnique = false;
+                }
+            }
+            //copy the files to the unique ID & also change the creationTime information
+            string mdbCopy = backupsPath + versionID + ".mdb.txt";
+            string asmCopy = backupsPath + versionID + "." + Path.GetFileNameWithoutExtension(romPath) + ".asm";
+            string romCopy = backupsPath + versionID + "." + Path.GetFileNameWithoutExtension(romPath) + ".smc";
+            File.Copy(mdbPath, mdbCopy);
+            File.Copy(asmPath, asmCopy);
+            File.Copy(romPath, romCopy);
+            FileInfo mdb = new FileInfo(mdbCopy); mdb.CreationTime = DateTime.Now; mdb.LastAccessTime = DateTime.Now; mdb.LastWriteTime = DateTime.Now;
+            FileInfo asm = new FileInfo(asmCopy); asm.CreationTime = DateTime.Now; asm.LastAccessTime = DateTime.Now; asm.LastWriteTime = DateTime.Now;
+            FileInfo rom = new FileInfo(romCopy); rom.CreationTime = DateTime.Now; rom.LastAccessTime = DateTime.Now; rom.LastWriteTime = DateTime.Now;
+
+            //now, delete the oldest files in the folder if applicable.
+            //if less than zero do not delete anything.
+            //it's safe to parse this here because it was verified in the try-catch earlier.
+            int maxBackups = int.Parse(config.ChildNodes[1].SelectSingleNode("MaxBackupFiles").InnerText);
+            if(maxBackups < 0) { return; }
+            string[] backupFiles = Directory.GetFiles(backupsPath);
+            if (backupFiles.Length > maxBackups)
+            {
+                string oldestID = "";
+                DateTime oldestFile = DateTime.Now;
+                //find the 9-digit ID of the oldest file and delete all of them.
+                foreach (string file in backupFiles)
+                {
+                    FileInfo fileInfo = new FileInfo(file);
+                    if(fileInfo.LastAccessTime < oldestFile)
+                    {
+                        oldestFile = fileInfo.LastAccessTime;
+                        oldestID = fileInfo.Name;
+                    }
+                }
+                oldestID = oldestID.Split('.')[0];
+                foreach (string file in backupFiles)
+                {
+                    FileInfo fileInfo = new FileInfo(file);
+                    if (fileInfo.Name.Contains(oldestID))
+                    {
+                        try
+                        {
+                            fileInfo.Delete();
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Oldest backups are in use currently; cannot be deleted. Deletion skipped.","Files in Use", MessageBoxButtons.OK);
+                        }
+                    }
+                }
+            }
+            return;
+        }
+        private string MakeVersionID(int numberDigits)
+        {
+            //generate a 9-digit random number to make sure the backup names are never the same.
+            //if called with a number less than 1 it will return an empty string (why would you do this??)
+            Random rnd = new Random();
+            string id = "";
+            for (int i = 0; i < numberDigits; i++)
+            {
+                id += rnd.Next(0, 9);
+            }
+            return id;
+        }
+
         private void ApplyButton_Click(object sender, EventArgs e)
         {
             string q = @"" + (char)34;
@@ -2404,6 +2532,7 @@ namespace SM_ASM_GUI
             string mdbpath = getMDBpath(out bool mdbExists);
 
             updateTilesetAddress(asmPath, tstAddr);
+            BackupSMASMfiles(out bool unused);
 
             string strCmdText = string.Format(@"{0}{1}{0} {0}{2}{0}", q, asmPath, rom);
             //try
@@ -2557,6 +2686,7 @@ namespace SM_ASM_GUI
 
                     //for each item in oldNames, find and replace "dw $oldRooms :" in the door section of the ASM file.
                     //NOTE: this only catches valid door links. eg, the room header in the door data MUST be in the list, else it gets ignored.
+                    //ALSO because of oldrooms[i] and arooms[i], the lists must be in the same order.
                     for (int i = 0; i < oldRooms.Count; i++)
                     {
                         try
