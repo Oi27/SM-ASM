@@ -2584,76 +2584,57 @@ namespace SM_ASM_GUI
                     }
 
                     this.Enabled = false;
-                    List<string> sRooms = new List<string>();
-                    List<string> sNames = new List<string>();
-                    List<string> aRooms = new List<string>();
-                    List<string> aNames = new List<string>();
-                    SMILEfcn.ASARList(asarOut, out aRooms, out aNames);
-                    if (aRooms.Count == 0) { MessageBox.Show("MDB Error: ASAR output not detected. Was there an assembler error?\n You can check by using ASAR.exe with the command line to patch the ROM.", "ASAR Error", MessageBoxButtons.OK); return; }
+                    List<MdbRoom> newRooms;
+                    List<MdbRoom> oldRooms;
+                    newRooms = ASARList(asarOut);
+                    if (newRooms.Count == 0) { MessageBox.Show("MDB Error: ASAR output not detected. Was there an assembler error?\n You can check by using ASAR.exe with the command line to patch the ROM.", "ASAR Error", MessageBoxButtons.OK); return; }
                     //if the MBDpath does not exist then it will just be the ASAR output
                     if (File.Exists(mdbpath))
                     {
-                        SMILEfcn.MDBList(mdbpath, out sRooms, out sNames);
+                        oldRooms = MDBList(mdbpath);
                     }
-                    List<string> oldRooms = new List<string>(sRooms);
-                    List<string> oldNames = new List<string>(sNames);
+                    else
+                    {
+                        oldRooms = newRooms;
+                    }
+                    //we have this list of new and old MDB entries at this point: 
+                    //so we should go by room name and make a list of old new headers like that.
+
                     //Since we're using the custom folder, it makes sense for it to delete all the MDB that isn't in SMASM.
-                    if (DelMDB.Checked)
+                    //BY ROOM NAME: it deletes all the rooms found in Smile that are not in Asar
+                    for (int x = 0; x < oldRooms.Count; x++)
                     {
-                        for (int x = 0; x < sNames.Count; x++)
+                        bool matchfound = false;
+                        for (int y = 0; y < newRooms.Count; y++)
                         {
-                            bool matchfound = false;
-                            for (int y = 0; y < aNames.Count; y++)
+                            if (oldRooms[x].Name == newRooms[y].Name) { matchfound = true; }
+                        }
+                        if (!matchfound) { oldRooms.RemoveAt(x); x--; }
+                    }
+                    //after the above removal:
+                    //oldrooms is guaranteed to be the same size or smaller than newrooms.
+                    for(int i = 0; i < newRooms.Count; i++)
+                    {
+                        foreach (MdbRoom room in oldRooms)
+                        {
+                            if(room.Name == newRooms[i].Name)
                             {
-                                if (sNames[x] == aNames[y]) { matchfound = true; }
+                                MdbRoom mod = newRooms[i];
+                                mod.Needs83Repoint = true;
+                                mod.OldHeader = room.OldHeader;
+                                newRooms[i] = mod;
                             }
-                            if (!matchfound) { sNames.RemoveAt(x); sRooms.RemoveAt(x); x--; }
                         }
                     }
-                    //then, check the room names.
-                    //if our R1A1 is on the list, replace that entry with the new header location.
-                    //Else, add it to the top of the sRooms and sNames.
-                    //No sorting is necessary because the MDB.txt does not need to be in an order
-                    for (int x = 0; x < aNames.Count; x++)
-                    {
-                        //if the sNames list is empty, as in a blank MDB, then this is give an index OOB error.
-                        //Catch this case so that remaining entries in aNames will be added to the top of the list with no checks.
-                        //In the edge case that the MDB exists but it's just smaller than the aLists, this try will work up until it doesn't, and then catch the rest.
-                        try
-                        {
-                            bool matchfound = false;
-                            for (int y = 0; y < sNames.Count; y++)
-                            {
-                                matchfound = false;
-                                if (sNames[y] == aNames[x])
-                                {
-                                    matchfound = true;
-                                    sRooms[y] = aRooms[x];
-                                    break;
-                                }
-                            }
-                            if (!matchfound)
-                            {
-                                sNames.Insert(0, aNames[x]);
-                                sRooms.Insert(0, aRooms[x]);
-                            }
-                        }
-                        catch
-                        {
-                            sNames.Insert(0, aNames[x]);
-                            sRooms.Insert(0, aRooms[x]);
-                        }
-                    }
-
-
-                    //sNames and sRooms now contain the ASAR generated entries.
+                    //each room name is now populated with the new and old headers.
                     //recombine them into a valid MBD.txt:
                     //the area names in the vanilla MDB seem optional.
-                    
+                    //reverse the list so that the most recently added rooms are at the top.
+                    newRooms.Reverse();
                     string res = "";
-                    for (int i = 0; i < sNames.Count; i++)
+                    for (int i = 0; i < newRooms.Count; i++)
                     {
-                        res += sRooms[i] + " " + sNames[i] + "\r\n";
+                        res += newRooms[i].NewHeader + " " + newRooms[i].Name + "\r\n";
                     }
                     //need to shorten it so the last character in the string is not whitespace...
                     res = res.Substring(0, res.Length - 2);
@@ -2675,7 +2656,6 @@ namespace SM_ASM_GUI
                     GetSMASMsections(smasmASM, out smasm8F, out smasm83d, out smasm83f, out smasmA1, out smasmB4, out smasmLV, out smasmTilesets, out List<string> smasmTilesetTable);
 
                     oldRooms.Reverse();
-                    oldNames.Reverse();
 
                     //make the doors section into a single string for easy searching
                     string single_string_83d = "";
@@ -2686,20 +2666,22 @@ namespace SM_ASM_GUI
 
                     //for each item in oldNames, find and replace "dw $oldRooms :" in the door section of the ASM file.
                     //NOTE: this only catches valid door links. eg, the room header in the door data MUST be in the list, else it gets ignored.
-                    //ALSO because of oldrooms[i] and arooms[i], the lists must be in the same order.
-                    for (int i = 0; i < oldRooms.Count; i++)
+                    //replaces first with unique tag to handle the freak case where a room shares an newheader address with the oldheader address of another room.
+                    for (int i = 0; i < newRooms.Count; i++)
                     {
-                        try
+                        MdbRoom room = newRooms[i];
+                        room.UniqueTag = i.ToString();
+                        if (room.Needs83Repoint)
                         {
-                            string find = "dw $" + oldRooms[i].Substring(1) + " :";
-                            string replace = "dw $" + aRooms[i].Substring(1) + " :";
-                            single_string_83d = ReplaceAllOccurences(single_string_83d, find, replace);
+                            single_string_83d = room.InitialReplaceIn83(single_string_83d);
+                            single_string_83d = room.UniqueTagReplaceIn83(single_string_83d);
+
                         }
-                        catch
-                        {
-                            //this is in a try-catch because it was giving an index oob error and idk why
-                        }
+                        newRooms[i] = room;
                     }
+
+                        
+                    
                     List<string> new83d = single_string_83d.Split('@').ToList<string>();
                     new83d.RemoveAt(new83d.Count-1);
                     //^^^this gets rid of a blank entry that appears due to the last @ in the file.
@@ -2749,7 +2731,114 @@ namespace SM_ASM_GUI
             return;
         }
 
-        private string ReplaceAllOccurences(string Source, string Find, string Replace)
+        public struct MdbRoom
+        {
+        /// <summary>
+        /// i just found out about the code summaries
+        /// </summary>
+        /// 
+            //the headers can be stored as strings because we're not doing anything mathematical with them.
+            //the room name will stay the same before and after the ASM-apply.
+            //Though the list might be in a totally different order.
+            //So, need to make a list of all the names in the old MDB
+            //Take down their old headers
+            //apply ASM
+            //Find those old names in the ASAR output, take down the new headers.
+            
+            //for each Door2Fix, find and replace the old/new header in $83.
+            //>>>this could potentially break some links if the new header of some room happened to be the old header of another room.
+            //Maybe require an intermediary step where all the old headers are replaced by tags. AAAA, BBBB, CCCC etc. so they can't be broken by newly-duplicate data.
+            
+            //desired behavior for rooms not in either list:
+            //Rooms found in Asar Output but NOT in MDB should be added to new MDB & skip the Door2Fix process
+            //Rooms from MDB that are NOT in Asar output should be deleted from MDB.
+            public string Name { set; get; }
+            public string OldHeader { set; get; }
+            public string NewHeader { set; get; }
+            public string UniqueTag { set; get; }
+            public bool Needs83Repoint { set; get; }
+
+            public string InitialReplaceIn83(string bank_83_all)
+            {
+                ///<summary>
+                ///Replace all instances of this Door2Fix's OldHeader with its UniqueTag.
+                ///</summary>
+                string find = "dw $" + OldHeader.Substring(1) + " :";      //substring(1) to get rid of first digit in PC address.
+                string replace = "dw $" + UniqueTag + " :";
+                bank_83_all = ReplaceAllOccurences(bank_83_all, find, replace);
+                return bank_83_all;
+            }
+            public string UniqueTagReplaceIn83(string bank_83_all)
+            {
+                ///<summary>
+                ///Replace all instances of this Door2Fix's UniqueTag with its NewHeader.
+                ///</summary>
+                string find = "dw $" + UniqueTag + " :";      //substring(1) to get rid of first digit in PC address.
+                string replace = "dw $" + NewHeader.Substring(1) + " :";
+                bank_83_all = ReplaceAllOccurences(bank_83_all, find, replace);
+                return bank_83_all;
+            }
+            private string ReplaceAllOccurences(string Source, string Find, string Replace)
+            {
+            loop:
+                if (Find == Replace) { return Source; }
+                int Place = Source.IndexOf(Find);
+                if (Place == -1) { return Source; }
+                Source = Source.Remove(Place, Find.Length).Insert(Place, Replace);
+                goto loop;
+            }
+        }
+
+        public List<MdbRoom> MDBList(string mdbPath)
+        {
+            if (!File.Exists(mdbPath))
+            {
+                return null;
+            }
+            List<MdbRoom> mdbList = new List<MdbRoom>();
+
+            string[] mdb = File.ReadAllText(mdbPath).Replace("\r", string.Empty).Split('\n');
+            //if the first 5 char in the line are hex then add it to the Addr and Name lists.
+            for (int i = 0; i < mdb.Length; i++)
+            {
+                if (int.TryParse(mdb[i].Substring(0, 5), NumberStyles.HexNumber, null, out int barse))
+                {
+                    string header = mdb[i].Substring(0, 5);
+                    bool namePresent = mdb[i].Length > 6;
+                    string roomName = "";
+                    if (namePresent)
+                    {
+                        roomName = mdb[i].Substring(6);
+                    }
+                    mdbList.Add(new MdbRoom { Name = roomName, OldHeader = header });
+                }
+            }
+            return mdbList;
+        }
+        public List<MdbRoom> ASARList(string ASARpcs)
+        {
+            List<MdbRoom> mdbList = new List<MdbRoom>();
+            string[] mdb = ASARpcs.Replace("\r", string.Empty).Replace("-", " ").Split('\n');
+            //if the first 5 char in the line are hex then add it to the Addr and Name lists.
+            //Also account for the empty string at the end of ASAR output.
+            for (int i = 0; i < mdb.Length - 1; i++)
+            {
+                if (uint.TryParse(mdb[i].Substring(0, 6), NumberStyles.HexNumber, null, out uint barse))
+                {
+                    string name = "";
+                    string header;
+                    header = (string.Format("{0:X5}", LUNAR.SNEStoPC(barse)));
+                    if (mdb[i].Length > 7)
+                    {
+                        name = (mdb[i].Substring(7));
+                    }
+                    mdbList.Add(new MdbRoom { Name = name, NewHeader = header });
+                }
+            }
+            return mdbList;
+        }
+
+        public string ReplaceAllOccurences(string Source, string Find, string Replace)
         {
             loop:
             if(Find == Replace) { return Source; }
@@ -4722,15 +4811,15 @@ namespace SM_ASM_GUI
             StringBuilder asmFile = new StringBuilder(5000);
 
             //maaaaaan it needs to be async for this to work. the sep progressbar isn't in the main windows, so that's why it works.
-            string statusBar =
-                "\n-------------------\n" +
-                "MDB to ASM Progress:\n";
-            string endStatus = "\n-------------------\n";
+            //string statusBar =
+            //    "\n-------------------\n" +
+            //    "MDB to ASM Progress:\n";
+            //string endStatus = "\n-------------------\n";
             char[] progress = new string('.', mdb.Count).ToCharArray();
 
             CreateNewASMfile(savePath);
             CreateNewSMASMspace(savePath);
-            int j = 0;
+            //int j = 0;
             //for this new and improved version:
             //after creating new ASM file, all the threads will draw from it.
             //Preallocate an array of the MDB count
@@ -5508,11 +5597,6 @@ namespace SM_ASM_GUI
         public uint SCE { get; set; }
         public uint Palette { get; set; }
         public uint Pointer { get; set; }
-    }
-    public class MDBentry
-    {
-        public string Pointer { get; set; }
-        public string Name { get; set; }
     }
 
     public static class LUNAR
