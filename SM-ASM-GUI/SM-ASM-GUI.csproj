@@ -79,6 +79,12 @@
     <Compile Include="credits.Designer.cs">
       <DependentUpon>credits.cs</DependentUpon>
     </Compile>
+    <Compile Include="LevelDataFromBmp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LevelDataFromBmp.Designer.cs">
+      <DependentUpon>LevelDataFromBmp.cs</DependentUpon>
+    </Compile>
     <Compile Include="newRoomSize.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -169,6 +175,9 @@
     <EmbeddedResource Include="credits.resx">
       <DependentUpon>credits.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LevelDataFromBmp.resx">
+      <DependentUpon>LevelDataFromBmp.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="newRoomSize.resx">
       <DependentUpon>newRoomSize.cs</DependentUpon>
     </EmbeddedResource>
@@ -228,6 +237,9 @@
     <Content Include="1.png" />
     <Content Include="2.png" />
     <Content Include="Bitmap1.bmp" />
+    <Content Include="defaultRoom.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="enemylist.txt" />
     <Content Include="filefolder.bmp" />
     <Content Include="logo_large.png" />

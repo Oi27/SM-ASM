@@ -1141,11 +1141,24 @@ namespace SM_ASM_GUI
             SMILEfilesPath = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText;
             sm = new ROM(config.ChildNodes[1].SelectSingleNode("ROM").InnerText);
             PopulateHeaderList();
+
+            LevelDataFromBmp A = new LevelDataFromBmp(this);
+            try
+            {
+                Bitmap face = new Bitmap(DbLocation + "defaultRoom.bmp");
+                thisroom = A.RoomFromBitmap(face, 0xC075, 0x80FF);
+            }
+            catch
+            {
+                thisroom = CreateEmptyRoom(6, 6);
+            }
+            finally
+            {
+                A.Close();
+            }
+            LoadRoomToGUI(thisroom);
             
 
-            //pcBox.Text = string.Format("{0:X6}", readWord(0x10, sm));
-            //string az = config.ChildNodes[1].SelectSingleNode("ROM").InnerText + null;
-            //if (!LUNAR.OpenFile(az)) { MessageBox.Show ("LUNAR rom load failed"); }
         }
 
         private bool RoomLoaded()
@@ -1216,6 +1229,9 @@ namespace SM_ASM_GUI
                         break;
                     case 3:
                         filter = "EXE files (*.exe)|*.exe|All files (*.*)|*.*";
+                        break;
+                    case 4:
+                        filter = "BMP files (*.bmp)|*.bmp";
                         break;
                     default:
                         filter = "All files(*.*)|*.*|";
@@ -1343,7 +1359,7 @@ namespace SM_ASM_GUI
             StateBox.Items.Add("Default");
             StateBox.SelectedIndex = StateBox.Items.Count - 1;
 
-            AppendStatus("Loaded Blank Room" + " - " + DateTime.Now.ToLongTimeString());
+            AppendStatus("Loaded New Room" + " - " + DateTime.Now.ToLongTimeString());
             Bitmap test = LevelData2Bitmap(room, room.StateCount);
             roomPic = test;
             RoomPicture.Image = test;
@@ -1765,23 +1781,22 @@ namespace SM_ASM_GUI
             levelData = sizeWord.Concat(levelData).ToArray();
             return levelData;
         }
-        public unsafe roomdata CreateEmptyRoom(uint width, uint height)
+        public unsafe byte[] CompressLevelData(byte[] uncompressed, out uint compressedSize)
         {
-            //uint height = 1;
-            //uint width = 1;
-            //need function to generate the empty level data here - account for variable width and height.
-            //also generate scrolls array
-
             byte[] compress = new byte[0x10000];
-            uint compSize;
-            byte[] levelDataUncompressed = BlankLevelData(width, height);
-            uint dataSize = (uint)levelDataUncompressed.Length;
-            fixed (void* sourcePtr = levelDataUncompressed)
+            
+            uint dataSize = (uint)uncompressed.Length;
+            fixed (void* sourcePtr = uncompressed)
             fixed (void* destPtr = compress)
 
-            compSize = LUNAR.Compress(sourcePtr, destPtr, dataSize);
-            Array.Resize(ref compress, (int)compSize);
-
+                compressedSize = LUNAR.Compress(sourcePtr, destPtr, dataSize);
+            Array.Resize(ref compress, (int)compressedSize);
+            return compress;
+        }
+        public unsafe roomdata CreateEmptyRoom(uint width, uint height)
+        {
+            byte[] levelDataUncompressed = BlankLevelData(width, height);
+            byte[] compress = CompressLevelData(levelDataUncompressed, out uint compSize);
             //populate scrolls array with blue scrolls.
             uint[] scrolls = new uint[height * width];
             for (int i = 0; i < scrolls.Length; i++)
@@ -3616,6 +3631,7 @@ namespace SM_ASM_GUI
         {
             if (!RoomLoaded()) { return; }
             //load room based on current address in Headerbox.
+            if(HeaderDropdown.Text.Length < 5) { return; }
             string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
             uint headerAddr = uint.Parse(headerNumbers, NumberStyles.HexNumber);
             LoadRoomToGUI(headerAddr);
@@ -5812,10 +5828,20 @@ namespace SM_ASM_GUI
         {
             newRoomSize A = new newRoomSize(this);
             A.ShowDialog();
+            if((A.RoomWidth == 0) || (A.RoomHeight == 0)) { return; }
             thisroom = CreateEmptyRoom(A.RoomWidth,A.RoomHeight);
             LoadRoomToGUI(thisroom);
             A.Close();
             return;
+        }
+
+        private void importLevelDataFromBMPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LevelDataFromBmp A = new LevelDataFromBmp(this);
+            A.ShowDialog();
+            thisroom = A.Room;
+            LoadRoomToGUI(thisroom);
+            A.Close();
         }
     }
 

@@ -33,13 +33,13 @@ namespace SM_ASM_GUI
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SMASM));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadBlankRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentRoomToNewASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteCurrentRoomFromASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mergeRoomFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mDBListToASMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.specialDoorIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.specialItemIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadBlankRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filePathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tilesetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +54,8 @@ namespace SM_ASM_GUI
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.walkthoughToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importLevelDataFromBMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HeaderLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.RoomIndex = new System.Windows.Forms.TextBox();
@@ -111,17 +113,17 @@ namespace SM_ASM_GUI
             this.DelMDB = new System.Windows.Forms.CheckBox();
             this.ZoomPicIn = new System.Windows.Forms.Button();
             this.ZoomPicOut = new System.Windows.Forms.Button();
-            this.RoomPicture = new System.Windows.Forms.PictureBox();
             this.HeaderDropdown = new System.Windows.Forms.ComboBox();
             this.OpenMDB = new System.Windows.Forms.Button();
             this.testbutton = new System.Windows.Forms.Button();
             this.HeaderInfo = new System.Windows.Forms.GroupBox();
+            this.RoomPicture = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.StateMenuStrip.SuspendLayout();
             this.DataListMenu.SuspendLayout();
             this.LevelPicMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).BeginInit();
             this.HeaderInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -133,7 +135,8 @@ namespace SM_ASM_GUI
             this.tilesetsToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.debugToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
@@ -154,6 +157,13 @@ namespace SM_ASM_GUI
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 24);
             this.fileToolStripMenuItem.Text = "ASM";
+            // 
+            // loadBlankRoomToolStripMenuItem
+            // 
+            this.loadBlankRoomToolStripMenuItem.Name = "loadBlankRoomToolStripMenuItem";
+            this.loadBlankRoomToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.loadBlankRoomToolStripMenuItem.Text = "Load Blank Room";
+            this.loadBlankRoomToolStripMenuItem.Click += new System.EventHandler(this.loadBlankRoomToolStripMenuItem_Click);
             // 
             // currentRoomToNewASMToolStripMenuItem
             // 
@@ -196,13 +206,6 @@ namespace SM_ASM_GUI
             this.specialItemIDToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
             this.specialItemIDToolStripMenuItem.Text = "Special Item ID";
             this.specialItemIDToolStripMenuItem.Click += new System.EventHandler(this.specialItemIDToolStripMenuItem_Click);
-            // 
-            // loadBlankRoomToolStripMenuItem
-            // 
-            this.loadBlankRoomToolStripMenuItem.Name = "loadBlankRoomToolStripMenuItem";
-            this.loadBlankRoomToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
-            this.loadBlankRoomToolStripMenuItem.Text = "Load Blank Room";
-            this.loadBlankRoomToolStripMenuItem.Click += new System.EventHandler(this.loadBlankRoomToolStripMenuItem_Click);
             // 
             // configToolStripMenuItem
             // 
@@ -255,7 +258,7 @@ namespace SM_ASM_GUI
             this.slimGUIToolStripMenuItem.CheckOnClick = true;
             this.slimGUIToolStripMenuItem.Enabled = false;
             this.slimGUIToolStripMenuItem.Name = "slimGUIToolStripMenuItem";
-            this.slimGUIToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.slimGUIToolStripMenuItem.Size = new System.Drawing.Size(149, 26);
             this.slimGUIToolStripMenuItem.Text = "Slim GUI";
             // 
             // editToolStripMenuItem
@@ -270,14 +273,14 @@ namespace SM_ASM_GUI
             // thisRoomToolStripMenuItem
             // 
             this.thisRoomToolStripMenuItem.Name = "thisRoomToolStripMenuItem";
-            this.thisRoomToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.thisRoomToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
             this.thisRoomToolStripMenuItem.Text = "This Room";
             this.thisRoomToolStripMenuItem.Click += new System.EventHandler(this.thisRoomToolStripMenuItem_Click);
             // 
             // areasFromMDBToolStripMenuItem
             // 
             this.areasFromMDBToolStripMenuItem.Name = "areasFromMDBToolStripMenuItem";
-            this.areasFromMDBToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.areasFromMDBToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
             this.areasFromMDBToolStripMenuItem.Text = "Areas from MDB";
             this.areasFromMDBToolStripMenuItem.Click += new System.EventHandler(this.fromMDBListToolStripMenuItem_Click);
             // 
@@ -312,6 +315,21 @@ namespace SM_ASM_GUI
             this.creditsToolStripMenuItem.Size = new System.Drawing.Size(171, 26);
             this.creditsToolStripMenuItem.Text = "Credits";
             this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
+            // 
+            // debugToolStripMenuItem
+            // 
+            this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importLevelDataFromBMPToolStripMenuItem});
+            this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
+            this.debugToolStripMenuItem.Text = "Debug";
+            // 
+            // importLevelDataFromBMPToolStripMenuItem
+            // 
+            this.importLevelDataFromBMPToolStripMenuItem.Name = "importLevelDataFromBMPToolStripMenuItem";
+            this.importLevelDataFromBMPToolStripMenuItem.Size = new System.Drawing.Size(281, 26);
+            this.importLevelDataFromBMPToolStripMenuItem.Text = "Import Level Data from BMP";
+            this.importLevelDataFromBMPToolStripMenuItem.Click += new System.EventHandler(this.importLevelDataFromBMPToolStripMenuItem_Click);
             // 
             // HeaderLabel
             // 
@@ -953,21 +971,6 @@ namespace SM_ASM_GUI
             this.ZoomPicOut.UseVisualStyleBackColor = true;
             this.ZoomPicOut.Click += new System.EventHandler(this.ZoomPicOut_Click);
             // 
-            // RoomPicture
-            // 
-            this.RoomPicture.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.RoomPicture.ContextMenuStrip = this.LevelPicMenu;
-            this.RoomPicture.Cursor = System.Windows.Forms.Cursors.NoMove2D;
-            this.RoomPicture.Location = new System.Drawing.Point(16, 367);
-            this.RoomPicture.Margin = new System.Windows.Forms.Padding(4);
-            this.RoomPicture.Name = "RoomPicture";
-            this.RoomPicture.Padding = new System.Windows.Forms.Padding(0, 0, 0, 12);
-            this.RoomPicture.Size = new System.Drawing.Size(132, 130);
-            this.RoomPicture.TabIndex = 64;
-            this.RoomPicture.TabStop = false;
-            this.RoomPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseMove);
-            this.RoomPicture.MouseUp += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseUp);
-            // 
             // HeaderDropdown
             // 
             this.HeaderDropdown.FormattingEnabled = true;
@@ -1027,6 +1030,21 @@ namespace SM_ASM_GUI
             this.HeaderInfo.Size = new System.Drawing.Size(171, 260);
             this.HeaderInfo.TabIndex = 69;
             this.HeaderInfo.TabStop = false;
+            // 
+            // RoomPicture
+            // 
+            this.RoomPicture.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.RoomPicture.ContextMenuStrip = this.LevelPicMenu;
+            this.RoomPicture.Cursor = System.Windows.Forms.Cursors.NoMove2D;
+            this.RoomPicture.Location = new System.Drawing.Point(16, 367);
+            this.RoomPicture.Margin = new System.Windows.Forms.Padding(4);
+            this.RoomPicture.Name = "RoomPicture";
+            this.RoomPicture.Padding = new System.Windows.Forms.Padding(0, 0, 0, 12);
+            this.RoomPicture.Size = new System.Drawing.Size(132, 130);
+            this.RoomPicture.TabIndex = 64;
+            this.RoomPicture.TabStop = false;
+            this.RoomPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseMove);
+            this.RoomPicture.MouseUp += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseUp);
             // 
             // SMASM
             // 
@@ -1088,9 +1106,9 @@ namespace SM_ASM_GUI
             this.StateMenuStrip.ResumeLayout(false);
             this.DataListMenu.ResumeLayout(false);
             this.LevelPicMenu.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).EndInit();
             this.HeaderInfo.ResumeLayout(false);
             this.HeaderInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RoomPicture)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1182,6 +1200,8 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem specialItemIDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteCurrentRoomFromASMToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadBlankRoomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importLevelDataFromBMPToolStripMenuItem;
     }
 }
 
