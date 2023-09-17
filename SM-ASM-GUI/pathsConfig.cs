@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using System.Xml;
+using System.Diagnostics;
 
 namespace SM_ASM_GUI
 {
@@ -92,5 +94,25 @@ namespace SM_ASM_GUI
             parent.AllowHexOnlyTEXTBOX(sender, e);
         }
 
+        private void OpenMdbFolder_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(SMILEbox.Text))
+            {
+                MessageBox.Show("SMILE folder not found.", "Invalid Path", MessageBoxButtons.OK);
+                return;
+            }
+            //GetMdbPath creates the folder as well as returning a location.
+            string mdbPath = parent.getMDBpath(out bool mdbExists);
+            string mdbFolder = Path.GetDirectoryName(mdbPath);
+            Process winExp = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    Arguments = mdbFolder,
+                    FileName = "explorer.exe"
+                }
+            };
+            winExp.Start();
+        }
     }
 }

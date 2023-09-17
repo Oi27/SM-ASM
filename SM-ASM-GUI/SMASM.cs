@@ -1319,6 +1319,36 @@ namespace SM_ASM_GUI
             RoomPicture.Image = test;
             imageScale = 1;
         }
+        private void LoadRoomToGUI(roomdata room)
+        {
+            if (room.States == null) { return; }
+
+            RoomIndex.Text = string.Format("{0:X2}", room.RoomIndex);
+            AreaIndex.Text = string.Format("{0:X2}", room.AreaIndex);
+            MapX.Text = string.Format("{0:X2}", room.MapX);
+            MapY.Text = string.Format("{0:X2}", room.MapY);
+            RoomWidth.Text = string.Format("{0:X2}", room.Width);
+            RoomHeight.Text = string.Format("{0:X2}", room.Height);
+            UpScroller.Text = string.Format("{0:X2}", room.UpScroller);
+            DnScroller.Text = string.Format("{0:X2}", room.DnScroller);
+            SpecialGFX.Text = string.Format("{0:X2}", room.SpecialGFX);
+
+            room.DupChek();
+
+            StateBox.Items.Clear();
+            for (int i = 0; i < room.StateCount; i++)
+            {
+                StateBox.Items.Add("State " + i);
+            }
+            StateBox.Items.Add("Default");
+            StateBox.SelectedIndex = StateBox.Items.Count - 1;
+
+            AppendStatus("Loaded Blank Room" + " - " + DateTime.Now.ToLongTimeString());
+            Bitmap test = LevelData2Bitmap(room, room.StateCount);
+            roomPic = test;
+            RoomPicture.Image = test;
+            imageScale = 1;
+        }
         public void AppendStatus(string text)
         {
             StatusBox.Text += text + "\n";
@@ -1703,6 +1733,160 @@ namespace SM_ASM_GUI
             string[] delimchars = { "\r\n", "\n" };
             return tASM.Split(delimchars, StringSplitOptions.None).ToList();
         }
+        byte[] BlankLevelData(uint width, uint height)
+        {
+            byte blockType = 0;
+            byte graphic = 0xFF;
+            byte[] pattern = { graphic, blockType };
+            //pattern accounts for endianness
+
+            uint btsSize = width * height * 256;
+            uint layer1Size = btsSize*2;
+            uint layer2Size = layer1Size;
+            uint totalSize = btsSize + layer1Size + layer2Size;
+
+            byte hi, lo;
+            lo = (byte)(layer1Size & 0xFF);
+            hi = (byte)((layer1Size & 0xFF00) >> 8);
+            byte[] sizeWord = { lo, hi };
+
+            byte[] levelData = new byte[totalSize];
+
+            // each iteration alternates between the two bytes in the pattern.
+            for (int i = 0; i < totalSize; i++)
+            {
+                levelData[i] = pattern[i & 1];
+            }
+            //this loop clears the BTS array
+            for (uint i = layer1Size; i < (layer1Size + btsSize); i++)
+            {
+                levelData[i] = 0;
+            }
+            levelData = sizeWord.Concat(levelData).ToArray();
+            return levelData;
+        }
+        public unsafe roomdata CreateEmptyRoom(uint width, uint height)
+        {
+            //uint height = 1;
+            //uint width = 1;
+            //need function to generate the empty level data here - account for variable width and height.
+            //also generate scrolls array
+
+            byte[] compress = new byte[0x10000];
+            uint compSize;
+            byte[] levelDataUncompressed = BlankLevelData(width, height);
+            uint dataSize = (uint)levelDataUncompressed.Length;
+            fixed (void* sourcePtr = levelDataUncompressed)
+            fixed (void* destPtr = compress)
+
+            compSize = LUNAR.Compress(sourcePtr, destPtr, dataSize);
+            Array.Resize(ref compress, (int)compSize);
+
+            //populate scrolls array with blue scrolls.
+            uint[] scrolls = new uint[height * width];
+            for (int i = 0; i < scrolls.Length; i++)
+            {
+                scrolls[i] = 1;
+            }
+
+            roomdata newRoom = new roomdata
+            {
+                AreaIndex = 0,
+                RoomIndex = 0,
+                DnScroller = 0xA0,
+                DoorOut = 0xFFFF,
+                Header = 0xFFFF,
+                Height = height,
+                Label = ".R00A0",
+                LabelM = "R00A0",
+                MapX = 0,
+                MapY = 0,
+                SpecialGFX = 0,
+                Width = width,
+                StateCount = 0,
+                Bytes8F = 0,
+                UpScroller = 0x70,
+
+                States = new List<state> {
+                    new state
+                    {
+                        BGxScroll = 0,
+                        BGyScroll = 0,
+                        Bytes8F = 0,
+                        PlayInd = 5,
+                        SongSet = 0,
+                        StateArg = 0,
+                        Type = 0xE612,
+                        pBackground = 0,
+                        pEnemyGFX = 0xFFFF,
+                        pEnemySet = 0xFFFF,
+                        pFX = 0xFFFF,
+                        pLevelData = 0xFFFF,
+                        pMainASM = 0x0000,
+                        pPLMset = 0xFFFF,
+                        pScrolls = 0xFFFF,
+                        pSetupASM = 0x0000,
+                        pUnused = 0x0000,
+
+                        pmEnemyGFX = "default",
+                        pmEnemySet = "default",
+                        pmFX = "default",
+                        pmLevelData = "default",
+                        pmPLMset = "default",
+                        pmScrolls = "default",
+                        TileSet = 0,
+
+                        LevelDataSizeC = compSize,
+                        LevelDataC = compress,
+                        LevelDataUC = levelDataUncompressed,
+                        Scrolls = scrolls,
+
+                        EnemyCount = 0,
+                        DataPointer = 0xFFFF,
+                        Enemies = new List<EnemyData>(),
+                        EnemiesAllowed = new List<EnemyGFX>(),
+                        PLMs = new List<PLMdata>(),
+                        FX = new List<FXdata>
+                        {
+                            new FXdata
+                            {
+                                BitA = 0xFF,
+                                BitB = 0xFF,
+                                BitC = 0xFF,
+                                DoorSelect = 0xFFFF,
+                                LiqDelay = 0xFF,
+                                LiqEnd = 0xFFFF,
+                                LiqSpeed = 0xFFFF,
+                                LiqStart = 0xFFFF,
+                                PalBlend = 0xFF,
+                                PalFXflags = 0xFF,
+                                TileAnimFlags = 0xFF,
+                                Type = 0xFF
+                            }
+                        }
+                        
+
+
+                    }
+                },
+
+                Doors = new List<DoorData> {
+                    new DoorData
+                    {
+                        Bitflag = 0,
+                        CapX = 0,
+                        CapY = 0,
+                        Destination = 0,
+                        Direction = 0,
+                        DoorASM = 0,
+                        ScrnX = 0,
+                        ScrnY = 0,
+                        SpawnDist = 0x8000
+                    }
+                },
+            };
+            return newRoom;
+        }
 
         public List<string> Parse_SMASM_ASM(string asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists)
             //return string list of each line in the SMASM space, along with the starting and ending lines of SMASM-Space.
@@ -1864,12 +2048,14 @@ namespace SM_ASM_GUI
             List<StatePointersASM> oldStatePointers = null;
             if (roomExists)
             {
-                List<string> roomText = FindSection(room.Label, smasm8F, out int roomStartline, out int roomEndline);
+                List<string> roomText8F = FindSection(room.Label, smasm8F, out int roomStartline, out int roomEndline);
+                List<string> roomText83 = FindSection(room.Label, smasm83d, out int startline83, out int endline83);
                 if (roomStartline == 0 || roomEndline == 0) { MessageBox.Show("roomlabel not found!"); }
-                oldStatePointers = GetStatePointersFromASM(room, roomText);
+                oldStatePointers = GetStatePointersFromASM(room, roomText8F, roomText83);
             }
             string[] export = asmFCN.Room2ASM(room, int.Parse(LevelBuffer.Text));
             ReplaceMainSetupLabels(oldStatePointers, export, room);
+            ReplaceDoorAsmLabels(oldStatePointers, export, room);
             //export  = 8F, 83d, 83f, A1, B4, LEVELS
             //Place each export at the end of each section.
             if (!roomExists)
@@ -1931,15 +2117,15 @@ namespace SM_ASM_GUI
             }
             return;
         }
-        public List<StatePointersASM> GetStatePointersFromASM(roomdata room, List<string> roomSection)
+        public List<StatePointersASM> GetStatePointersFromASM(roomdata room, List<string> roomSection8F, List<string> roomSection83)
         {
             List<StatePointersASM> rtn = new List<StatePointersASM>();
             for (int state = 0; state < room.StateCount; state++)
             {
-                rtn.Add(new StatePointersASM(state, roomSection));
+                rtn.Add(new StatePointersASM(state, roomSection8F, roomSection83));
             }
             //also for default state
-            rtn.Add(new StatePointersASM(-1, roomSection));
+            rtn.Add(new StatePointersASM(-1, roomSection8F, roomSection83));
             return rtn;
         }
         public string[] ReplaceMainSetupLabels(List<StatePointersASM> oldStatePointers, string[] export, roomdata room)
@@ -1964,6 +2150,35 @@ namespace SM_ASM_GUI
             //get rid of the extra line return introduced.
             newExportZero.Remove(newExportZero.Length - 1, 1);
             export[0] = newExportZero.ToString();
+            return export;
+        }
+
+        public string[] ReplaceDoorAsmLabels(List<StatePointersASM> oldStatePointers, string[] export, roomdata room)
+        {
+            //reminder: export[] is the room data prior to being inserted to SMASM space.
+            if (oldStatePointers == null) { return export; }
+            List<string> doorsAsm = export[1].Split('\n').ToList();
+            List<string> newDoorsAsm = new List<string>();
+            int doorCount = 0;
+            foreach (string line in doorsAsm)
+            {
+                if(line.Length < 10) { newDoorsAsm.Add(line); continue; }
+                string doorAsm = (line.Split(':')[2].Split(',')[1]).Trim();
+                //if (doorAsm.Substring(0,1) == "$") { newDoorsAsm.Add(line); continue; }
+                string[] asm = line.Split(':');
+                string[] lastDw = asm[2].Split(',');
+                lastDw[1] = oldStatePointers[oldStatePointers.Count - 1].DoorLabels[doorCount];
+                string replacementLine = asm[0] + ":" + asm[1] + ":" + lastDw[0] + ", " + lastDw[1];
+                newDoorsAsm.Add(replacementLine);
+                doorCount++;
+            }
+            StringBuilder newExportOne = new StringBuilder(500);
+            foreach (string line in newDoorsAsm)
+            {
+                newExportOne.Append(line + '\n');
+            }
+            newExportOne.Remove(newExportOne.Length - 1, 1);
+            export[1] = newExportOne.ToString();
             return export;
         }
 
@@ -2006,9 +2221,11 @@ namespace SM_ASM_GUI
         public struct StatePointersASM
         {
             //this struct exists so we can keep the setup asm and the main ASM pointers next to each other.
+            //door asm checks happen regardless of state but must be a list themselves.
             //pass stateNumber -1 for default state
-            public StatePointersASM(int stateNumber, List<string> roomSection)
+            public StatePointersASM(int stateNumber, List<string> roomSection8F, List<string> roomSection83)
             {
+                DoorLabels = new List<string>();
                 MainIsLabel = false;
                 SetupIsLabel = false;
                 string stateLabel;
@@ -2016,7 +2233,7 @@ namespace SM_ASM_GUI
                 else { stateLabel = "..state" + stateNumber; }
 
                 int labelLine = 0;
-                foreach (string line in roomSection)
+                foreach (string line in roomSection8F)
                 {
                     if(line.Trim() == stateLabel) { labelLine++; break; }
                     labelLine++;
@@ -2026,17 +2243,31 @@ namespace SM_ASM_GUI
                 //1 is the db
                 //2 is the dw
                 //and of the dw's, we can select the pointers.
-                string[] statePointers = roomSection[labelLine].Split(':')[2].Split(',');
+                string[] statePointers = roomSection8F[labelLine].Split(':')[2].Split(',');
                 MainASM = statePointers[6].Trim();
                 SetupASM = statePointers[9].Trim();
 
                 if(MainASM[0] != '$') { MainIsLabel = true; }
                 if(SetupASM[0] != '$') { SetupIsLabel = true; }
+
+                //example door data
+                //.R00A0
+                //..d0
+                //dw $CAF6 : db $00, $06, $46, $02, $04, $00 : dw $8000, $0000
+                //..d1
+                //
+                //
+                foreach (string line in roomSection83)
+                {
+                    if(line.Length < 10) { continue; }
+                    DoorLabels.Add(line.Split(':')[2].Split(',')[1].Trim());
+                }
             }
             public string MainASM { set; get; }
             public string SetupASM { set; get; }
             public bool MainIsLabel { set; get; }
             public bool SetupIsLabel { set; get; }
+            public List<string> DoorLabels { set; get; }
         }
         public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite, roomdata room, out string smasmOut)
         {
@@ -4640,6 +4871,7 @@ namespace SM_ASM_GUI
 
         private string RoomList2string(List<string> smasmSpace, List<SmasmRoom> roomList)
         {
+            //Clear any existing data in the SMASM space provided & populate it with the rooms in the list - the ASM for each SmasmRoom has already been calculated. 
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             //Clearsection keeps the section label and opening bracket.
             smasm8F = ClearSection(smasm8F);
@@ -4800,8 +5032,128 @@ namespace SM_ASM_GUI
             //thisroom = origRoom;
             //AppendStatus("File saved to:\n" + savePath);
         }
+        public void ExportMdbForItemsDoors()
+        {
+            //After the item and door IDs renumber things in the ROM, all the rooms need refreshed in ASM.
+            //Needs to update $8F and $A1 of the original ASM file.
+
+            //THE PLAN
+            //it looks like i can replace this newly-created SMASM file with the existing one and the export functions will work as normal
+            //in which case it will simply update them just like refreshing them by hand?
+
+            BackupSMASMfiles(out bool allFilesPresent);
+            roomdata origRoom = thisroom;
+            string saveFolder = Path.GetDirectoryName(sm.Path);
+            string savePath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            string mdbPath = getMDBpath(out bool mdbexists);
+            if (!mdbexists) { MessageBox.Show("Could not find\n" + mdbPath, "File not Found", MessageBoxButtons.OK); Process.Start("explorer.exe", Path.GetDirectoryName(mdbPath)); return; }
+            List<string> mdb = File.ReadAllLines(mdbPath).ToList();
+            StringBuilder asmFile = new StringBuilder(5000);
+
+            //maaaaaan it needs to be async for this to work. the sep progressbar isn't in the main windows, so that's why it works.
+            //string statusBar =
+            //    "\n-------------------\n" +
+            //    "MDB to ASM Progress:\n";
+            //string endStatus = "\n-------------------\n";
+            char[] progress = new string('.', mdb.Count).ToCharArray();
+
+            //CreateNewASMfile(savePath);
+            //CreateNewSMASMspace(savePath);
+            //int j = 0;
+            //for this new and improved version:
+            //after creating new ASM file, all the threads will draw from it.
+            //Preallocate an array of the MDB count
+            //Export Room will give us a SMASMSPACE with a single room for each in the game.
+            //Stick each of these into the thread number [i] in the preallocated array.
+            //threading part is over with
+            //process the MDB smasm spaces to merge all the rooms into one.
+            //(can use existing ASM merge function??)
+            //MIGHT execute faster than the singlethreaded approach.
+            string[] manySmasms = new string[mdb.Count];
+            List<roomdata> mdbRooms = new List<roomdata>();
+            foreach (string entry in mdb)
+            {
+                uint headerAddr = uint.Parse(entry.Substring(0, 5), NumberStyles.HexNumber);
+                roomdata room = new roomdata(sm, headerAddr);
+                room.DupChek();
+                mdbRooms.Add(room);
+            }
+
+            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
+            //everything is the same up to this point, for each thread.
+
+            //Export_Room(smasmSpace, startline, endline, savePath, false, room, out string roomASM);
+
+            //any arguments need passed via the class constructor?
+            //ok ok so all the threads need to be created from the main program(?) they cannot live in the sub-class.
+            List<ThreadedRoomExporter> A = new List<ThreadedRoomExporter>();
+
+            //reverse this so it starts at the bottom (export in same order that they were originally added)
+            mdbRooms.Reverse();
+            foreach (roomdata room in mdbRooms)
+            {//pretty sure the mdbindex is unused... placeholder 0. This could be used later on to relink the doors?
+                A.Add(new ThreadedRoomExporter(this, room, 0, smasmSpace, savePath, startline, endline));
+            }
+
+            List<ThreadStart> B = new List<ThreadStart>(new ThreadStart[A.Count]);
+            List<Thread> C = new List<Thread>(new Thread[A.Count]);
+            for (int i = 0; i < A.Count; i++)
+            {
+                B[i] = new ThreadStart(A[i].ExportRoom);
+                C[i] = new Thread(B[i]);
+            }
+            foreach (Thread item in C)
+            {
+                item.Start();
+            }
+            //now, everything we want to use the threads for will run in parallel, populating each RoomExporter.Result with the desired string
+            //so, the main thread should just wait for everything to be done.
+            bool allComplete = true;
+            while (allComplete)
+            {
+                bool incompleteFound = false;
+                foreach (ThreadedRoomExporter item in A)
+                {
+                    if (item.Finished == false) { incompleteFound = true; break; }
+                }
+                if (!incompleteFound) { allComplete = false; }
+                Thread.Sleep(500);
+            }
+
+            List<SmasmRoom> allRooms = new List<SmasmRoom>();
+            int z = 0;
+            foreach (ThreadedRoomExporter item in A)
+            {
+                //each .Result goes into manySmasms for manipulation.
+                //it will only have one room in each thread.
+                //later comment: looks like the .result has the entire SMASMspace, with that thread's room replaced. Need to separate "that room" from all the other ones & compile to list.
+                List<SmasmRoom> roomExported = GetRoomsInString(item.Result);
+                allRooms.Add(roomExported[z]);
+                z++;
+            }
+
+            string finalSMASM = RoomList2string(smasmSpace, allRooms);
+
+            string[] splitEscs = { "\n", "\r\n" };
+            List<string> firstFileList = File.ReadAllText(savePath).Split(splitEscs, StringSplitOptions.None).ToList<string>();
+            List<string> firstNonSmasm = firstFileList.GetRange(0, startline);
+            firstNonSmasm.Add(finalSMASM);
+            StringBuilder output = new StringBuilder(5000);
+            foreach (string line in firstNonSmasm)
+            {
+                output.Append(line + '\n');
+            }
+            File.WriteAllText(savePath, output.ToString());
+
+            thisroom = origRoom;
+        }
+
         public void QuickMDBtoASM()
         {
+            //This version of the MDB export doesn't need to retain door data - would be nice but this relies on the user knowing what org $8F the original MDB was using, or else all the doors will break.
+            //a version that exports $8F back to current ASM file would need to be its own thing.
+
             roomdata origRoom = thisroom;
             string saveFolder = Path.GetDirectoryName(sm.Path);
             string savePath = Path.GetDirectoryName(sm.Path) + "\\" + Path.GetFileNameWithoutExtension(sm.Path) + "_rooms.asm";
@@ -4849,8 +5201,10 @@ namespace SM_ASM_GUI
             //ok ok so all the threads need to be created from the main program(?) they cannot live in the sub-class.
             List<ThreadedRoomExporter> A = new List<ThreadedRoomExporter>();
 
+            //reverse this so it starts at the bottom (export in same order that they were originally added)
+            mdbRooms.Reverse();
             foreach (roomdata room in mdbRooms)
-            {//pretty sure the mdbindex is unused... placeholder 0.
+            {//pretty sure the mdbindex is unused... placeholder 0. This could be used later on to relink the doors?
                 A.Add(new ThreadedRoomExporter(this, room, 0, smasmSpace, savePath, startline, endline));
             }
 
@@ -5453,6 +5807,16 @@ namespace SM_ASM_GUI
             }
             return;
         }
+
+        private void loadBlankRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            newRoomSize A = new newRoomSize(this);
+            A.ShowDialog();
+            thisroom = CreateEmptyRoom(A.RoomWidth,A.RoomHeight);
+            LoadRoomToGUI(thisroom);
+            A.Close();
+            return;
+        }
     }
 
     class ThreadedRoomExporter
@@ -5639,7 +6003,6 @@ namespace SM_ASM_GUI
             return LunarRecompress(source, dest, source_size, 0x10000, 4, 0); 
         }
 
-
         [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         public static extern uint LunarVersion();
 
@@ -5776,6 +6139,7 @@ file flags
 
 
         [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+
         public static unsafe extern uint LunarSNEStoPCRGB(uint SNESColor);
 
         [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]

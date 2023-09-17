@@ -128,7 +128,7 @@ namespace SM_ASM_GUI
             if(export == DialogResult.Yes)
             {
                 this.Enabled = false;
-                Source.QuickMDBtoASM();
+                Source.ExportMdbForItemsDoors();
                 this.Enabled = true;
             }
             return;

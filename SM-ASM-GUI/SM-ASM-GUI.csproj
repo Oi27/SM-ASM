@@ -79,6 +79,12 @@
     <Compile Include="credits.Designer.cs">
       <DependentUpon>credits.cs</DependentUpon>
     </Compile>
+    <Compile Include="newRoomSize.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="newRoomSize.Designer.cs">
+      <DependentUpon>newRoomSize.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -162,6 +168,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="credits.resx">
       <DependentUpon>credits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="newRoomSize.resx">
+      <DependentUpon>newRoomSize.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectPicker.resx">
       <DependentUpon>ObjectPicker.cs</DependentUpon>
