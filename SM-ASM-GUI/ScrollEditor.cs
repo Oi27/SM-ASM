@@ -64,14 +64,56 @@ namespace SM_ASM_GUI
             scrollSelector.SelectedIndexChanged += ScrollSelector_SelectedIndexChanged;
             this.Controls.Add(scrollSelector);
             this.PerformAutoScale();
+            bool[] scrolldatafailures = new bool[room.States[state].PLMs.Count];
             for (int k = 0; k < room.States[state].PLMs.Count; k++)
             {
                 PLMdata plm = room.States[state].PLMs[k];
-                if (plm.ScrollData != null) { scrollSelector.Items.Add(asmFCN.WWord(plm.ID) + "-" + asmFCN.WByte((uint)k)); }
+                if (plm.ScrollData != null) 
+                { 
+                    //only add valid scroll plms to the editor box. Give opportunity to make invalid ones into valid ones.
+                    if (BadScrollData(plm, out bool[] specifics))
+                    {
+                        const int tooManyScrolls = 0;
+                        const int indexOutOfBounds = 1;
+
+                        scrolldatafailures[k] = true;
+                        if (specifics[tooManyScrolls])
+                        {
+                            //error message here
+                        }
+                        if (specifics[indexOutOfBounds])
+                        {
+                            //error message here
+                        }
+                        DialogResult A = MessageBox.Show("Reset PLM " + k + "'s scroll data to default values?", "Bad Scroll Data", MessageBoxButtons.YesNo);
+                        if(A == DialogResult.Yes)
+                        {
+                            plm.ScrollData = new byte[] { 0, 0, 0x80 };
+                            room.States[state].PLMs[k] = plm;
+                            scrolldatafailures[k] = false;
+                        }
+                    }
+                    else
+                    {
+                        scrollSelector.Items.Add(asmFCN.WWord(plm.ID) + "-" + asmFCN.WByte((uint)k));
+                    }
+                }
             }
+
+            bool badScrollDataPresent = false;
+            foreach (bool scrolldata in scrolldatafailures)
+            {
+                badScrollDataPresent |= scrolldata;
+            }
+
+            if (badScrollDataPresent)
+            {
+                MessageBox.Show("PLMs with bad scroll data will not be shown in list.", "Bad Scroll Data", MessageBoxButtons.OK);
+            }
+
             if(scrollSelector.Items.Count == 0)
             {
-                MessageBox.Show("This room does not contain any scroll PLMs!\nAdd at least one and try again.", "No Scroll PLMs!", MessageBoxButtons.OK);
+                MessageBox.Show("This room does not contain any valid scroll PLMs!\nAdd at least one and try again.", "No Scroll PLMs!", MessageBoxButtons.OK);
                 this.Close();
                 return;
             }
@@ -359,10 +401,31 @@ namespace SM_ASM_GUI
             }
         }
 
-        private void ScrollEditor_Load(object sender, EventArgs e)
-        {
 
+        private bool BadScrollData(PLMdata scrollPlm, out bool[] specifics)
+        {
+            //if plm scrolldata size is bigger than room scroll array throw an error & ask to reset the PLM.
+            //do the same if any of the scroll change screens are outside the bounds of the room.
+            int plmChangeScreenCount = scrollPlm.ScrollData.Length - 1;
+            uint roomSize = Room.Width * Room.Height;
+            uint largestNumberInScrollChanges = scrollPlm.ScrollData.Max();
+
+            bool tooManyScreens = plmChangeScreenCount > roomSize;
+            bool indexOutOfBounds = largestNumberInScrollChanges > roomSize;
+            if (tooManyScreens)
+            {
+                //error here
+            }
+            if (indexOutOfBounds)
+            {
+                //error here
+            }
+            //fixing the scrolldata in the PLM can be handled outside this routine
+            //and so should the error messages...
+            specifics = new bool[] { tooManyScreens, indexOutOfBounds };
+            return tooManyScreens || indexOutOfBounds;
         }
+
         #region Windows Form Designer generated code
 
         /// <summary>

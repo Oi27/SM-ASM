@@ -12,7 +12,14 @@ namespace SM_ASM_GUI
 {
     public partial class StateConfig : Form
     {
+        //saves the pm pointers when focus leaves the groupbox containing the pm boxes.
+        //state type is saved immediately on selecting it in the dropdown.
+        //state argument is saved when the entry box is left.
+
+
+
         roomdata thisroom;
+        roomdata origroom;
         public roomdata ModdedRoom { get; set; }
 
         public StateConfig(roomdata troom, int statenumber)
@@ -21,12 +28,25 @@ namespace SM_ASM_GUI
             //Assigns thisroom to a local variable so that it can be edited outside this setup function.
             InitializeComponent();
             InitializeStateConfigurator(troom, statenumber);
+            origroom = troom;
         }
 
         private void InitializeStateConfigurator(roomdata troom, int statenumber)
         {
+            //these variables are not laid out well >_<;
+            //ModdedRoom is simply used as a return property. It is written to here to handle if the user X's out of the state editor. The only other time is when save is clicked.
+            //thisroom is used for everything else this editor writes to, before being assigned to ModdedRoom when Save is clicked.
             thisroom = troom;
+            ModdedRoom = thisroom;
+
             StateSelect.Items.Clear();
+            if(thisroom.States[thisroom.StateCount].Type != (uint)StateType.Default)
+            {
+                MessageBox.Show("Default state has been detected using a non-default state type. This will be corrected to E5E6.", "Invalid Default State", MessageBoxButtons.OK);
+                state A = thisroom.States[thisroom.StateCount];
+                A.Type = (uint)StateType.Default;
+                thisroom.States[thisroom.StateCount] = A;
+            }
             if (thisroom.StateCount != 0)
             {
                 for (int i = 0; i < thisroom.StateCount; i++)
@@ -37,7 +57,8 @@ namespace SM_ASM_GUI
             StateSelect.Items.Add("Default");
             StateSelect.SelectedIndex = statenumber;
 
-            //Make the ShareBoxes match the statebox.
+            //Make the ShareBoxes match the entries in statebox.
+            //this is just for initialization & gets updated to correct values later on.
             foreach (ComboBox sharebox in GroupSharing.Controls)
             {
                 sharebox.Items.Clear();
@@ -67,6 +88,7 @@ namespace SM_ASM_GUI
             StateType type = (StateType)currentstate.Type;
 
             bool isDefaultState;
+
             if (statenumber == thisroom.StateCount) 
             { 
                 isDefaultState = true;
@@ -77,7 +99,8 @@ namespace SM_ASM_GUI
             {
                 isDefaultState = false;
                 BoxStateType.Enabled = true;
-                BoxStateType.SelectedItem = type;
+                BoxStateType.SelectedItem = type.ToString();
+                BoxStateType.Text = type.ToString();
             }
             StateArgChanges(type, currentstate.StateArg);
             //if the PM string ends in a number, then it's a state number
@@ -417,6 +440,13 @@ namespace SM_ASM_GUI
             //Uniques bool array is:
             //[L, F, S, P, E, G]
             state newstate = thisroom.States[thisroom.StateCount];
+            //so, because state is a stuct and all the lists inside it are classes, each list needs to be explicitly copied to new list instances in the new state struct.
+            //newstate.PLMs = new List<PLMdata>(newstate.PLMs);
+            //newstate.Enemies = new List<EnemyData>(newstate.Enemies);
+            //newstate.EnemiesAllowed = new List<EnemyGFX>(newstate.EnemiesAllowed);
+            //newstate.FX = new List<FXdata>(newstate.FX);
+            //List<uint> copy = newstate.Scrolls.ToList();
+            //newstate.Scrolls = copy.ToArray();
             if (A.Uniques[0]) { newstate.pmLevelData = "state" + thisroom.StateCount; }
             if (A.Uniques[1]) { newstate.pmFX = "state" + thisroom.StateCount; }
             if (A.Uniques[2]) { newstate.pmScrolls = "state" + thisroom.StateCount; }
@@ -492,7 +522,11 @@ namespace SM_ASM_GUI
 
         private void StateConfig_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ModdedRoom = thisroom;
+            if(e.CloseReason == CloseReason.UserClosing)
+            {
+                MessageBox.Show("Changes will be discarded.", "User Exit", MessageBoxButtons.OK);
+                ModdedRoom = origroom;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -501,6 +535,12 @@ namespace SM_ASM_GUI
             A.ShowDialog();
             thisroom = A.RtnRoom;
             InitializeStateConfigurator(thisroom, thisroom.StateCount);
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            ModdedRoom = thisroom;
+            this.Hide();
         }
     }
 }

@@ -1378,6 +1378,32 @@ namespace SM_ASM_GUI
         private void StateBox_SelectedIndexChanged(object sender, EventArgs e)
         //populate all the state data boxes.
         {
+            UpdateDataBoxContents();
+            UpdateDataBoxEnables();
+        }
+
+        private void UpdateDataBoxEnables()
+        {
+            //make the state data boxes enabledness match the PM pointers: only let you modify data sets if they're unique
+            //reminder the pm properties are "state0", "state1", "default", etc. as strings.
+            //make sure default state always returns true
+            bool isDefaultState = false;
+            if(StateBox.SelectedIndex == thisroom.StateCount)
+            {
+                isDefaultState = true;
+            }
+            state state = thisroom.States[StateBox.SelectedIndex];
+            string pmMatch = "state" + StateBox.SelectedIndex;
+            GFXbox.Enabled                = isDefaultState | (state.pmEnemyGFX == pmMatch);
+            EnemyBox.Enabled              = isDefaultState | (state.pmEnemySet == pmMatch);
+            PlmBox.Enabled                = isDefaultState | (state.pmPLMset == pmMatch);
+            FXbox.Enabled                 = isDefaultState | (state.pmFX == pmMatch);
+            LevelPicMenu.Enabled = isDefaultState | (state.pmScrolls == pmMatch);
+            return;
+        }
+
+        private void UpdateDataBoxContents()
+        {
             EnemyBox.Items.Clear();
             for (int i = 0; i < thisroom.States[StateBox.SelectedIndex].Enemies.Count(); i++)
             {
@@ -1393,7 +1419,7 @@ namespace SM_ASM_GUI
             FXbox.Items.Clear();
             for (int i = 0; i < thisroom.States[StateBox.SelectedIndex].FX.Count(); i++)
             {
-                if(thisroom.States[StateBox.SelectedIndex].FX[i].DoorSelect == 0xFFFF)
+                if (thisroom.States[StateBox.SelectedIndex].FX[i].DoorSelect == 0xFFFF)
                 {
                     FXbox.Items.Add("No Room FX");
                 }
@@ -1417,7 +1443,6 @@ namespace SM_ASM_GUI
 
             TilesetBox.Clear();
             TilesetBox.Text = asmFCN.WByte(thisroom.States[StateBox.SelectedIndex].TileSet);
-            
         }
 
         //private void HeaderBox_Validating(object sender, CancelEventArgs e)
@@ -1831,7 +1856,7 @@ namespace SM_ASM_GUI
                         PlayInd = 5,
                         SongSet = 0,
                         StateArg = 0,
-                        Type = 0xE612,
+                        Type = 0xE5E6,
                         pBackground = 0,
                         pEnemyGFX = 0xFFFF,
                         pEnemySet = 0xFFFF,
@@ -3435,6 +3460,7 @@ namespace SM_ASM_GUI
         {
             ListBox B = (ListBox)DataListMenu.SourceControl;
             ObjectPicker A = new ObjectPicker(this,B);
+            state currentState = thisroom.States[StateBox.SelectedIndex];
             uint[] n;
 
             if (B.Name.Substring(0, 1) == "E" && B.Items.Count < MaxEnemies)
@@ -3443,7 +3469,7 @@ namespace SM_ASM_GUI
                 n = A.Results();
                 A.Close();
                 if(n == null) { return; }
-                thisroom.States[StateBox.SelectedIndex].Enemies.Add(CreateEnemy(sm, n[0], n[1], n[2]));
+                currentState.Enemies.Add(CreateEnemy(sm, n[0], n[1], n[2]));
             }
             else if (B.Name.Substring(0, 1) == "G" && B.Items.Count < MaxGFX)
             {
@@ -3451,7 +3477,7 @@ namespace SM_ASM_GUI
                 n = A.Results();
                 A.Close();
                 if (n == null) { return; }
-                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Add(CreateGFX(sm, n[0], n[1]));
+                currentState.EnemiesAllowed.Add(CreateGFX(sm, n[0], n[1]));
             }
             else if (B.Name.Substring(0, 1) == "P" && B.Items.Count < MaxPLMs)
             {
@@ -3461,17 +3487,21 @@ namespace SM_ASM_GUI
                 if (n == null) { return; }
                 PLMdata C = CreatePLM(sm, n[0], n[1], n[2]);
                 C.PopulateScrolls();
-                thisroom.States[StateBox.SelectedIndex].PLMs.Add(C);
+                currentState.PLMs.Add(C);
+                //PLMdata[] ray = currentState.PLMs.ToArray();
+                //Array.Resize(ref ray, ray.Length + 1);
+                //ray[ray.Length-1] = C;
+                //currentState.PLMs = ray.ToList();
             }
             //doors and FX don't have hardcoded maximums but they should probably be limited anyway?
             else if (B.Name.Substring(0, 1) == "F" && B.Items.Count < MaxPLMs)
             {
                 //order matters in this list:
                 A.Close();
-                FXdata terminator = thisroom.States[StateBox.SelectedIndex].FX[thisroom.States[StateBox.SelectedIndex].FX.Count-1];
-                thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(thisroom.States[StateBox.SelectedIndex].FX.Count-1);
-                thisroom.States[StateBox.SelectedIndex].FX.Add(CreateFX(thisroom.Doors[0].Destination));
-                thisroom.States[StateBox.SelectedIndex].FX.Add(terminator);
+                FXdata terminator = currentState.FX[currentState.FX.Count-1];
+                currentState.FX.RemoveAt(currentState.FX.Count-1);
+                currentState.FX.Add(CreateFX(thisroom.Doors[0].Destination));
+                currentState.FX.Add(terminator);
             }
             else if (B.Name.Substring(0, 1) == "D" && B.Items.Count < MaxPLMs)
             {
@@ -3479,8 +3509,7 @@ namespace SM_ASM_GUI
                 thisroom.Doors.Add(CreateDoor());
             }
 
-
-
+            thisroom.States[StateBox.SelectedIndex] = currentState;
             StateBox_SelectedIndexChanged(sender, e);
 
         }
@@ -3579,8 +3608,8 @@ namespace SM_ASM_GUI
         {
             StateConfig A = new StateConfig(thisroom, StateBox.SelectedIndex);
             A.ShowDialog();
-
             thisroom = A.ModdedRoom;
+            A.Close();
 
             StateBox.Items.Clear();
             for (int i = 0; i < thisroom.StateCount; i++)

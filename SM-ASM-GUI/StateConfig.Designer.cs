@@ -29,6 +29,7 @@ namespace SM_ASM_GUI
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StateConfig));
             this.StateSelect = new System.Windows.Forms.ComboBox();
             this.LevelShare = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -70,6 +71,7 @@ namespace SM_ASM_GUI
             this.ButtonHelp = new System.Windows.Forms.Button();
             this.ButtonKillState = new System.Windows.Forms.Button();
             this.ButtonAddState = new System.Windows.Forms.Button();
+            this.SaveButton = new System.Windows.Forms.Button();
             this.GroupSharing.SuspendLayout();
             this.GroupManuals.SuspendLayout();
             this.SuspendLayout();
@@ -470,11 +472,23 @@ namespace SM_ASM_GUI
             this.ButtonAddState.UseVisualStyleBackColor = true;
             this.ButtonAddState.Click += new System.EventHandler(this.ButtonAddState_Click);
             // 
+            // SaveButton
+            // 
+            this.SaveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SaveButton.Location = new System.Drawing.Point(12, 145);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(128, 45);
+            this.SaveButton.TabIndex = 33;
+            this.SaveButton.Text = "Save Changes";
+            this.SaveButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            // 
             // StateConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(395, 498);
+            this.ClientSize = new System.Drawing.Size(395, 399);
+            this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.ButtonHelp);
             this.Controls.Add(this.GroupManuals);
@@ -498,6 +512,7 @@ namespace SM_ASM_GUI
             this.Controls.Add(this.GroupSharing);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "StateConfig";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "State Configurator";
@@ -554,5 +569,6 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.TextBox BoxTileset;
         private System.Windows.Forms.Button ButtonHelp;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SaveButton;
     }
 }

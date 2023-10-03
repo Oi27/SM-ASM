@@ -78,7 +78,6 @@ namespace SM_ASM_GUI
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ScrollEditor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ScrollEditor_FormClosing);
-            this.Load += new System.EventHandler(this.ScrollEditor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PLMlayer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScrollLayer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LevelPicture)).EndInit();
