@@ -439,7 +439,7 @@ namespace SM_ASM_GUI
             //They will be placed at the top of the list.
             //Uniques bool array is:
             //[L, F, S, P, E, G]
-            state newstate = thisroom.States[thisroom.StateCount];
+            state newstate = new state(thisroom.States[thisroom.StateCount]);
             //so, because state is a stuct and all the lists inside it are classes, each list needs to be explicitly copied to new list instances in the new state struct.
             //newstate.PLMs = new List<PLMdata>(newstate.PLMs);
             //newstate.Enemies = new List<EnemyData>(newstate.Enemies);

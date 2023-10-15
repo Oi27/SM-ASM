@@ -10,7 +10,7 @@ namespace SM_ASM_GUI
     
     class asmFCN
     {
-        const string d = ", $";
+        const string commaCash = ", $";
         public static string WByte(uint data)
         {
             return string.Format("{0:X2}", data);
@@ -47,14 +47,14 @@ namespace SM_ASM_GUI
         {
             string header1 =
                 "$" +
-                WByte(r.RoomIndex) + d +
-                WByte(r.AreaIndex) + d +
-                WByte(r.MapX) + d +
-                WByte(r.MapY) + d +
-                WByte(r.Width) + d +
-                WByte(r.Height) + d +
-                WByte(r.UpScroller) + d +
-                WByte(r.DnScroller) + d +
+                WByte(r.RoomIndex) + commaCash +
+                WByte(r.AreaIndex) + commaCash +
+                WByte(r.MapX) + commaCash +
+                WByte(r.MapY) + commaCash +
+                WByte(r.Width) + commaCash +
+                WByte(r.Height) + commaCash +
+                WByte(r.UpScroller) + commaCash +
+                WByte(r.DnScroller) + commaCash +
                 WByte(r.SpecialGFX) + 
                 ""
                 ;
@@ -79,7 +79,7 @@ namespace SM_ASM_GUI
                     }
                     else if(r.States[i].Type == 0xE5EB)
                     {
-                        statetext += d + WWord(r.States[i].StateArg) + "..state" + i;
+                        statetext += commaCash + WWord(r.States[i].StateArg) + "..state" + i;
                     }
                     else
                     {
@@ -97,18 +97,18 @@ namespace SM_ASM_GUI
             {
                 statepointers =
                 "dl LEVELS_" + r.LabelM + "_default" +
-                " : db $" + WByte(r.States[r.StateCount].TileSet) + d +
-                WByte(r.States[r.StateCount].SongSet) + d +
+                " : db $" + WByte(r.States[r.StateCount].TileSet) + commaCash +
+                WByte(r.States[r.StateCount].SongSet) + commaCash +
                 WByte(r.States[r.StateCount].PlayInd) +
                 " : dw ROOMFX_" + r.LabelM + "_default, " +
                 "ENEMYSET_" + r.LabelM + "_default, " +
                 "ENEMYGFX_" + r.LabelM + "_default, " +
-                "$" + WWord((r.States[r.StateCount].BGxScroll * 0x100) + r.States[r.StateCount].BGyScroll) + d +
-                WWord(r.States[r.StateCount].pScrolls) + d +
-                WWord(r.States[r.StateCount].pUnused) + d +
+                "$" + WWord((r.States[r.StateCount].BGxScroll * 0x100) + r.States[r.StateCount].BGyScroll) + commaCash +
+                WWord(r.States[r.StateCount].pScrolls) + commaCash +
+                WWord(r.States[r.StateCount].pUnused) + commaCash +
                 WWord(r.States[r.StateCount].pMainASM) + ", " +
-                "..plms_default" + d +
-                WWord(r.States[r.StateCount].pBackground) + d +
+                "..plms_default" + commaCash +
+                WWord(r.States[r.StateCount].pBackground) + commaCash +
                 WWord(r.States[r.StateCount].pSetupASM) +
                 "\n"
                 ;
@@ -117,18 +117,18 @@ namespace SM_ASM_GUI
             {
                 statepointers =
                 "dl LEVELS_" + r.LabelM + "_default" +
-                " : db $" + WByte(r.States[r.StateCount].TileSet) + d +
-                WByte(r.States[r.StateCount].SongSet) + d +
+                " : db $" + WByte(r.States[r.StateCount].TileSet) + commaCash +
+                WByte(r.States[r.StateCount].SongSet) + commaCash +
                 WByte(r.States[r.StateCount].PlayInd) +
                 " : dw ROOMFX_" + r.LabelM + "_default, " +
                 "ENEMYSET_" + r.LabelM + "_default, " +
                 "ENEMYGFX_" + r.LabelM + "_default, " +
                 "$" + WWord((r.States[r.StateCount].BGxScroll * 0x100) + r.States[r.StateCount].BGyScroll) + ", " +
-                "..scrolls_default" + d +
-                WWord(r.States[r.StateCount].pUnused) + d +
+                "..scrolls_default" + commaCash +
+                WWord(r.States[r.StateCount].pUnused) + commaCash +
                 WWord(r.States[r.StateCount].pMainASM) + ", " +
-                "..plms_default" + d +
-                WWord(r.States[r.StateCount].pBackground) + d +
+                "..plms_default" + commaCash +
+                WWord(r.States[r.StateCount].pBackground) + commaCash +
                 WWord(r.States[r.StateCount].pSetupASM) +
                 "\n"
                 ;
@@ -153,18 +153,18 @@ namespace SM_ASM_GUI
                         statepointers +=
                              "..state" + i + "\n" +
                              "dl LEVELS_" + r.LabelM + "_" + r.States[i].pmLevelData +
-                             " : db $" + WByte(r.States[i].TileSet) + d +
-                             WByte(r.States[i].SongSet) + d +
+                             " : db $" + WByte(r.States[i].TileSet) + commaCash +
+                             WByte(r.States[i].SongSet) + commaCash +
                              WByte(r.States[i].PlayInd) +
                              " : dw ROOMFX_" + r.LabelM + "_" + r.States[i].pmFX + ", " +
                              "ENEMYSET_" + r.LabelM + "_" + r.States[i].pmEnemySet + ", " +
                              "ENEMYGFX_" + r.LabelM + "_" + r.States[i].pmEnemyGFX + ", " +
-                             "$" + WWord((r.States[i].BGxScroll * 0x100) + r.States[i].BGyScroll) + d +
-                             WWord(r.States[i].pScrolls) + d +
-                             WWord(r.States[i].pUnused) + d +
+                             "$" + WWord((r.States[i].BGxScroll * 0x100) + r.States[i].BGyScroll) + commaCash +
+                             WWord(r.States[i].pScrolls) + commaCash +
+                             WWord(r.States[i].pUnused) + commaCash +
                              WWord(r.States[i].pMainASM) + ", " +
-                             "..plms" + "_" + r.States[i].pmPLMset + d +
-                             WWord(r.States[i].pBackground) + d +
+                             "..plms" + "_" + r.States[i].pmPLMset + commaCash +
+                             WWord(r.States[i].pBackground) + commaCash +
                              WWord(r.States[i].pSetupASM) +
                              "\n"
                              ;
@@ -174,18 +174,18 @@ namespace SM_ASM_GUI
                         statepointers +=
                             "..state" + i + "\n" +
                             "dl LEVELS_" + r.LabelM + "_" + r.States[i].pmLevelData +
-                            " : db $" + WByte(r.States[i].TileSet) + d +
-                            WByte(r.States[i].SongSet) + d +
+                            " : db $" + WByte(r.States[i].TileSet) + commaCash +
+                            WByte(r.States[i].SongSet) + commaCash +
                             WByte(r.States[i].PlayInd) +
                             " : dw ROOMFX_" + r.LabelM + "_" + r.States[i].pmFX + ", " +
                             "ENEMYSET_" + r.LabelM + "_" + r.States[i].pmEnemySet + ", " +
                             "ENEMYGFX_" + r.LabelM + "_" + r.States[i].pmEnemyGFX + ", " +
                             "$" + WWord((r.States[i].BGxScroll * 0x100) + r.States[i].BGyScroll) + ", " +
-                            "..scrolls" + "_" + r.States[i].pmScrolls + d +
-                            WWord(r.States[i].pUnused) + d +
+                            "..scrolls" + "_" + r.States[i].pmScrolls + commaCash +
+                            WWord(r.States[i].pUnused) + commaCash +
                             WWord(r.States[i].pMainASM) + ", " +
-                            "..plms" + "_" + r.States[i].pmPLMset + d +
-                            WWord(r.States[i].pBackground) + d +
+                            "..plms" + "_" + r.States[i].pmPLMset + commaCash +
+                            WWord(r.States[i].pBackground) + commaCash +
                             WWord(r.States[i].pSetupASM) +
                             "\n"
                             ;
@@ -243,7 +243,7 @@ namespace SM_ASM_GUI
                 {
                     plmdata += "dw $" +
                     WWord(s.PLMs[i].ID) + " : db $" +
-                    WByte(s.PLMs[i].PosX) + d +
+                    WByte(s.PLMs[i].PosX) + commaCash +
                     WByte(s.PLMs[i].PosY) + " : dw $" +
                     WWord(s.PLMs[i].Variable) +
                     "\n"
@@ -253,7 +253,7 @@ namespace SM_ASM_GUI
                 {
                     plmdata += "dw $" +
                     WWord(s.PLMs[i].ID) + " : db $" +
-                    WByte(s.PLMs[i].PosX) + d +
+                    WByte(s.PLMs[i].PosX) + commaCash +
                     WByte(s.PLMs[i].PosY) + " : dw ....scrolldata_scrollPLM" + scrollPLMcount + 
                     "\n"
                     ;
@@ -303,7 +303,7 @@ namespace SM_ASM_GUI
                 string scrolldw = "db $";
                 for (int j = 0; j < plm.ScrollData.Length; j++)
                 {
-                    scrolldw += WByte(plm.ScrollData[j]) + d;
+                    scrolldw += WByte(plm.ScrollData[j]) + commaCash;
                 }
                 scrolldw = scrolldw.Substring(0, scrolldw.Length-3);
                 scrolldw += "\n";
@@ -319,10 +319,10 @@ namespace SM_ASM_GUI
             string scrolldata = "db $";
             for (int i = 0; i < s.Scrolls.Length; i++)
             {
-                scrolldata += WByte(s.Scrolls[i]) + d;
+                scrolldata += WByte(s.Scrolls[i]) + commaCash;
             }
             //chop off the last d that is added extraneously.
-            scrolldata = scrolldata.Substring(0, scrolldata.Length - d.Length);
+            scrolldata = scrolldata.Substring(0, scrolldata.Length - commaCash.Length);
             scrolldata += "\n";
             return scrolldata;
         }
@@ -347,13 +347,13 @@ namespace SM_ASM_GUI
                 doordata += "..d" + i + "\n" +
                     "dw $" +
                     WWord(r.Doors[i].Destination) + " : db $" +
-                    WByte(r.Doors[i].Bitflag) + d +
-                    WByte(r.Doors[i].Direction) + d + 
-                    WByte(r.Doors[i].CapX) + d +
-                    WByte(r.Doors[i].CapY) + d +
-                    WByte(r.Doors[i].ScrnX) + d +
+                    WByte(r.Doors[i].Bitflag) + commaCash +
+                    WByte(r.Doors[i].Direction) + commaCash + 
+                    WByte(r.Doors[i].CapX) + commaCash +
+                    WByte(r.Doors[i].CapY) + commaCash +
+                    WByte(r.Doors[i].ScrnX) + commaCash +
                     WByte(r.Doors[i].ScrnY) + " : dw $" +
-                    WWord(r.Doors[i].SpawnDist) + d + 
+                    WWord(r.Doors[i].SpawnDist) + commaCash + 
                     WWord(r.Doors[i].DoorASM) + 
                     "\n"
                     ;
@@ -408,17 +408,17 @@ namespace SM_ASM_GUI
                     break;
                 }
                 fxdata += "dw $" +
-                    WWord(s.FX[i].DoorSelect) + d +
-                    WWord(s.FX[i].LiqStart) + d +
-                    WWord(s.FX[i].LiqEnd) + d +
+                    WWord(s.FX[i].DoorSelect) + commaCash +
+                    WWord(s.FX[i].LiqStart) + commaCash +
+                    WWord(s.FX[i].LiqEnd) + commaCash +
                     WWord(s.FX[i].LiqSpeed) + " : db $" +
-                    WByte(s.FX[i].LiqDelay) + d +
-                    WByte(s.FX[i].Type) + d +
-                    WByte(s.FX[i].BitA) + d +
-                    WByte(s.FX[i].BitB) + d +
-                    WByte(s.FX[i].BitC) + d +
-                    WByte(s.FX[i].PalFXflags) + d +
-                    WByte(s.FX[i].TileAnimFlags) + d +
+                    WByte(s.FX[i].LiqDelay) + commaCash +
+                    WByte(s.FX[i].Type) + commaCash +
+                    WByte(s.FX[i].BitA) + commaCash +
+                    WByte(s.FX[i].BitB) + commaCash +
+                    WByte(s.FX[i].BitC) + commaCash +
+                    WByte(s.FX[i].PalFXflags) + commaCash +
+                    WByte(s.FX[i].TileAnimFlags) + commaCash +
                     WByte(s.FX[i].PalBlend) +
                     "\n"
                     ;
@@ -461,13 +461,13 @@ namespace SM_ASM_GUI
             for (int i = 0; i < s.Enemies.Count; i++)
             {
                 enemydata += "dw $" +
-                    WWord(s.Enemies[i].ID) + d +
-                    WWord(s.Enemies[i].PosX) + d +
-                    WWord(s.Enemies[i].PosY) + d +
-                    WWord(s.Enemies[i].TileMap) + d +
-                    WWord(s.Enemies[i].Special) + d +
-                    WWord(s.Enemies[i].SpecGFX) + d +
-                    WWord(s.Enemies[i].Speed1) + d +
+                    WWord(s.Enemies[i].ID) + commaCash +
+                    WWord(s.Enemies[i].PosX) + commaCash +
+                    WWord(s.Enemies[i].PosY) + commaCash +
+                    WWord(s.Enemies[i].TileMap) + commaCash +
+                    WWord(s.Enemies[i].Special) + commaCash +
+                    WWord(s.Enemies[i].SpecGFX) + commaCash +
+                    WWord(s.Enemies[i].Speed1) + commaCash +
                     WWord(s.Enemies[i].Speed2) +
                     "\n"
                     ;
@@ -511,7 +511,7 @@ namespace SM_ASM_GUI
             for (int i = 0; i < s.EnemiesAllowed.Count; i++)
             {
                 enemygfx += "dw $" +
-                    WWord(s.EnemiesAllowed[i].ID) + d +
+                    WWord(s.EnemiesAllowed[i].ID) + commaCash +
                     WWord(s.EnemiesAllowed[i].Palette) +
                     "\n"
                     ;
@@ -558,9 +558,9 @@ namespace SM_ASM_GUI
             string leveldata = "db $";
             for (int i = 0; i < s.LevelDataSizeC; i++)
             {
-                leveldata += WByte(s.LevelDataC[i]) + d;
+                leveldata += WByte(s.LevelDataC[i]) + commaCash;
             }
-            leveldata = leveldata.Substring(0, leveldata.Length - d.Length);
+            leveldata = leveldata.Substring(0, leveldata.Length - commaCash.Length);
             leveldata += "\n" +
             "fillbyte $FF" + "\n" +
             "fill " + levelbuffer + "\n" +

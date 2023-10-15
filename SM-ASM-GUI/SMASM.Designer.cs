@@ -139,8 +139,8 @@ namespace SM_ASM_GUI
             this.debugToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(908, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(681, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -155,55 +155,55 @@ namespace SM_ASM_GUI
             this.specialDoorIDToolStripMenuItem,
             this.specialItemIDToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.fileToolStripMenuItem.Text = "ASM";
             // 
             // loadBlankRoomToolStripMenuItem
             // 
             this.loadBlankRoomToolStripMenuItem.Name = "loadBlankRoomToolStripMenuItem";
-            this.loadBlankRoomToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.loadBlankRoomToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.loadBlankRoomToolStripMenuItem.Text = "Load Blank Room";
             this.loadBlankRoomToolStripMenuItem.Click += new System.EventHandler(this.loadBlankRoomToolStripMenuItem_Click);
             // 
             // currentRoomToNewASMToolStripMenuItem
             // 
             this.currentRoomToNewASMToolStripMenuItem.Name = "currentRoomToNewASMToolStripMenuItem";
-            this.currentRoomToNewASMToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.currentRoomToNewASMToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.currentRoomToNewASMToolStripMenuItem.Text = "Current Room to New ASM";
             this.currentRoomToNewASMToolStripMenuItem.Click += new System.EventHandler(this.currentRoomToNewASMToolStripMenuItem_Click);
             // 
             // deleteCurrentRoomFromASMToolStripMenuItem
             // 
             this.deleteCurrentRoomFromASMToolStripMenuItem.Name = "deleteCurrentRoomFromASMToolStripMenuItem";
-            this.deleteCurrentRoomFromASMToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.deleteCurrentRoomFromASMToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.deleteCurrentRoomFromASMToolStripMenuItem.Text = "Delete Current Room from ASM";
             this.deleteCurrentRoomFromASMToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentRoomFromASMToolStripMenuItem_Click);
             // 
             // mergeRoomFilesToolStripMenuItem
             // 
             this.mergeRoomFilesToolStripMenuItem.Name = "mergeRoomFilesToolStripMenuItem";
-            this.mergeRoomFilesToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.mergeRoomFilesToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.mergeRoomFilesToolStripMenuItem.Text = "Merge Room Files";
             this.mergeRoomFilesToolStripMenuItem.Click += new System.EventHandler(this.mergeRoomFilesToolStripMenuItem_Click);
             // 
             // mDBListToASMToolStripMenuItem
             // 
             this.mDBListToASMToolStripMenuItem.Name = "mDBListToASMToolStripMenuItem";
-            this.mDBListToASMToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.mDBListToASMToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.mDBListToASMToolStripMenuItem.Text = "MDB List to ASM";
             this.mDBListToASMToolStripMenuItem.Click += new System.EventHandler(this.mDBListToASMToolStripMenuItem_Click);
             // 
             // specialDoorIDToolStripMenuItem
             // 
             this.specialDoorIDToolStripMenuItem.Name = "specialDoorIDToolStripMenuItem";
-            this.specialDoorIDToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.specialDoorIDToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.specialDoorIDToolStripMenuItem.Text = "Special Door ID";
             this.specialDoorIDToolStripMenuItem.Click += new System.EventHandler(this.specialDoorIDToolStripMenuItem_Click);
             // 
             // specialItemIDToolStripMenuItem
             // 
             this.specialItemIDToolStripMenuItem.Name = "specialItemIDToolStripMenuItem";
-            this.specialItemIDToolStripMenuItem.Size = new System.Drawing.Size(303, 26);
+            this.specialItemIDToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.specialItemIDToolStripMenuItem.Text = "Special Item ID";
             this.specialItemIDToolStripMenuItem.Click += new System.EventHandler(this.specialItemIDToolStripMenuItem_Click);
             // 
@@ -212,13 +212,13 @@ namespace SM_ASM_GUI
             this.configToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.filePathsToolStripMenuItem});
             this.configToolStripMenuItem.Name = "configToolStripMenuItem";
-            this.configToolStripMenuItem.Size = new System.Drawing.Size(67, 24);
+            this.configToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
             this.configToolStripMenuItem.Text = "Config";
             // 
             // filePathsToolStripMenuItem
             // 
             this.filePathsToolStripMenuItem.Name = "filePathsToolStripMenuItem";
-            this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
+            this.filePathsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.filePathsToolStripMenuItem.Text = "File Paths";
             this.filePathsToolStripMenuItem.Click += new System.EventHandler(this.FilePaths_Open);
             // 
@@ -228,20 +228,20 @@ namespace SM_ASM_GUI
             this.tilesetFoldersToASMToolStripMenuItem,
             this.rOMToTilesetFoldersToolStripMenuItem});
             this.tilesetsToolStripMenuItem.Name = "tilesetsToolStripMenuItem";
-            this.tilesetsToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
+            this.tilesetsToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.tilesetsToolStripMenuItem.Text = "Tilesets";
             // 
             // tilesetFoldersToASMToolStripMenuItem
             // 
             this.tilesetFoldersToASMToolStripMenuItem.Name = "tilesetFoldersToASMToolStripMenuItem";
-            this.tilesetFoldersToASMToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+            this.tilesetFoldersToASMToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.tilesetFoldersToASMToolStripMenuItem.Text = "Tileset Folders to ASM";
             this.tilesetFoldersToASMToolStripMenuItem.Click += new System.EventHandler(this.ImportTilesets_Click);
             // 
             // rOMToTilesetFoldersToolStripMenuItem
             // 
             this.rOMToTilesetFoldersToolStripMenuItem.Name = "rOMToTilesetFoldersToolStripMenuItem";
-            this.rOMToTilesetFoldersToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+            this.rOMToTilesetFoldersToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.rOMToTilesetFoldersToolStripMenuItem.Text = "ROM to Tileset Folders";
             this.rOMToTilesetFoldersToolStripMenuItem.Click += new System.EventHandler(this.ExportTilesets_Click);
             // 
@@ -250,7 +250,7 @@ namespace SM_ASM_GUI
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.slimGUIToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // slimGUIToolStripMenuItem
@@ -258,7 +258,7 @@ namespace SM_ASM_GUI
             this.slimGUIToolStripMenuItem.CheckOnClick = true;
             this.slimGUIToolStripMenuItem.Enabled = false;
             this.slimGUIToolStripMenuItem.Name = "slimGUIToolStripMenuItem";
-            this.slimGUIToolStripMenuItem.Size = new System.Drawing.Size(149, 26);
+            this.slimGUIToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.slimGUIToolStripMenuItem.Text = "Slim GUI";
             // 
             // editToolStripMenuItem
@@ -267,20 +267,20 @@ namespace SM_ASM_GUI
             this.thisRoomToolStripMenuItem,
             this.areasFromMDBToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(83, 24);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.editToolStripMenuItem.Text = "Mapping";
             // 
             // thisRoomToolStripMenuItem
             // 
             this.thisRoomToolStripMenuItem.Name = "thisRoomToolStripMenuItem";
-            this.thisRoomToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.thisRoomToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.thisRoomToolStripMenuItem.Text = "This Room";
             this.thisRoomToolStripMenuItem.Click += new System.EventHandler(this.thisRoomToolStripMenuItem_Click);
             // 
             // areasFromMDBToolStripMenuItem
             // 
             this.areasFromMDBToolStripMenuItem.Name = "areasFromMDBToolStripMenuItem";
-            this.areasFromMDBToolStripMenuItem.Size = new System.Drawing.Size(202, 26);
+            this.areasFromMDBToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.areasFromMDBToolStripMenuItem.Text = "Areas from MDB";
             this.areasFromMDBToolStripMenuItem.Click += new System.EventHandler(this.fromMDBListToolStripMenuItem_Click);
             // 
@@ -291,28 +291,28 @@ namespace SM_ASM_GUI
             this.walkthoughToolStripMenuItem,
             this.creditsToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Enabled = false;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(171, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Visible = false;
             // 
             // walkthoughToolStripMenuItem
             // 
             this.walkthoughToolStripMenuItem.Name = "walkthoughToolStripMenuItem";
-            this.walkthoughToolStripMenuItem.Size = new System.Drawing.Size(171, 26);
+            this.walkthoughToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.walkthoughToolStripMenuItem.Text = "Walkthough";
             this.walkthoughToolStripMenuItem.Click += new System.EventHandler(this.walkthoughToolStripMenuItem_Click);
             // 
             // creditsToolStripMenuItem
             // 
             this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(171, 26);
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.creditsToolStripMenuItem.Text = "Credits";
             this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
@@ -321,43 +321,40 @@ namespace SM_ASM_GUI
             this.debugToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.importLevelDataFromBMPToolStripMenuItem});
             this.debugToolStripMenuItem.Name = "debugToolStripMenuItem";
-            this.debugToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
+            this.debugToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.debugToolStripMenuItem.Text = "Debug";
             // 
             // importLevelDataFromBMPToolStripMenuItem
             // 
             this.importLevelDataFromBMPToolStripMenuItem.Name = "importLevelDataFromBMPToolStripMenuItem";
-            this.importLevelDataFromBMPToolStripMenuItem.Size = new System.Drawing.Size(281, 26);
+            this.importLevelDataFromBMPToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.importLevelDataFromBMPToolStripMenuItem.Text = "Import Level Data from BMP";
             this.importLevelDataFromBMPToolStripMenuItem.Click += new System.EventHandler(this.importLevelDataFromBMPToolStripMenuItem_Click);
             // 
             // HeaderLabel
             // 
             this.HeaderLabel.AutoSize = true;
-            this.HeaderLabel.Location = new System.Drawing.Point(12, 49);
-            this.HeaderLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.HeaderLabel.Location = new System.Drawing.Point(9, 40);
             this.HeaderLabel.Name = "HeaderLabel";
-            this.HeaderLabel.Size = new System.Drawing.Size(125, 17);
+            this.HeaderLabel.Size = new System.Drawing.Size(94, 13);
             this.HeaderLabel.TabIndex = 10;
             this.HeaderLabel.Text = "Level Header (PC)";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 103);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(17, 84);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 17);
+            this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 12;
             this.label1.Text = "Room Index";
             // 
             // RoomIndex
             // 
-            this.RoomIndex.Location = new System.Drawing.Point(11, 22);
-            this.RoomIndex.Margin = new System.Windows.Forms.Padding(4);
+            this.RoomIndex.Location = new System.Drawing.Point(8, 18);
             this.RoomIndex.MaxLength = 2;
             this.RoomIndex.Name = "RoomIndex";
-            this.RoomIndex.Size = new System.Drawing.Size(37, 22);
+            this.RoomIndex.Size = new System.Drawing.Size(29, 20);
             this.RoomIndex.TabIndex = 11;
             this.RoomIndex.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.RoomIndex.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -366,20 +363,18 @@ namespace SM_ASM_GUI
             // MapXLabel
             // 
             this.MapXLabel.AutoSize = true;
-            this.MapXLabel.Location = new System.Drawing.Point(23, 151);
-            this.MapXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapXLabel.Location = new System.Drawing.Point(17, 123);
             this.MapXLabel.Name = "MapXLabel";
-            this.MapXLabel.Size = new System.Drawing.Size(48, 17);
+            this.MapXLabel.Size = new System.Drawing.Size(38, 13);
             this.MapXLabel.TabIndex = 14;
             this.MapXLabel.Text = "Map X";
             // 
             // MapX
             // 
-            this.MapX.Location = new System.Drawing.Point(11, 69);
-            this.MapX.Margin = new System.Windows.Forms.Padding(4);
+            this.MapX.Location = new System.Drawing.Point(8, 56);
             this.MapX.MaxLength = 2;
             this.MapX.Name = "MapX";
-            this.MapX.Size = new System.Drawing.Size(37, 22);
+            this.MapX.Size = new System.Drawing.Size(29, 20);
             this.MapX.TabIndex = 13;
             this.MapX.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.MapX.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -389,21 +384,19 @@ namespace SM_ASM_GUI
             // 
             this.label5.AutoSize = true;
             this.label5.Enabled = false;
-            this.label5.Location = new System.Drawing.Point(23, 201);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(17, 163);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 17);
+            this.label5.Size = new System.Drawing.Size(35, 13);
             this.label5.TabIndex = 16;
             this.label5.Text = "Width";
             // 
             // RoomWidth
             // 
             this.RoomWidth.Enabled = false;
-            this.RoomWidth.Location = new System.Drawing.Point(11, 119);
-            this.RoomWidth.Margin = new System.Windows.Forms.Padding(4);
+            this.RoomWidth.Location = new System.Drawing.Point(8, 97);
             this.RoomWidth.MaxLength = 2;
             this.RoomWidth.Name = "RoomWidth";
-            this.RoomWidth.Size = new System.Drawing.Size(37, 22);
+            this.RoomWidth.Size = new System.Drawing.Size(29, 20);
             this.RoomWidth.TabIndex = 15;
             this.RoomWidth.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.RoomWidth.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -412,20 +405,18 @@ namespace SM_ASM_GUI
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(23, 260);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(17, 211);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(70, 17);
+            this.label6.Size = new System.Drawing.Size(53, 13);
             this.label6.TabIndex = 18;
             this.label6.Text = "U Scroller";
             // 
             // UpScroller
             // 
-            this.UpScroller.Location = new System.Drawing.Point(11, 178);
-            this.UpScroller.Margin = new System.Windows.Forms.Padding(4);
+            this.UpScroller.Location = new System.Drawing.Point(8, 145);
             this.UpScroller.MaxLength = 2;
             this.UpScroller.Name = "UpScroller";
-            this.UpScroller.Size = new System.Drawing.Size(37, 22);
+            this.UpScroller.Size = new System.Drawing.Size(29, 20);
             this.UpScroller.TabIndex = 17;
             this.UpScroller.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.UpScroller.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -434,20 +425,18 @@ namespace SM_ASM_GUI
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(23, 313);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(17, 254);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 17);
+            this.label7.Size = new System.Drawing.Size(66, 13);
             this.label7.TabIndex = 20;
             this.label7.Text = "Special GFX";
             // 
             // SpecialGFX
             // 
-            this.SpecialGFX.Location = new System.Drawing.Point(11, 231);
-            this.SpecialGFX.Margin = new System.Windows.Forms.Padding(4);
+            this.SpecialGFX.Location = new System.Drawing.Point(8, 188);
             this.SpecialGFX.MaxLength = 2;
             this.SpecialGFX.Name = "SpecialGFX";
-            this.SpecialGFX.Size = new System.Drawing.Size(37, 22);
+            this.SpecialGFX.Size = new System.Drawing.Size(29, 20);
             this.SpecialGFX.TabIndex = 19;
             this.SpecialGFX.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.SpecialGFX.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -456,20 +445,18 @@ namespace SM_ASM_GUI
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(117, 260);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Location = new System.Drawing.Point(88, 211);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(70, 17);
+            this.label9.Size = new System.Drawing.Size(53, 13);
             this.label9.TabIndex = 28;
             this.label9.Text = "D Scroller";
             // 
             // DnScroller
             // 
-            this.DnScroller.Location = new System.Drawing.Point(105, 178);
-            this.DnScroller.Margin = new System.Windows.Forms.Padding(4);
+            this.DnScroller.Location = new System.Drawing.Point(79, 145);
             this.DnScroller.MaxLength = 2;
             this.DnScroller.Name = "DnScroller";
-            this.DnScroller.Size = new System.Drawing.Size(37, 22);
+            this.DnScroller.Size = new System.Drawing.Size(29, 20);
             this.DnScroller.TabIndex = 27;
             this.DnScroller.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.DnScroller.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -479,21 +466,19 @@ namespace SM_ASM_GUI
             // 
             this.label10.AutoSize = true;
             this.label10.Enabled = false;
-            this.label10.Location = new System.Drawing.Point(117, 201);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Location = new System.Drawing.Point(88, 163);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(49, 17);
+            this.label10.Size = new System.Drawing.Size(38, 13);
             this.label10.TabIndex = 26;
             this.label10.Text = "Height";
             // 
             // RoomHeight
             // 
             this.RoomHeight.Enabled = false;
-            this.RoomHeight.Location = new System.Drawing.Point(105, 119);
-            this.RoomHeight.Margin = new System.Windows.Forms.Padding(4);
+            this.RoomHeight.Location = new System.Drawing.Point(79, 97);
             this.RoomHeight.MaxLength = 2;
             this.RoomHeight.Name = "RoomHeight";
-            this.RoomHeight.Size = new System.Drawing.Size(37, 22);
+            this.RoomHeight.Size = new System.Drawing.Size(29, 20);
             this.RoomHeight.TabIndex = 25;
             this.RoomHeight.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.RoomHeight.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -502,20 +487,18 @@ namespace SM_ASM_GUI
             // MapYLabel
             // 
             this.MapYLabel.AutoSize = true;
-            this.MapYLabel.Location = new System.Drawing.Point(117, 151);
-            this.MapYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MapYLabel.Location = new System.Drawing.Point(88, 123);
             this.MapYLabel.Name = "MapYLabel";
-            this.MapYLabel.Size = new System.Drawing.Size(48, 17);
+            this.MapYLabel.Size = new System.Drawing.Size(38, 13);
             this.MapYLabel.TabIndex = 24;
             this.MapYLabel.Text = "Map Y";
             // 
             // MapY
             // 
-            this.MapY.Location = new System.Drawing.Point(105, 69);
-            this.MapY.Margin = new System.Windows.Forms.Padding(4);
+            this.MapY.Location = new System.Drawing.Point(79, 56);
             this.MapY.MaxLength = 2;
             this.MapY.Name = "MapY";
-            this.MapY.Size = new System.Drawing.Size(37, 22);
+            this.MapY.Size = new System.Drawing.Size(29, 20);
             this.MapY.TabIndex = 23;
             this.MapY.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.MapY.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -524,20 +507,18 @@ namespace SM_ASM_GUI
             // AreaLabel
             // 
             this.AreaLabel.AutoSize = true;
-            this.AreaLabel.Location = new System.Drawing.Point(115, 103);
-            this.AreaLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.AreaLabel.Location = new System.Drawing.Point(86, 84);
             this.AreaLabel.Name = "AreaLabel";
-            this.AreaLabel.Size = new System.Drawing.Size(75, 17);
+            this.AreaLabel.Size = new System.Drawing.Size(58, 13);
             this.AreaLabel.TabIndex = 22;
             this.AreaLabel.Text = "Area Index";
             // 
             // AreaIndex
             // 
-            this.AreaIndex.Location = new System.Drawing.Point(105, 22);
-            this.AreaIndex.Margin = new System.Windows.Forms.Padding(4);
+            this.AreaIndex.Location = new System.Drawing.Point(79, 18);
             this.AreaIndex.MaxLength = 2;
             this.AreaIndex.Name = "AreaIndex";
-            this.AreaIndex.Size = new System.Drawing.Size(37, 22);
+            this.AreaIndex.Size = new System.Drawing.Size(29, 20);
             this.AreaIndex.TabIndex = 21;
             this.AreaIndex.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             this.AreaIndex.Validating += new System.ComponentModel.CancelEventHandler(this.HeaderData_Validating);
@@ -545,10 +526,9 @@ namespace SM_ASM_GUI
             // 
             // ASMbutton
             // 
-            this.ASMbutton.Location = new System.Drawing.Point(192, 219);
-            this.ASMbutton.Margin = new System.Windows.Forms.Padding(4);
+            this.ASMbutton.Location = new System.Drawing.Point(144, 178);
             this.ASMbutton.Name = "ASMbutton";
-            this.ASMbutton.Size = new System.Drawing.Size(161, 50);
+            this.ASMbutton.Size = new System.Drawing.Size(121, 41);
             this.ASMbutton.TabIndex = 35;
             this.ASMbutton.Text = "Export to ASM";
             this.ASMbutton.UseVisualStyleBackColor = true;
@@ -558,11 +538,9 @@ namespace SM_ASM_GUI
             // 
             this.StateBox.ContextMenuStrip = this.StateMenuStrip;
             this.StateBox.FormattingEnabled = true;
-            this.StateBox.ItemHeight = 16;
-            this.StateBox.Location = new System.Drawing.Point(192, 69);
-            this.StateBox.Margin = new System.Windows.Forms.Padding(4);
+            this.StateBox.Location = new System.Drawing.Point(144, 56);
             this.StateBox.Name = "StateBox";
-            this.StateBox.Size = new System.Drawing.Size(160, 84);
+            this.StateBox.Size = new System.Drawing.Size(121, 69);
             this.StateBox.TabIndex = 38;
             this.StateBox.SelectedIndexChanged += new System.EventHandler(this.StateBox_SelectedIndexChanged);
             this.StateBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
@@ -578,20 +556,20 @@ namespace SM_ASM_GUI
             this.toolStripMenuItem1,
             this.AddStateButton});
             this.StateMenuStrip.Name = "contextMenuStrip1";
-            this.StateMenuStrip.Size = new System.Drawing.Size(183, 52);
+            this.StateMenuStrip.Size = new System.Drawing.Size(156, 48);
             this.StateMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.StateMenuStrip_Opening);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 24);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(155, 22);
             this.toolStripMenuItem1.Text = "Delete Item";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.BlockDelete_Click);
             // 
             // AddStateButton
             // 
             this.AddStateButton.Name = "AddStateButton";
-            this.AddStateButton.Size = new System.Drawing.Size(182, 24);
+            this.AddStateButton.Size = new System.Drawing.Size(155, 22);
             this.AddStateButton.Text = "Add/Edit States";
             this.AddStateButton.Click += new System.EventHandler(this.AddStateButton_Click);
             // 
@@ -604,34 +582,34 @@ namespace SM_ASM_GUI
             this.NewItem,
             this.ScrollPLMedit});
             this.DataListMenu.Name = "contextMenuStrip1";
-            this.DataListMenu.Size = new System.Drawing.Size(184, 100);
+            this.DataListMenu.Size = new System.Drawing.Size(181, 114);
             this.DataListMenu.Opening += new System.ComponentModel.CancelEventHandler(this.DataListMenu_Opening);
             // 
             // DeleteButton
             // 
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(183, 24);
+            this.DeleteButton.Size = new System.Drawing.Size(180, 22);
             this.DeleteButton.Text = "Delete Item";
             this.DeleteButton.Click += new System.EventHandler(this.BlockDelete_Click);
             // 
             // BlockCopy
             // 
             this.BlockCopy.Name = "BlockCopy";
-            this.BlockCopy.Size = new System.Drawing.Size(183, 24);
+            this.BlockCopy.Size = new System.Drawing.Size(180, 22);
             this.BlockCopy.Text = "Duplicate";
             this.BlockCopy.Click += new System.EventHandler(this.BlockCopy_Click);
             // 
             // NewItem
             // 
             this.NewItem.Name = "NewItem";
-            this.NewItem.Size = new System.Drawing.Size(183, 24);
+            this.NewItem.Size = new System.Drawing.Size(180, 22);
             this.NewItem.Text = "New Item";
             this.NewItem.Click += new System.EventHandler(this.NewItem_Click);
             // 
             // ScrollPLMedit
             // 
             this.ScrollPLMedit.Name = "ScrollPLMedit";
-            this.ScrollPLMedit.Size = new System.Drawing.Size(183, 24);
+            this.ScrollPLMedit.Size = new System.Drawing.Size(180, 22);
             this.ScrollPLMedit.Text = "Edit Scroll PLMs";
             this.ScrollPLMedit.Visible = false;
             this.ScrollPLMedit.Click += new System.EventHandler(this.ScrollPLMedit_Click);
@@ -640,10 +618,9 @@ namespace SM_ASM_GUI
             // 
             this.label8.AutoSize = true;
             this.label8.Enabled = false;
-            this.label8.Location = new System.Drawing.Point(188, 49);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Location = new System.Drawing.Point(141, 40);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(41, 17);
+            this.label8.Size = new System.Drawing.Size(32, 13);
             this.label8.TabIndex = 39;
             this.label8.Text = "State";
             // 
@@ -651,10 +628,9 @@ namespace SM_ASM_GUI
             // 
             this.label11.AutoSize = true;
             this.label11.Enabled = false;
-            this.label11.Location = new System.Drawing.Point(403, 49);
-            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label11.Location = new System.Drawing.Point(302, 40);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(62, 17);
+            this.label11.Size = new System.Drawing.Size(47, 13);
             this.label11.TabIndex = 41;
             this.label11.Text = "Enemies";
             // 
@@ -663,12 +639,10 @@ namespace SM_ASM_GUI
             this.EnemyBox.AllowDrop = true;
             this.EnemyBox.ContextMenuStrip = this.DataListMenu;
             this.EnemyBox.FormattingEnabled = true;
-            this.EnemyBox.ItemHeight = 16;
-            this.EnemyBox.Location = new System.Drawing.Point(407, 69);
-            this.EnemyBox.Margin = new System.Windows.Forms.Padding(4);
+            this.EnemyBox.Location = new System.Drawing.Point(305, 56);
             this.EnemyBox.Name = "EnemyBox";
             this.EnemyBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.EnemyBox.Size = new System.Drawing.Size(127, 68);
+            this.EnemyBox.Size = new System.Drawing.Size(96, 56);
             this.EnemyBox.TabIndex = 40;
             this.EnemyBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
             this.EnemyBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.lst_DragEnter);
@@ -680,10 +654,9 @@ namespace SM_ASM_GUI
             // 
             this.label12.AutoSize = true;
             this.label12.Enabled = false;
-            this.label12.Location = new System.Drawing.Point(404, 234);
-            this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label12.Location = new System.Drawing.Point(303, 190);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(43, 17);
+            this.label12.Size = new System.Drawing.Size(34, 13);
             this.label12.TabIndex = 43;
             this.label12.Text = "PLMs";
             // 
@@ -692,12 +665,10 @@ namespace SM_ASM_GUI
             this.PlmBox.AllowDrop = true;
             this.PlmBox.ContextMenuStrip = this.DataListMenu;
             this.PlmBox.FormattingEnabled = true;
-            this.PlmBox.ItemHeight = 16;
-            this.PlmBox.Location = new System.Drawing.Point(407, 249);
-            this.PlmBox.Margin = new System.Windows.Forms.Padding(4);
+            this.PlmBox.Location = new System.Drawing.Point(305, 202);
             this.PlmBox.Name = "PlmBox";
             this.PlmBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.PlmBox.Size = new System.Drawing.Size(127, 68);
+            this.PlmBox.Size = new System.Drawing.Size(96, 56);
             this.PlmBox.TabIndex = 42;
             this.PlmBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
             this.PlmBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.lst_DragEnter);
@@ -709,10 +680,9 @@ namespace SM_ASM_GUI
             // 
             this.label13.AutoSize = true;
             this.label13.Enabled = false;
-            this.label13.Location = new System.Drawing.Point(404, 322);
-            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Location = new System.Drawing.Point(303, 262);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(25, 17);
+            this.label13.Size = new System.Drawing.Size(20, 13);
             this.label13.TabIndex = 45;
             this.label13.Text = "FX";
             // 
@@ -721,12 +691,10 @@ namespace SM_ASM_GUI
             this.FXbox.AllowDrop = true;
             this.FXbox.ContextMenuStrip = this.DataListMenu;
             this.FXbox.FormattingEnabled = true;
-            this.FXbox.ItemHeight = 16;
-            this.FXbox.Location = new System.Drawing.Point(407, 338);
-            this.FXbox.Margin = new System.Windows.Forms.Padding(4);
+            this.FXbox.Location = new System.Drawing.Point(305, 275);
             this.FXbox.Name = "FXbox";
             this.FXbox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.FXbox.Size = new System.Drawing.Size(127, 68);
+            this.FXbox.Size = new System.Drawing.Size(96, 56);
             this.FXbox.TabIndex = 44;
             this.FXbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
             this.FXbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.lst_DragEnter);
@@ -738,10 +706,9 @@ namespace SM_ASM_GUI
             // 
             this.label14.AutoSize = true;
             this.label14.Enabled = false;
-            this.label14.Location = new System.Drawing.Point(404, 412);
-            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label14.Location = new System.Drawing.Point(303, 335);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(46, 17);
+            this.label14.Size = new System.Drawing.Size(35, 13);
             this.label14.TabIndex = 47;
             this.label14.Text = "Doors";
             // 
@@ -750,12 +717,10 @@ namespace SM_ASM_GUI
             this.DoorBox.AllowDrop = true;
             this.DoorBox.ContextMenuStrip = this.DataListMenu;
             this.DoorBox.FormattingEnabled = true;
-            this.DoorBox.ItemHeight = 16;
-            this.DoorBox.Location = new System.Drawing.Point(407, 428);
-            this.DoorBox.Margin = new System.Windows.Forms.Padding(4);
+            this.DoorBox.Location = new System.Drawing.Point(305, 348);
             this.DoorBox.Name = "DoorBox";
             this.DoorBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.DoorBox.Size = new System.Drawing.Size(127, 68);
+            this.DoorBox.Size = new System.Drawing.Size(96, 56);
             this.DoorBox.TabIndex = 46;
             this.DoorBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
             this.DoorBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.lst_DragEnter);
@@ -767,10 +732,9 @@ namespace SM_ASM_GUI
             // 
             this.label15.AutoSize = true;
             this.label15.Enabled = false;
-            this.label15.Location = new System.Drawing.Point(403, 142);
-            this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label15.Location = new System.Drawing.Point(302, 115);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(83, 17);
+            this.label15.Size = new System.Drawing.Size(63, 13);
             this.label15.TabIndex = 49;
             this.label15.Text = "Enemy GFX";
             // 
@@ -779,12 +743,10 @@ namespace SM_ASM_GUI
             this.GFXbox.AllowDrop = true;
             this.GFXbox.ContextMenuStrip = this.DataListMenu;
             this.GFXbox.FormattingEnabled = true;
-            this.GFXbox.ItemHeight = 16;
-            this.GFXbox.Location = new System.Drawing.Point(407, 161);
-            this.GFXbox.Margin = new System.Windows.Forms.Padding(4);
+            this.GFXbox.Location = new System.Drawing.Point(305, 131);
             this.GFXbox.Name = "GFXbox";
             this.GFXbox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.GFXbox.Size = new System.Drawing.Size(127, 68);
+            this.GFXbox.Size = new System.Drawing.Size(96, 56);
             this.GFXbox.TabIndex = 48;
             this.GFXbox.DragDrop += new System.Windows.Forms.DragEventHandler(this.lst_DragDrop);
             this.GFXbox.DragEnter += new System.Windows.Forms.DragEventHandler(this.lst_DragEnter);
@@ -794,10 +756,9 @@ namespace SM_ASM_GUI
             // 
             // ApplyButton
             // 
-            this.ApplyButton.Location = new System.Drawing.Point(192, 278);
-            this.ApplyButton.Margin = new System.Windows.Forms.Padding(4);
+            this.ApplyButton.Location = new System.Drawing.Point(144, 226);
             this.ApplyButton.Name = "ApplyButton";
-            this.ApplyButton.Size = new System.Drawing.Size(161, 50);
+            this.ApplyButton.Size = new System.Drawing.Size(121, 41);
             this.ApplyButton.TabIndex = 50;
             this.ApplyButton.Text = "Apply to ROM";
             this.ApplyButton.UseVisualStyleBackColor = true;
@@ -808,20 +769,18 @@ namespace SM_ASM_GUI
             this.StatusBox.BackColor = System.Drawing.SystemColors.MenuText;
             this.StatusBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StatusBox.ForeColor = System.Drawing.SystemColors.Window;
-            this.StatusBox.Location = new System.Drawing.Point(543, 69);
-            this.StatusBox.Margin = new System.Windows.Forms.Padding(4);
+            this.StatusBox.Location = new System.Drawing.Point(407, 56);
             this.StatusBox.Name = "StatusBox";
-            this.StatusBox.Size = new System.Drawing.Size(307, 427);
+            this.StatusBox.Size = new System.Drawing.Size(231, 348);
             this.StatusBox.TabIndex = 51;
             this.StatusBox.Text = "";
             this.StatusBox.TextChanged += new System.EventHandler(this.StatusBox_TextChanged);
             // 
             // ImportCurrentTileset
             // 
-            this.ImportCurrentTileset.Location = new System.Drawing.Point(192, 336);
-            this.ImportCurrentTileset.Margin = new System.Windows.Forms.Padding(4);
+            this.ImportCurrentTileset.Location = new System.Drawing.Point(144, 273);
             this.ImportCurrentTileset.Name = "ImportCurrentTileset";
-            this.ImportCurrentTileset.Size = new System.Drawing.Size(161, 50);
+            this.ImportCurrentTileset.Size = new System.Drawing.Size(121, 41);
             this.ImportCurrentTileset.TabIndex = 55;
             this.ImportCurrentTileset.Text = "Current Tileset Folder to ASM";
             this.ImportCurrentTileset.UseVisualStyleBackColor = true;
@@ -829,10 +788,9 @@ namespace SM_ASM_GUI
             // 
             // ExportCurrentTileset
             // 
-            this.ExportCurrentTileset.Location = new System.Drawing.Point(192, 394);
-            this.ExportCurrentTileset.Margin = new System.Windows.Forms.Padding(4);
+            this.ExportCurrentTileset.Location = new System.Drawing.Point(144, 320);
             this.ExportCurrentTileset.Name = "ExportCurrentTileset";
-            this.ExportCurrentTileset.Size = new System.Drawing.Size(161, 23);
+            this.ExportCurrentTileset.Size = new System.Drawing.Size(121, 19);
             this.ExportCurrentTileset.TabIndex = 56;
             this.ExportCurrentTileset.Text = "ROM to TSet Folder";
             this.ExportCurrentTileset.UseVisualStyleBackColor = true;
@@ -840,10 +798,9 @@ namespace SM_ASM_GUI
             // 
             // RefreshExport
             // 
-            this.RefreshExport.Location = new System.Drawing.Point(192, 161);
-            this.RefreshExport.Margin = new System.Windows.Forms.Padding(4);
+            this.RefreshExport.Location = new System.Drawing.Point(144, 131);
             this.RefreshExport.Name = "RefreshExport";
-            this.RefreshExport.Size = new System.Drawing.Size(161, 50);
+            this.RefreshExport.Size = new System.Drawing.Size(121, 41);
             this.RefreshExport.TabIndex = 57;
             this.RefreshExport.Text = "Refresh from ROM and Export to ASM";
             this.RefreshExport.UseVisualStyleBackColor = true;
@@ -853,21 +810,19 @@ namespace SM_ASM_GUI
             // 
             this.label16.AutoSize = true;
             this.label16.Enabled = false;
-            this.label16.Location = new System.Drawing.Point(115, 313);
-            this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label16.Location = new System.Drawing.Point(86, 254);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(50, 17);
+            this.label16.Size = new System.Drawing.Size(38, 13);
             this.label16.TabIndex = 62;
             this.label16.Text = "Tileset";
             // 
             // TilesetBox
             // 
             this.TilesetBox.Enabled = false;
-            this.TilesetBox.Location = new System.Drawing.Point(105, 231);
-            this.TilesetBox.Margin = new System.Windows.Forms.Padding(4);
+            this.TilesetBox.Location = new System.Drawing.Point(79, 188);
             this.TilesetBox.MaxLength = 2;
             this.TilesetBox.Name = "TilesetBox";
-            this.TilesetBox.Size = new System.Drawing.Size(37, 22);
+            this.TilesetBox.Size = new System.Drawing.Size(29, 20);
             this.TilesetBox.TabIndex = 61;
             this.TilesetBox.TextChanged += new System.EventHandler(this.AllowHexOnlyTEXTBOX);
             // 
@@ -875,10 +830,9 @@ namespace SM_ASM_GUI
             // 
             this.label17.AutoSize = true;
             this.label17.Enabled = false;
-            this.label17.Location = new System.Drawing.Point(539, 49);
-            this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label17.Location = new System.Drawing.Point(404, 40);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(48, 17);
+            this.label17.Size = new System.Drawing.Size(37, 13);
             this.label17.TabIndex = 63;
             this.label17.Text = "Status";
             // 
@@ -888,23 +842,22 @@ namespace SM_ASM_GUI
             this.LevelPicMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.EditLevelScrollsButton});
             this.LevelPicMenu.Name = "contextMenuStrip1";
-            this.LevelPicMenu.Size = new System.Drawing.Size(190, 28);
+            this.LevelPicMenu.Size = new System.Drawing.Size(162, 26);
             this.LevelPicMenu.Opening += new System.ComponentModel.CancelEventHandler(this.StateMenuStrip_Opening);
             // 
             // EditLevelScrollsButton
             // 
             this.EditLevelScrollsButton.Name = "EditLevelScrollsButton";
-            this.EditLevelScrollsButton.Size = new System.Drawing.Size(189, 24);
+            this.EditLevelScrollsButton.Size = new System.Drawing.Size(161, 22);
             this.EditLevelScrollsButton.Text = "Edit Level Scrolls";
             this.EditLevelScrollsButton.Click += new System.EventHandler(this.EditLevelScrollsButton_Click);
             // 
             // alltopCheckbox
             // 
             this.alltopCheckbox.AutoSize = true;
-            this.alltopCheckbox.Location = new System.Drawing.Point(859, 441);
-            this.alltopCheckbox.Margin = new System.Windows.Forms.Padding(4);
+            this.alltopCheckbox.Location = new System.Drawing.Point(644, 358);
             this.alltopCheckbox.Name = "alltopCheckbox";
-            this.alltopCheckbox.Size = new System.Drawing.Size(122, 21);
+            this.alltopCheckbox.Size = new System.Drawing.Size(96, 17);
             this.alltopCheckbox.TabIndex = 3;
             this.alltopCheckbox.Text = "Always on Top";
             this.alltopCheckbox.UseVisualStyleBackColor = true;
@@ -914,21 +867,19 @@ namespace SM_ASM_GUI
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(856, 470);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(642, 382);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(118, 17);
+            this.label4.Size = new System.Drawing.Size(90, 13);
             this.label4.TabIndex = 54;
             this.label4.Text = "Level Data Buffer";
             this.label4.Visible = false;
             // 
             // LevelBuffer
             // 
-            this.LevelBuffer.Location = new System.Drawing.Point(859, 490);
-            this.LevelBuffer.Margin = new System.Windows.Forms.Padding(4);
+            this.LevelBuffer.Location = new System.Drawing.Point(644, 398);
             this.LevelBuffer.MaxLength = 4;
             this.LevelBuffer.Name = "LevelBuffer";
-            this.LevelBuffer.Size = new System.Drawing.Size(73, 22);
+            this.LevelBuffer.Size = new System.Drawing.Size(56, 20);
             this.LevelBuffer.TabIndex = 53;
             this.LevelBuffer.Text = "1000";
             this.LevelBuffer.Visible = false;
@@ -938,10 +889,9 @@ namespace SM_ASM_GUI
             this.DelMDB.AutoSize = true;
             this.DelMDB.Checked = true;
             this.DelMDB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DelMDB.Location = new System.Drawing.Point(859, 396);
-            this.DelMDB.Margin = new System.Windows.Forms.Padding(4);
+            this.DelMDB.Location = new System.Drawing.Point(644, 322);
             this.DelMDB.Name = "DelMDB";
-            this.DelMDB.Size = new System.Drawing.Size(218, 38);
+            this.DelMDB.Size = new System.Drawing.Size(167, 30);
             this.DelMDB.TabIndex = 52;
             this.DelMDB.Text = "On Apply: Delete MDB entries\r\nif not in ASM file";
             this.DelMDB.UseVisualStyleBackColor = true;
@@ -950,10 +900,9 @@ namespace SM_ASM_GUI
             // ZoomPicIn
             // 
             this.ZoomPicIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ZoomPicIn.Location = new System.Drawing.Point(147, 366);
-            this.ZoomPicIn.Margin = new System.Windows.Forms.Padding(4);
+            this.ZoomPicIn.Location = new System.Drawing.Point(110, 297);
             this.ZoomPicIn.Name = "ZoomPicIn";
-            this.ZoomPicIn.Size = new System.Drawing.Size(39, 33);
+            this.ZoomPicIn.Size = new System.Drawing.Size(29, 27);
             this.ZoomPicIn.TabIndex = 65;
             this.ZoomPicIn.Text = "+";
             this.ZoomPicIn.UseVisualStyleBackColor = true;
@@ -962,10 +911,9 @@ namespace SM_ASM_GUI
             // ZoomPicOut
             // 
             this.ZoomPicOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ZoomPicOut.Location = new System.Drawing.Point(147, 398);
-            this.ZoomPicOut.Margin = new System.Windows.Forms.Padding(4);
+            this.ZoomPicOut.Location = new System.Drawing.Point(110, 323);
             this.ZoomPicOut.Name = "ZoomPicOut";
-            this.ZoomPicOut.Size = new System.Drawing.Size(39, 33);
+            this.ZoomPicOut.Size = new System.Drawing.Size(29, 27);
             this.ZoomPicOut.TabIndex = 66;
             this.ZoomPicOut.Text = "-";
             this.ZoomPicOut.UseVisualStyleBackColor = true;
@@ -974,11 +922,10 @@ namespace SM_ASM_GUI
             // HeaderDropdown
             // 
             this.HeaderDropdown.FormattingEnabled = true;
-            this.HeaderDropdown.Location = new System.Drawing.Point(16, 69);
-            this.HeaderDropdown.Margin = new System.Windows.Forms.Padding(4);
+            this.HeaderDropdown.Location = new System.Drawing.Point(12, 56);
             this.HeaderDropdown.MaxLength = 5;
             this.HeaderDropdown.Name = "HeaderDropdown";
-            this.HeaderDropdown.Size = new System.Drawing.Size(160, 24);
+            this.HeaderDropdown.Size = new System.Drawing.Size(121, 21);
             this.HeaderDropdown.TabIndex = 1;
             this.HeaderDropdown.DropDown += new System.EventHandler(this.HeaderDropdown_DropDown);
             this.HeaderDropdown.SelectedIndexChanged += new System.EventHandler(this.HeaderDropdown_SelectedIndexChanged);
@@ -988,10 +935,9 @@ namespace SM_ASM_GUI
             // 
             // OpenMDB
             // 
-            this.OpenMDB.Location = new System.Drawing.Point(145, 39);
-            this.OpenMDB.Margin = new System.Windows.Forms.Padding(4);
+            this.OpenMDB.Location = new System.Drawing.Point(109, 32);
             this.OpenMDB.Name = "OpenMDB";
-            this.OpenMDB.Size = new System.Drawing.Size(32, 26);
+            this.OpenMDB.Size = new System.Drawing.Size(24, 21);
             this.OpenMDB.TabIndex = 67;
             this.OpenMDB.Text = "M";
             this.OpenMDB.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1000,10 +946,9 @@ namespace SM_ASM_GUI
             // 
             // testbutton
             // 
-            this.testbutton.Location = new System.Drawing.Point(596, 39);
-            this.testbutton.Margin = new System.Windows.Forms.Padding(4);
+            this.testbutton.Location = new System.Drawing.Point(447, 32);
             this.testbutton.Name = "testbutton";
-            this.testbutton.Size = new System.Drawing.Size(113, 26);
+            this.testbutton.Size = new System.Drawing.Size(85, 21);
             this.testbutton.TabIndex = 68;
             this.testbutton.Text = "test";
             this.testbutton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1023,11 +968,11 @@ namespace SM_ASM_GUI
             this.HeaderInfo.Controls.Add(this.RoomWidth);
             this.HeaderInfo.Controls.Add(this.MapX);
             this.HeaderInfo.Controls.Add(this.RoomIndex);
-            this.HeaderInfo.Location = new System.Drawing.Point(16, 100);
-            this.HeaderInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.HeaderInfo.Location = new System.Drawing.Point(12, 81);
+            this.HeaderInfo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.HeaderInfo.Name = "HeaderInfo";
-            this.HeaderInfo.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.HeaderInfo.Size = new System.Drawing.Size(171, 260);
+            this.HeaderInfo.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.HeaderInfo.Size = new System.Drawing.Size(128, 211);
             this.HeaderInfo.TabIndex = 69;
             this.HeaderInfo.TabStop = false;
             // 
@@ -1036,11 +981,10 @@ namespace SM_ASM_GUI
             this.RoomPicture.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.RoomPicture.ContextMenuStrip = this.LevelPicMenu;
             this.RoomPicture.Cursor = System.Windows.Forms.Cursors.NoMove2D;
-            this.RoomPicture.Location = new System.Drawing.Point(16, 367);
-            this.RoomPicture.Margin = new System.Windows.Forms.Padding(4);
+            this.RoomPicture.Location = new System.Drawing.Point(12, 298);
             this.RoomPicture.Name = "RoomPicture";
-            this.RoomPicture.Padding = new System.Windows.Forms.Padding(0, 0, 0, 12);
-            this.RoomPicture.Size = new System.Drawing.Size(132, 130);
+            this.RoomPicture.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
+            this.RoomPicture.Size = new System.Drawing.Size(100, 106);
             this.RoomPicture.TabIndex = 64;
             this.RoomPicture.TabStop = false;
             this.RoomPicture.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RoomPicture_MouseMove);
@@ -1048,9 +992,9 @@ namespace SM_ASM_GUI
             // 
             // SMASM
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(908, 495);
+            this.ClientSize = new System.Drawing.Size(681, 409);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label10);
@@ -1095,9 +1039,8 @@ namespace SM_ASM_GUI
             this.Controls.Add(this.HeaderInfo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.MaximumSize = new System.Drawing.Size(926, 542);
-            this.MinimumSize = new System.Drawing.Size(554, 542);
+            this.MaximumSize = new System.Drawing.Size(698, 448);
+            this.MinimumSize = new System.Drawing.Size(420, 448);
             this.Name = "SMASM";
             this.Text = "SM-ASM";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SMASM_FormClosing);

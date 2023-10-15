@@ -327,194 +327,6 @@ namespace SM_ASM_GUI
         GotPowerbomb = 0xE669,
         GotSpeed = 0xE678
     }
-    public struct state
-    {//will contain all the room pointers as SNES addresses.
-        public unsafe state(ROM sm, uint statetype, uint statepointer, uint statearg, uint roomsize)
-        {
-            if (!LUNAR.OpenFile(sm.Path)) { MessageBox.Show("LUNAR ROM LOAD FAIL!"); }
-            byte[] rom = sm.Rom;
-            Type = statetype;
-            DataPointer = statepointer;
-            StateArg = statearg;
-
-            uint i = statepointer;
-            pLevelData = ROM.readLong(i, rom); i = i + 3;   //CHECK
-
-            TileSet = rom[i]; i++;                          //CHECK
-            SongSet = rom[i]; i++;                          //CHECK
-            PlayInd = rom[i]; i++;                          //CHECK
-
-            pFX = ROM.readWord(i, rom); i = i + 2;          
-            pEnemySet = ROM.readWord(i, rom); i = i + 2;    //CHECK
-            pEnemyGFX = ROM.readWord(i, rom); i = i + 2;    //CHECK
-
-            BGxScroll = rom[i]; i++;                        //CHECK
-            BGyScroll = rom[i]; i++;                        //CHECK
-
-            pScrolls = ROM.readWord(i, rom); i = i + 2;     //CHECK
-            pUnused = ROM.readWord(i, rom); i = i + 2;      //CHECK
-            pMainASM = ROM.readWord(i, rom); i = i + 2;     //CHECK
-            pPLMset = ROM.readWord(i, rom); i = i + 2;      //CHECK
-            pBackground = ROM.readWord(i, rom); i = i + 2;  //CHECK
-            pSetupASM = ROM.readWord(i, rom); i = i + 2;    //CHECK
-
-            uint pcLevelPointer = LUNAR.SNEStoPC(pLevelData);
-            uint addr2 = 0; //this will be assigned the end of the compressed data; compressed data size = addr2 - level data pointer
-            //#################################################################################
-            //THIS MAX LEVEL SIZE MUST AGREE WITH THE MAX DECOMPRESSION SIZE IN THE LUNAR CLASS
-            //#################################################################################
-            byte[] levelUC = new byte[0xA000];    //reserve max level data size. Landing site is 0x5A00 bytes for reference.
-            fixed (void* ptr = levelUC)
-            LUNAR.Decompress(ptr, pcLevelPointer, &addr2);    //decompression takes a PC address.
-            //levelUC is populated with uncompressed level data.
-
-            byte[] levelC = new byte[0x5000];
-            Buffer.BlockCopy(rom, (int)pcLevelPointer, levelC, 0, (int)(addr2 - pcLevelPointer));
-
-            LevelDataUC = levelUC;
-            LevelDataC  = levelC;
-            LevelDataSizeUC = ROM.readWord(0,levelUC);
-            LevelDataSizeC = addr2 - pcLevelPointer;
-
-            LUNAR.CloseFile();
-
-            //parse enemy set; cap at 0x20 entries; FFFF terminator.
-            uint j = LUNAR.SNEStoPC(pEnemySet + 0xA10000);
-            List<EnemyData> theseenemies = new List<EnemyData>();
-            for (i = 0; i < 0x20; i++)
-            {
-                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
-                theseenemies.Add(new EnemyData(sm, j, (int)i));
-                j = j + 0x10;
-            }
-            Enemies = theseenemies;
-            j += 2;
-            //EnemyCount is the Enemies-to-Clear value.
-            EnemyCount = sm.Rom[j];
-
-            //parse enemy gfx set; cap at 4 entries; FFFF terminator.
-            j = LUNAR.SNEStoPC(pEnemyGFX + 0xB40000);
-            List<EnemyGFX> thesegfx = new List<EnemyGFX>();
-            for (i = 0; i < 4; i++)
-            {
-                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
-                thesegfx.Add(new EnemyGFX(sm, j));
-                j = j + 4;
-            }
-            EnemiesAllowed = thesegfx;
-
-            //parse room PLM set; cap at d.40; 0000 terminator.
-            //special overload of the PLMdata constructor for use in Special Item ID; record PLM index
-            j = LUNAR.SNEStoPC(pPLMset + 0x8F0000);
-            List<PLMdata> theseplms = new List<PLMdata>();
-            for (i = 0; i < 0x28; i++)
-            {
-                if (ROM.readWord(j, sm.Rom) == 0x0000) { break; }
-                theseplms.Add(new PLMdata(sm, j, (int)i));
-                j += 6;
-            }
-            PLMs = theseplms;
-
-            //parse scrolls for total number of screens in the room
-            j = LUNAR.SNEStoPC(pScrolls + 0x8F0000);
-            List<uint> thesescrolls = new List<uint>();    //the intial size of the list needs to be an int for some reason.
-            for (i = 0; i < roomsize; i++)
-            {
-                thesescrolls.Add(sm.Rom[j]);
-                j++;
-            }
-            Scrolls = thesescrolls.ToArray();
-
-            //Parse FX Data. 16 Bytes each, terminated by a final entry with a Door Select of 0000.
-            //Technically each door could have its own FX, so the FX limit is the door limit.
-            //Also, a pointer will always contain at least the default room FX, so there will always be an entry.
-            j = LUNAR.SNEStoPC(pFX + 0x830000);
-            List<FXdata> theseFX = new List<FXdata>();
-            for (i = 0; i < 0x100; i++)
-            {
-                if (ROM.readWord(j, sm.Rom) == 0x0000) { break; }
-                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
-                theseFX.Add(new FXdata(sm, j));
-                j += 0x10;
-            }
-            theseFX.Add(new FXdata(sm, j));
-            FX = theseFX;
-
-            pmLevelData = null;
-                   pmFX = null;
-             pmEnemySet = null;
-             pmEnemyGFX = null;
-              pmScrolls = null;
-               pmPLMset = null;
-
-            int argbytes;
-            if (statetype == 0xE612 || statetype == 0xE629)
-            {
-                argbytes = 1;
-            }     //events and boss bits take 1 byte arg
-            else if (statetype == 0xE5EB)
-            {
-                argbytes = 2;
-            }     //the door room state needs a special one for its two-byte arg.
-            else if (statetype == 0xE5E6)
-            {
-                argbytes = -2;
-            }     //default state lacks a pointer, so this adjusts the count accordingly.
-            else
-            {
-                argbytes = 0;
-            }
-
-            //for determining level header size,
-            //sum size of each state
-            //plus default state
-            //plus door data
-            Bytes8F =
-                argbytes +
-                4 +     //Word state type and word state pointer are global
-                26      //26 is size of mandatory pointer block in bytes
-                ;
-
-        }
-        public uint Type { get; set; }
-        public uint DataPointer { get; set; }
-        public uint StateArg { get; set; }
-        public int Bytes8F { get; set; }
-
-        public uint[] Scrolls { get; set; }
-        public uint LevelDataSizeUC { get; set; }
-        public uint LevelDataSizeC { get; set; }
-        public uint pLevelData { get; set; }
-        public uint TileSet { get; set; }
-        public uint SongSet { get; set; }
-        public uint PlayInd { get; set; }
-        public uint pFX { get; set; }
-        public uint pEnemySet { get; set; }
-        public uint pEnemyGFX { get; set; }
-        public uint BGxScroll { get; set; }
-        public uint BGyScroll { get; set; }
-        public uint pScrolls { get; set; }
-        public uint pUnused { get; set; }
-        public uint pMainASM { get; set; }
-        public uint pPLMset { get; set; }
-        public uint pBackground { get; set; }
-        public uint pSetupASM { get; set; }
-        public byte[] LevelDataUC { get; set; }
-        public byte[] LevelDataC { get; set; }
-        public List<EnemyData> Enemies { get; set; }
-        public uint EnemyCount { get; set; }
-        public List<EnemyGFX> EnemiesAllowed { get; set; }
-        public List<PLMdata> PLMs { get; set; }
-        public List<FXdata> FX { get; set; }
-
-        //might need to make pm versions of all the other pointers for the state configuration...
-        public string pmLevelData {get; set;}
-        public string pmFX { get; set; }
-        public string pmEnemySet { get; set; }
-        public string pmEnemyGFX { get; set; }
-        public string pmScrolls { get; set; }
-        public string pmPLMset { get; set; }
-    }
     public struct roomdata
     {//contains top header properties and sub-structs for each state.
         public roomdata(ROM sm, uint pheader)
@@ -601,6 +413,7 @@ namespace SM_ASM_GUI
                 //                   0           1              2
                 //    statepointers [Event type, Event Pointer, Optional Arg.] for each state.
                 States.Add(new state(sm, x, stdstate + 2, 0, roomsize));
+                CheckLibraryScrolls();
             }
             //return;
             catch
@@ -614,7 +427,6 @@ namespace SM_ASM_GUI
 
 
         }
-        //public byte[] ROM { get; }
         public int Bytes8F { get; set; }
         public string LabelM { get; set; }
         public string Label { get; set; }
@@ -647,6 +459,31 @@ namespace SM_ASM_GUI
             LabelM = "R" + asmFCN.WByte(RoomIndex) + "A" + string.Format("{0:X1}", AreaIndex);
         }
 
+        public void CheckLibraryScrolls()
+        {
+            //if default state uses library scrolls, force all the other states to use the same one.
+            uint defaultScrollsPointer = this.States[this.StateCount].pScrolls;
+            if (defaultScrollsPointer >= 0x8000) { return; }
+            //only do this if they DO NOT already use library scrolls.
+            bool scrollDataPresent = false;
+            foreach (state item in States)
+            {
+                scrollDataPresent |= (item.pScrolls > 0x8000);
+            }
+            if (!scrollDataPresent) 
+            {
+                //all of them are already library scrolls so don't show the messagebox.
+                return; 
+            }
+
+            for (int i = 0; i < this.StateCount-1; i++)
+            {
+                this.States[i].pScrolls = defaultScrollsPointer;
+                this.States[i].pmScrolls = "default";
+            }
+            MessageBox.Show("Default state uses library scrolls $" + asmFCN.WWord(defaultScrollsPointer) + " - converted other states to do the same.", "Default Library Scrolls", MessageBoxButtons.OK);
+        }
+
         public void DupChek()
             //assigns the pm strings for each state (which data is duplicated, if any)
         {
@@ -654,10 +491,11 @@ namespace SM_ASM_GUI
             //the only data types that need checked for the same pointer are the ones that take up data space.
             for (int j = 0; j <= this.StateCount; j++)
             {
-                state A = States[j];
+                //int j = this.StateCount - 1; j > 0; j--
+                state A = new state(States[j]);
                 for (int i = 0; i <= this.StateCount; i++)
                 {
-                    state B = States[i];
+                    state B = new state(States[i]);
                     if (i == j) { continue; }
                     if (States[i].pLevelData == States[j].pLevelData)
                     {
@@ -725,7 +563,7 @@ namespace SM_ASM_GUI
                             B.pmPLMset = "state" + j;
                         }
                     }
-                    States[i] = B;
+                    States[i] = new state(B);
                 }
                 //if the pm string was not reassigned, then it is a unique state.
                 //this must be done here because the state type initializer does not know how many states are in the room.
@@ -742,9 +580,10 @@ namespace SM_ASM_GUI
                     { A.pmScrolls = "state" + j; }
                 if (States[j].pmPLMset == null) 
                     { A.pmPLMset = "state" + j; }
-                States[j] = A;
+                States[j] = new state(A);
             }
             //after all this looping, force default state to have its own pointers.
+            //apparently the stuff up there does not work.
             state correction = States[this.StateCount];
             correction.pmLevelData = "default";
             correction.pmFX = "default";
@@ -753,6 +592,24 @@ namespace SM_ASM_GUI
             correction.pmScrolls = "default";
             correction.pmPLMset = "default";
             States[this.StateCount] = correction;
+
+            //i think this needs a corrective function for recursive sharing - it can find these when non default states share pointers among themselves.
+            //Lower-down states (first in the room states list) can detect sharing with states above it, and then those states detect sharing with states below.
+            //In this case, the data is meant to be the same, so it doesn't matter which one is printed out.
+            //prefer the one closer to default state.
+
+            //or, maybe it's not recursive things i'm looking for anyway.
+            //they're bad, yes, but they're a result of states "sharing" with states that do not have unique data themselves.
+            //So, the check that i want to do is to make sure the state being pointed to has unique data, and if not, then give it unique data.
+            //this would fix recursive pointers but then the data is duplicated...
+
+            //so in addition to this, it still needs a list of what states are recursive, so that it can:
+            //  -give a unique data set to the state closest to default
+            //  -make both states look at that data set.
+
+            //SO CONFUSING! Since this only applies to scrolls due to it being an optional parameter,
+            //a better solution should be to have all states become library scrolls if default state is.
+            //yes; this will be handled in asmFcn at the time of printout.
         }
     }
 
@@ -1404,6 +1261,8 @@ namespace SM_ASM_GUI
 
         private void UpdateDataBoxContents()
         {
+            //this needs to pull info from the room that the pm pointers match...
+            //this needs to pull info from the room that the pm pointers match...
             EnemyBox.Items.Clear();
             for (int i = 0; i < thisroom.States[StateBox.SelectedIndex].Enemies.Count(); i++)
             {
@@ -1426,6 +1285,7 @@ namespace SM_ASM_GUI
                 else
                 {
                     FXbox.Items.Add(asmFCN.WByte((uint)i) + " - " + asmFCN.WWord(thisroom.States[StateBox.SelectedIndex].FX[i].DoorSelect));
+                    //RemoveNoFxTag(FXbox);       //this didn't work for some reason
                 }
             }
 
@@ -1848,7 +1708,7 @@ namespace SM_ASM_GUI
                 UpScroller = 0x70,
 
                 States = new List<state> {
-                    new state
+                    new state()
                     {
                         BGxScroll = 0,
                         BGyScroll = 0,
@@ -1904,10 +1764,8 @@ namespace SM_ASM_GUI
                                 Type = 0xFF
                             }
                         }
-                        
-
-
                     }
+        
                 },
 
                 Doors = new List<DoorData> {
@@ -2196,21 +2054,50 @@ namespace SM_ASM_GUI
         public string[] ReplaceDoorAsmLabels(List<StatePointersASM> oldStatePointers, string[] export, roomdata room)
         {
             //reminder: export[] is the room data prior to being inserted to SMASM space.
+
+            //this is messing up in a way that makes addition of new doors break...
+
             if (oldStatePointers == null) { return export; }
+            //if (oldStatePointers[0].DoorLabels == null) { return export; }
             List<string> doorsAsm = export[1].Split('\n').ToList();
             List<string> newDoorsAsm = new List<string>();
             int doorCount = 0;
-            foreach (string line in doorsAsm)
+            for (int i = 0; i < doorsAsm.Count; i++)
             {
+                //parses the Door ASM label again so that it will detect changes.....
+                //am i overthinking this?
+                //if it DOES NOT start with a '$' in oldStatePointers (what was previously in the ASM file)
+                //then it should be good to replace the newly generated door asm pointer (read from ROM)
+                //with that label.
+                //therefore, it should always replace the door asm label with what it previously had, even if it was just a pointer.
+                //this would disallow changing the pointer in the editor though.
+                //to allow that, it should only perform the substitution from oldStatePointers IF the oldStatePointer value is a label rather than a pointer.
+                string line = doorsAsm[i];
                 if(line.Length < 10) { newDoorsAsm.Add(line); continue; }
-                string doorAsm = (line.Split(':')[2].Split(',')[1]).Trim();
-                //if (doorAsm.Substring(0,1) == "$") { newDoorsAsm.Add(line); continue; }
+                string fromOldPointers = oldStatePointers[oldStatePointers.Count - 1].DoorLabels[doorCount];
+                if (fromOldPointers.StartsWith("$")) 
+                {
+                    doorCount++;
+                    newDoorsAsm.Add(line); 
+                    continue; 
+                }
                 string[] asm = line.Split(':');
                 string[] lastDw = asm[2].Split(',');
-                lastDw[1] = oldStatePointers[oldStatePointers.Count - 1].DoorLabels[doorCount];
+                lastDw[1] = fromOldPointers;
                 string replacementLine = asm[0] + ":" + asm[1] + ":" + lastDw[0] + ", " + lastDw[1];
                 newDoorsAsm.Add(replacementLine);
                 doorCount++;
+                if(doorCount == oldStatePointers[oldStatePointers.Count - 1].DoorLabels.Count)
+                {
+                    //there are fewer doors in the old ASM than the new ASM, so stop reading.
+                    //copy the remaining lines in doorsASM over to newDoorsAsm.
+                    i++;
+                    for (int j = i; j < doorsAsm.Count; j++)
+                    {
+                        newDoorsAsm.Add(doorsAsm[j]);
+                    }
+                    break;
+                }
             }
             StringBuilder newExportOne = new StringBuilder(500);
             foreach (string line in newDoorsAsm)
@@ -2263,6 +2150,10 @@ namespace SM_ASM_GUI
             //this struct exists so we can keep the setup asm and the main ASM pointers next to each other.
             //door asm checks happen regardless of state but must be a list themselves.
             //pass stateNumber -1 for default state
+
+            //needs to handle what happens if a state label is not found... that happens when states are added or removed.
+            //adding because labels will exist in new but not old ASM file
+            //removing for inverse reason.
             public StatePointersASM(int stateNumber, List<string> roomSection8F, List<string> roomSection83)
             {
                 DoorLabels = new List<string>();
@@ -2273,11 +2164,21 @@ namespace SM_ASM_GUI
                 else { stateLabel = "..state" + stateNumber; }
 
                 int labelLine = 0;
+                bool labelExists = false;
                 foreach (string line in roomSection8F)
                 {
-                    if(line.Trim() == stateLabel) { labelLine++; break; }
+                    if(line.Trim() == stateLabel) { labelLine++; labelExists = true; break; }
                     labelLine++;
                 }
+
+                if (!labelExists)
+                {
+                    //if label not found, the isLabel bools will remain false
+                    MainASM = "";
+                    SetupASM = "";
+                    return;
+                }
+
                 //split the pointer list by : and then by ,
                 //0 is the dl
                 //1 is the db
@@ -2297,6 +2198,11 @@ namespace SM_ASM_GUI
                 //..d1
                 //
                 //
+                if (roomSection83 == null)
+                {
+                    DoorLabels = null;
+                    return;
+                }
                 foreach (string line in roomSection83)
                 {
                     if(line.Length < 10) { continue; }
@@ -2665,7 +2571,15 @@ namespace SM_ASM_GUI
             string asm = File.ReadAllText(asmPath);
             System.Text.RegularExpressions.Match a = nameFormat.Match(asm);
             asm = asm.Replace(a.Value, replacement);
-            File.WriteAllText(asmPath,asm);
+            try
+            {
+                File.WriteAllText(asmPath, asm);
+            }
+            catch
+            {
+                MessageBox.Show("ASM File is in use by another process. Tileset Update failed.", "File in Use", MessageBoxButtons.OK);
+            }
+            
         }
 
         public void BackupSMASMfiles(out bool allFilesPresent)
@@ -3416,7 +3330,14 @@ namespace SM_ASM_GUI
                 }
                 else if (A.Name.Substring(0, 1) == "F" && A.Items.Count < MaxFX)
                 {
+                    //if FXbox then add it and if applicable remove the "No FX" text
+                    //the "no FX" text is really an FX full of FFFFFFF
+                    //and populating the box is taken care of when the GUI updates later on.
+                    //all that needs changed here is the room's FX data.
                     thisroom.States[StateBox.SelectedIndex].FX.Add(thisroom.States[StateBox.SelectedIndex].FX[(int)item]);
+                    RemoveNoFxTag(A);
+
+
                 }
                 else if (A.Name.Substring(0, 1) == "D" && A.Items.Count < MaxDoors)
                 {
@@ -3431,6 +3352,20 @@ namespace SM_ASM_GUI
 
 
             StateBox_SelectedIndexChanged(sender, e);
+        }
+        
+        private void RemoveNoFxTag(ListBox fxListBox)
+        {
+            for (int i = 0; i < fxListBox.Items.Count; i++)
+            {
+                string fxString = fxListBox.Items[i].ToString();
+                if (fxString.Contains("FX"))
+                {
+                    fxListBox.Items.RemoveAt(i);
+                    thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(i);
+                    break;
+                }
+            }
         }
         public void SortByPLMheader(ListBox needsSorted)
         {
@@ -3498,6 +3433,7 @@ namespace SM_ASM_GUI
             {
                 //order matters in this list:
                 A.Close();
+                //RemoveNoFxTag(B);
                 FXdata terminator = currentState.FX[currentState.FX.Count-1];
                 currentState.FX.RemoveAt(currentState.FX.Count-1);
                 currentState.FX.Add(CreateFX(thisroom.Doors[0].Destination));
@@ -6269,6 +6205,239 @@ Returns PC color value. (00000000 rrrrr000 ggggg000 bbbbb000)
             return longaddr;
         }
 
+    }
+    public class state
+    {//will contain all the room pointers as SNES addresses.
+        public unsafe state(ROM sm, uint statetype, uint statepointer, uint statearg, uint roomsize)
+        {
+            if (!LUNAR.OpenFile(sm.Path)) { MessageBox.Show("LUNAR ROM LOAD FAIL!"); }
+            byte[] rom = sm.Rom;
+            Type = statetype;
+            DataPointer = statepointer;
+            StateArg = statearg;
+
+            uint i = statepointer;
+            pLevelData = ROM.readLong(i, rom); i = i + 3;   //CHECK
+
+            TileSet = rom[i]; i++;                          //CHECK
+            SongSet = rom[i]; i++;                          //CHECK
+            PlayInd = rom[i]; i++;                          //CHECK
+
+            pFX = ROM.readWord(i, rom); i = i + 2;
+            pEnemySet = ROM.readWord(i, rom); i = i + 2;    //CHECK
+            pEnemyGFX = ROM.readWord(i, rom); i = i + 2;    //CHECK
+
+            BGxScroll = rom[i]; i++;                        //CHECK
+            BGyScroll = rom[i]; i++;                        //CHECK
+
+            pScrolls = ROM.readWord(i, rom); i = i + 2;     //CHECK
+            pUnused = ROM.readWord(i, rom); i = i + 2;      //CHECK
+            pMainASM = ROM.readWord(i, rom); i = i + 2;     //CHECK
+            pPLMset = ROM.readWord(i, rom); i = i + 2;      //CHECK
+            pBackground = ROM.readWord(i, rom); i = i + 2;  //CHECK
+            pSetupASM = ROM.readWord(i, rom); i = i + 2;    //CHECK
+
+            uint pcLevelPointer = LUNAR.SNEStoPC(pLevelData);
+            uint addr2 = 0; //this will be assigned the end of the compressed data; compressed data size = addr2 - level data pointer
+            //#################################################################################
+            //THIS MAX LEVEL SIZE MUST AGREE WITH THE MAX DECOMPRESSION SIZE IN THE LUNAR CLASS
+            //#################################################################################
+            byte[] levelUC = new byte[0xA000];    //reserve max level data size. Landing site is 0x5A00 bytes for reference.
+            fixed (void* ptr = levelUC)
+                LUNAR.Decompress(ptr, pcLevelPointer, &addr2);    //decompression takes a PC address.
+            //levelUC is populated with uncompressed level data.
+
+            byte[] levelC = new byte[0x5000];
+            Buffer.BlockCopy(rom, (int)pcLevelPointer, levelC, 0, (int)(addr2 - pcLevelPointer));
+
+            LevelDataUC = levelUC;
+            LevelDataC = levelC;
+            LevelDataSizeUC = ROM.readWord(0, levelUC);
+            LevelDataSizeC = addr2 - pcLevelPointer;
+
+            LUNAR.CloseFile();
+
+            //parse enemy set; cap at 0x20 entries; FFFF terminator.
+            uint j = LUNAR.SNEStoPC(pEnemySet + 0xA10000);
+            List<EnemyData> theseenemies = new List<EnemyData>();
+            for (i = 0; i < 0x20; i++)
+            {
+                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
+                theseenemies.Add(new EnemyData(sm, j, (int)i));
+                j = j + 0x10;
+            }
+            Enemies = theseenemies;
+            j += 2;
+            //EnemyCount is the Enemies-to-Clear value.
+            EnemyCount = sm.Rom[j];
+
+            //parse enemy gfx set; cap at 4 entries; FFFF terminator.
+            j = LUNAR.SNEStoPC(pEnemyGFX + 0xB40000);
+            List<EnemyGFX> thesegfx = new List<EnemyGFX>();
+            for (i = 0; i < 4; i++)
+            {
+                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
+                thesegfx.Add(new EnemyGFX(sm, j));
+                j = j + 4;
+            }
+            EnemiesAllowed = thesegfx;
+
+            //parse room PLM set; cap at d.40; 0000 terminator.
+            //special overload of the PLMdata constructor for use in Special Item ID; record PLM index
+            j = LUNAR.SNEStoPC(pPLMset + 0x8F0000);
+            List<PLMdata> theseplms = new List<PLMdata>();
+            for (i = 0; i < 0x28; i++)
+            {
+                if (ROM.readWord(j, sm.Rom) == 0x0000) { break; }
+                theseplms.Add(new PLMdata(sm, j, (int)i));
+                j += 6;
+            }
+            PLMs = theseplms;
+
+            //parse scrolls for total number of screens in the room
+            j = LUNAR.SNEStoPC(pScrolls + 0x8F0000);
+            List<uint> thesescrolls = new List<uint>();    //the intial size of the list needs to be an int for some reason.
+            for (i = 0; i < roomsize; i++)
+            {
+                thesescrolls.Add(sm.Rom[j]);
+                j++;
+            }
+            Scrolls = thesescrolls.ToArray();
+
+            //Parse FX Data. 16 Bytes each, terminated by a final entry with a Door Select of 0000.
+            //Technically each door could have its own FX, so the FX limit is the door limit.
+            //Also, a pointer will always contain at least the default room FX, so there will always be an entry.
+            j = LUNAR.SNEStoPC(pFX + 0x830000);
+            List<FXdata> theseFX = new List<FXdata>();
+            for (i = 0; i < 0x100; i++)
+            {
+                if (ROM.readWord(j, sm.Rom) == 0x0000) { break; }
+                if (ROM.readWord(j, sm.Rom) == 0xFFFF) { break; }
+                theseFX.Add(new FXdata(sm, j));
+                j += 0x10;
+            }
+            theseFX.Add(new FXdata(sm, j));
+            FX = theseFX;
+
+            pmLevelData = null;
+            pmFX = null;
+            pmEnemySet = null;
+            pmEnemyGFX = null;
+            pmScrolls = null;
+            pmPLMset = null;
+
+            int argbytes;
+            if (statetype == 0xE612 || statetype == 0xE629)
+            {
+                argbytes = 1;
+            }     //events and boss bits take 1 byte arg
+            else if (statetype == 0xE5EB)
+            {
+                argbytes = 2;
+            }     //the door room state needs a special one for its two-byte arg.
+            else if (statetype == 0xE5E6)
+            {
+                argbytes = -2;
+            }     //default state lacks a pointer, so this adjusts the count accordingly.
+            else
+            {
+                argbytes = 0;
+            }
+
+            //for determining level header size,
+            //sum size of each state
+            //plus default state
+            //plus door data
+            Bytes8F =
+                argbytes +
+                4 +     //Word state type and word state pointer are global
+                26      //26 is size of mandatory pointer block in bytes
+                ;
+
+        }
+
+        public state()
+        {
+            //this constructor exists to do nothing and allow us to instantiate the class as we would a struct?
+        }
+
+        public state(state copyThis)
+        {
+            this.Type = copyThis.Type;
+            this.DataPointer = copyThis.DataPointer;
+            this.StateArg = copyThis.StateArg;
+            this.Bytes8F = copyThis.Bytes8F;
+            this.Scrolls = new uint[copyThis.Scrolls.Length];
+            Array.Copy(copyThis.Scrolls, this.Scrolls, this.Scrolls.Length);
+            this.LevelDataSizeUC = copyThis.LevelDataSizeUC;
+            this.LevelDataSizeC = copyThis.LevelDataSizeC;
+            this.pLevelData = copyThis.pLevelData;
+            this.TileSet = copyThis.TileSet;
+            this.SongSet = copyThis.SongSet;
+            this.PlayInd = copyThis.PlayInd;
+            this.pFX = copyThis.pFX;
+            this.pEnemySet = copyThis.pEnemySet;
+            this.pEnemyGFX = copyThis.pEnemyGFX;
+            this.BGxScroll = copyThis.BGxScroll;
+            this.BGyScroll = copyThis.BGyScroll;
+            this.pScrolls = copyThis.pScrolls;
+            this.pUnused = copyThis.pUnused;
+            this.pMainASM = copyThis.pMainASM;
+            this.pPLMset = copyThis.pPLMset;
+            this.pBackground = copyThis.pBackground;
+            this.pSetupASM = copyThis.pSetupASM;
+            this.LevelDataUC = new byte[copyThis.LevelDataUC.Length];
+            Array.Copy(copyThis.LevelDataUC, this.LevelDataUC, this.LevelDataUC.Length);
+            this.LevelDataC = new byte[copyThis.LevelDataC.Length];
+            Array.Copy(copyThis.LevelDataC, this.LevelDataC, this.LevelDataC.Length);
+            this.Enemies = new List<EnemyData>(copyThis.Enemies);
+            this.EnemiesAllowed = new List<EnemyGFX>(copyThis.EnemiesAllowed);
+            this.EnemyCount = copyThis.EnemyCount;
+            this.PLMs = new List<PLMdata>(copyThis.PLMs);
+            this.FX = new List<FXdata>(copyThis.FX);
+            this.pmLevelData = copyThis.pmLevelData;
+            this.pmFX = copyThis.pmFX;
+            this.pmEnemySet = copyThis.pmEnemySet;
+            this.pmEnemyGFX = copyThis.pmEnemyGFX;
+            this.pmScrolls = copyThis.pmScrolls;
+            this.pmPLMset = copyThis.pmPLMset;
+        }
+
+        public uint Type { get; set; }
+        public uint DataPointer { get; set; }
+        public uint StateArg { get; set; }
+        public int Bytes8F { get; set; }
+        public uint[] Scrolls { get; set; }
+        public uint LevelDataSizeUC { get; set; }
+        public uint LevelDataSizeC { get; set; }
+        public uint pLevelData { get; set; }
+        public uint TileSet { get; set; }
+        public uint SongSet { get; set; }
+        public uint PlayInd { get; set; }
+        public uint pFX { get; set; }
+        public uint pEnemySet { get; set; }
+        public uint pEnemyGFX { get; set; }
+        public uint BGxScroll { get; set; }
+        public uint BGyScroll { get; set; }
+        public uint pScrolls { get; set; }
+        public uint pUnused { get; set; }
+        public uint pMainASM { get; set; }
+        public uint pPLMset { get; set; }
+        public uint pBackground { get; set; }
+        public uint pSetupASM { get; set; }
+        public byte[] LevelDataUC { get; set; }
+        public byte[] LevelDataC { get; set; }
+        public List<EnemyData> Enemies { get; set; }
+        public List<EnemyGFX> EnemiesAllowed { get; set; }
+        public uint EnemyCount { get; set; }
+        public List<PLMdata> PLMs { get; set; }
+        public List<FXdata> FX { get; set; }
+        public string pmLevelData { get; set; }
+        public string pmFX { get; set; }
+        public string pmEnemySet { get; set; }
+        public string pmEnemyGFX { get; set; }
+        public string pmScrolls { get; set; }
+        public string pmPLMset { get; set; }
     }
 
 

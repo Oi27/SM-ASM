@@ -91,6 +91,7 @@ namespace SM_ASM_GUI
                             plm.ScrollData = new byte[] { 0, 0, 0x80 };
                             room.States[state].PLMs[k] = plm;
                             scrolldatafailures[k] = false;
+                            scrollSelector.Items.Add(asmFCN.WWord(plm.ID) + "-" + asmFCN.WByte((uint)k));
                         }
                     }
                     else
@@ -406,11 +407,20 @@ namespace SM_ASM_GUI
         {
             //if plm scrolldata size is bigger than room scroll array throw an error & ask to reset the PLM.
             //do the same if any of the scroll change screens are outside the bounds of the room.
-            int plmChangeScreenCount = scrollPlm.ScrollData.Length - 1;
+            //reminder that plm scrolldata is SS VV, SS VV, SS VV....
+            //where SS is the screen to change and VV is what to change it to.
+            
             uint roomSize = Room.Width * Room.Height;
-            uint largestNumberInScrollChanges = scrollPlm.ScrollData.Max();
 
-            bool tooManyScreens = plmChangeScreenCount > roomSize;
+            List<byte> plmChangeScreenNumbers = new List<byte>();
+            for (int i = 0; i < scrollPlm.ScrollData.Length-1; i+=2)
+            {
+                plmChangeScreenNumbers.Add(scrollPlm.ScrollData[i]);
+            }
+
+            uint largestNumberInScrollChanges = plmChangeScreenNumbers.Max();
+
+            bool tooManyScreens = plmChangeScreenNumbers.Count > roomSize;
             bool indexOutOfBounds = largestNumberInScrollChanges > roomSize;
             if (tooManyScreens)
             {
