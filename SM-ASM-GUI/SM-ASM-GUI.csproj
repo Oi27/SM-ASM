@@ -7,7 +7,7 @@
     <ProjectGuid>{38AE9C22-E241-4406-A584-6653B8679DE7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>SM_ASM_GUI</RootNamespace>
-    <AssemblyName>SM-ASM-GUI</AssemblyName>
+    <AssemblyName>SM-ASM</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

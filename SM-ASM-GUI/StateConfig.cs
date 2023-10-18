@@ -244,6 +244,7 @@ namespace SM_ASM_GUI
             string oldTag = "";
             if (A.Tag != null) { oldTag = A.Tag.ToString(); }
             A.Tag = "state" + A.SelectedIndex;
+            if(A.Text.ToLower() == "default") { A.Tag = "default"; }
             if (A.Tag == null) { return; }
             if (!GroupSharing.ContainsFocus) { return; }
             //if the state being pointed to also points to this state for its PM, disallow the change and show a message.

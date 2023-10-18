@@ -2074,6 +2074,17 @@ namespace SM_ASM_GUI
                 //to allow that, it should only perform the substitution from oldStatePointers IF the oldStatePointer value is a label rather than a pointer.
                 string line = doorsAsm[i];
                 if(line.Length < 10) { newDoorsAsm.Add(line); continue; }
+                
+                if (doorCount == oldStatePointers[oldStatePointers.Count - 1].DoorLabels.Count)
+                {
+                    //there are fewer doors in the old ASM than the new ASM, so stop reading.
+                    //copy the remaining lines in doorsASM over to newDoorsAsm.
+                    for (int j = i; j < doorsAsm.Count; j++)
+                    {
+                        newDoorsAsm.Add(doorsAsm[j]);
+                    }
+                    break;
+                }
                 string fromOldPointers = oldStatePointers[oldStatePointers.Count - 1].DoorLabels[doorCount];
                 if (fromOldPointers.StartsWith("$")) 
                 {
@@ -2087,17 +2098,6 @@ namespace SM_ASM_GUI
                 string replacementLine = asm[0] + ":" + asm[1] + ":" + lastDw[0] + ", " + lastDw[1];
                 newDoorsAsm.Add(replacementLine);
                 doorCount++;
-                if(doorCount == oldStatePointers[oldStatePointers.Count - 1].DoorLabels.Count)
-                {
-                    //there are fewer doors in the old ASM than the new ASM, so stop reading.
-                    //copy the remaining lines in doorsASM over to newDoorsAsm.
-                    i++;
-                    for (int j = i; j < doorsAsm.Count; j++)
-                    {
-                        newDoorsAsm.Add(doorsAsm[j]);
-                    }
-                    break;
-                }
             }
             StringBuilder newExportOne = new StringBuilder(500);
             foreach (string line in newDoorsAsm)
