@@ -13,7 +13,7 @@ namespace SM_ASM_GUI
     public partial class ScrollEditor : Form
     {
         //overlayFolder must contain all the scroll pictures, named 0.png, 1.png, 2.png
-        public string overlayFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
+        public string overlayFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "Assets\\";
         MouseButtons LastUsed = MouseButtons.None;
 
         public enum Mode

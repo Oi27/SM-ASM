@@ -1002,7 +1002,7 @@ namespace SM_ASM_GUI
             LevelDataFromBmp A = new LevelDataFromBmp(this);
             try
             {
-                Bitmap face = new Bitmap(DbLocation + "defaultRoom.bmp");
+                Bitmap face = new Bitmap(DbLocation + "Assets\\" + "defaultRoom.bmp");
                 thisroom = A.RoomFromBitmap(face, 0xC075, 0x80FF);
             }
             catch
@@ -3595,6 +3595,7 @@ namespace SM_ASM_GUI
         private void RefreshExport_Click(object sender, EventArgs e)
         {
             if (!RoomLoaded()) { return; }
+            if (HeaderDropdown.Text == "New Room") { return; }  //should this have an error message????
             //load room based on current address in Headerbox.
             if(HeaderDropdown.Text.Length < 5) { return; }
             string headerNumbers = HeaderDropdown.Text.Substring(0, 5);
@@ -5277,6 +5278,7 @@ namespace SM_ASM_GUI
 
         private void HeaderDropdown_TextChanged(object sender, EventArgs e)
         {
+            if(HeaderDropdown.Text == "New Room") { return; }
             AllowHexOnlyCOMBO(sender, e);
         }
 
@@ -5797,6 +5799,7 @@ namespace SM_ASM_GUI
             thisroom = CreateEmptyRoom(A.RoomWidth,A.RoomHeight);
             LoadRoomToGUI(thisroom);
             A.Close();
+            HeaderDropdown.Text = "New Room";
             return;
         }
 
