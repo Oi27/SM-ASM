@@ -101,9 +101,18 @@ namespace SM_ASM_GUI
                 MessageBox.Show("SMILE folder not found.", "Invalid Path", MessageBoxButtons.OK);
                 return;
             }
+            if (!File.Exists(romBox.Text))
+            {
+                MessageBox.Show("Specified ROM does not exist.", "Invalid Path", MessageBoxButtons.OK);
+                return;
+            }
             //GetMdbPath creates the folder as well as returning a location.
-            string mdbPath = parent.getMDBpath(out bool mdbExists);
-            string mdbFolder = Path.GetDirectoryName(mdbPath);
+            //string mdbPath = parent.getMDBpath(out bool mdbExists);
+            string mdbFolder = SMILEbox.Text + "\\Custom\\" + Path.GetFileNameWithoutExtension(romBox.Text) + "\\Data\\";
+            if (!Directory.Exists(mdbFolder))
+            {
+                Directory.CreateDirectory(mdbFolder);
+            }
             Process winExp = new Process
             {
                 StartInfo = new ProcessStartInfo
