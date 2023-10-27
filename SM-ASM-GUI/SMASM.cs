@@ -1007,6 +1007,7 @@ namespace SM_ASM_GUI
             if(sm == null)
             {
                 //idk what exactly to do when the ROM fails to load...
+                //How to set it to the same state as when a room is not loaded?
                 //DialogResult openFilePicker = MessageBox.Show("File does not exist at config path:\n" + romPath + "\nOpen the paths config?", "ROM does not exist", MessageBoxButtons.OK);
                 //if(openFilePicker == DialogResult.Yes)
                 //{
@@ -1016,8 +1017,8 @@ namespace SM_ASM_GUI
                 //    config.Load(DbLocation + "config.xml");
                 //}
             }
+            if (!VerifyConfig()) { return; }
             PopulateHeaderList();
-
             LevelDataFromBmp A = new LevelDataFromBmp(this);
             try
             {
@@ -1077,6 +1078,42 @@ namespace SM_ASM_GUI
             string smileFilesPath = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText;
             string asarPath = config.ChildNodes[1].SelectSingleNode("ASR").InnerText;
 
+            if (!VerifyConfig()) { this.Close();  return false; }
+
+            bool shorterThanFive = asmPath.Length < 5;
+            if (shorterThanFive) 
+            {
+                string savePath = Path.GetDirectoryName(romPath) + "\\" + Path.GetFileNameWithoutExtension(romPath) + ".asm";
+                MessageBox.Show("No ASM file specified. Creating new file at:\n" + savePath,"No ASM",MessageBoxButtons.OK);
+                if (File.Exists(savePath))
+                {
+                    MessageBox.Show(
+                        "ASM file with ROM name already exists in ROM folder.\n" +
+                        "This one will be used instead of making a new one.",
+                        "ASM Already Exists",
+                        MessageBoxButtons.OK);
+                }
+                else
+                {
+                    CreateNewASMfile(savePath);
+                    CreateNewSMASMspace(savePath);
+                }
+                config.ChildNodes[1].SelectSingleNode("ASM").InnerText = savePath;
+                config.Save(DbLocation + "config.xml");
+            }
+            return true;
+        }
+
+        public bool VerifyConfig()
+            ///Return true if config is ok and false is any problems are found.
+        {
+            config.Load(DbLocation + "config.xml");
+
+            string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            string romPath = config.ChildNodes[1].SelectSingleNode("ROM").InnerText;
+            string smileFilesPath = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText;
+            string asarPath = config.ChildNodes[1].SelectSingleNode("ASR").InnerText;
+
 
             //bool asmOK = File.Exists(asmPath);
             bool romOK = File.Exists(romPath);
@@ -1103,33 +1140,10 @@ namespace SM_ASM_GUI
                 {
                     errormessage += "Specified ASAR does not exist.\n";
                 }
-                errormessage += "SMASM will be closed and config will be deleted.";
+                //errormessage += "SMASM will be closed and config will be deleted.";
                 MessageBox.Show(errormessage, "Config Error", MessageBoxButtons.OK);
                 File.Delete(DbLocation + "config.xml");
                 return false;
-            }
-
-
-            bool shorterThanFive = asmPath.Length < 5;
-            if (shorterThanFive) 
-            {
-                string savePath = Path.GetDirectoryName(romPath) + "\\" + Path.GetFileNameWithoutExtension(romPath) + ".asm";
-                MessageBox.Show("No ASM file specified. Creating new file at:\n" + savePath,"No ASM",MessageBoxButtons.OK);
-                if (File.Exists(savePath))
-                {
-                    MessageBox.Show(
-                        "ASM file with ROM name already exists in ROM folder.\n" +
-                        "This one will be used instead of making a new one.",
-                        "ASM Already Exists",
-                        MessageBoxButtons.OK);
-                }
-                else
-                {
-                    CreateNewASMfile(savePath);
-                    CreateNewSMASMspace(savePath);
-                }
-                config.ChildNodes[1].SelectSingleNode("ASM").InnerText = savePath;
-                config.Save(DbLocation + "config.xml");
             }
             return true;
         }
@@ -5678,9 +5692,7 @@ namespace SM_ASM_GUI
         private void OpenMDB_Click(object sender, EventArgs e)
         {
             string mdbPath = getMDBpath(out bool mdbExists);
-            if (!mdbExists) { MessageBox.Show("MDB plmdata c" +
-                "" +
-                "exist.\nCreate one by exporting a room and applying to ROM, or supply an existing one at:\n" + mdbPath, "No MDB", MessageBoxButtons.OK); return; }
+            if (!mdbExists) { MessageBox.Show("MDB does not exist.\nCreate one by exporting a room and applying to ROM, or supply an existing one at:\n" + mdbPath, "No MDB", MessageBoxButtons.OK); return; }
             Process.Start("notepad.exe", mdbPath);
         }
 
