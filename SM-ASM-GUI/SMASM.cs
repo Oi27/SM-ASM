@@ -1078,7 +1078,7 @@ namespace SM_ASM_GUI
             string smileFilesPath = config.ChildNodes[1].SelectSingleNode("SMILEFILE").InnerText;
             string asarPath = config.ChildNodes[1].SelectSingleNode("ASR").InnerText;
 
-            if (!VerifyConfig()) { this.Close();  return false; }
+            if (!VerifyConfig()) { File.Delete(DbLocation + "config.xml"); this.Close();  return false; }
 
             bool shorterThanFive = asmPath.Length < 5;
             if (shorterThanFive) 
@@ -1142,7 +1142,6 @@ namespace SM_ASM_GUI
                 }
                 //errormessage += "SMASM will be closed and config will be deleted.";
                 MessageBox.Show(errormessage, "Config Error", MessageBoxButtons.OK);
-                File.Delete(DbLocation + "config.xml");
                 return false;
             }
             return true;
@@ -1777,7 +1776,7 @@ namespace SM_ASM_GUI
                 RoomIndex = 0,
                 DnScroller = 0xA0,
                 DoorOut = 0xFFFF,
-                Header = 0xFFFF,
+                Header = 0x7FFFF,
                 Height = height,
                 Label = ".R00A0",
                 LabelM = "R00A0",
@@ -1868,7 +1867,7 @@ namespace SM_ASM_GUI
             return newRoom;
         }
 
-        public List<string> Parse_SMASM_ASM(string asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists)
+        public List<string> Parse_SMASM_ASM(string asmPath, out int smasmStartLine, out int smasmEndLine)
             //return string list of each line in the SMASM space, along with the starting and ending lines of SMASM-Space.
         {
             parsefile:
@@ -1900,7 +1899,6 @@ namespace SM_ASM_GUI
                     MessageBox.Show("SMASM creation aborted. Source operation will be cancelled.", "Creation Denied",MessageBoxButtons.OK);
                     smasmStartLine = 0;
                     smasmEndLine = 0;
-                    roomExists = false;
                     return null;
                 }
             }
@@ -1911,19 +1909,23 @@ namespace SM_ASM_GUI
             smasmEndLine = endline;
 
             List<string> newsmasm = new List<string>();
-
-
-            roomExists = false;
-            for (int i = startline; i < endline+1; i++)
+            for (int i = startline; i < endline + 1; i++)
             {
-                if (pASM[i].Trim() == thisroom.Label && !roomExists)
+                newsmasm.Add(pASM[i]);
+            }
+            return newsmasm;
+        }
+        public bool RoomExists(List<string> smasmSpace, roomdata room)
+        {
+            bool roomExists = false;
+            for (int i = 0; i < smasmSpace.Count; i++)
+            {
+                if (smasmSpace[i].Trim() == room.Label)
                 {
                     roomExists = true;
                 }
-                newsmasm.Add(pASM[i]);
             }
-
-            return newsmasm;
+            return roomExists;
         }
         public void GetSMASMsections(List<string> smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable)
             //this function exists to raise a compile error when adding new sections, because they need added everywhere in the code.
@@ -2391,7 +2393,7 @@ namespace SM_ASM_GUI
         {
             if (!RoomLoaded()) { return; }
             string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
-            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine);
             if(smasmSpace == null) { return; }
             Export_Room(smasmSpace, smasmStartLine, smasmEndLine, asmPath, true, thisroom);
             return;
@@ -2915,7 +2917,7 @@ namespace SM_ASM_GUI
                     //------------------------------------------------
                     //Stuff for repointing the doors
                     //
-                    List<string> smasmASM = Parse_SMASM_ASM(asmPath, out int startline, out int endline, out bool roomExists);
+                    List<string> smasmASM = Parse_SMASM_ASM(asmPath, out int startline, out int endline);
 
                     List<string> smasm8F = new List<string>();
                     List<string> smasm83d = new List<string>();
@@ -4075,7 +4077,7 @@ namespace SM_ASM_GUI
             string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
             string tilesets = TilesetFolders2ASM(singleSet);
             if(tilesets == null) { return; } //no tileset folders
-            List<string> smasmList = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool Room);
+            List<string> smasmList = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine);
             GetSMASMsections(smasmList, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             //when adding functionality for singles, it needs to locate and replace only the .T## that we selected.
             //This simple solution will be contained in an IF that makes sure we want to overwrite all.
@@ -4797,7 +4799,7 @@ namespace SM_ASM_GUI
             CreateNewASMfile(savePath);
             CreateNewSMASMspace(savePath);
 
-            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline);
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             Export_Room(smasmSpace, startline, endline, savePath, false, thisroom);
             //DialogResult exportTilesets = MessageBox.Show("Include tileset with room file?","Tilesets",MessageBoxButtons.YesNo);
@@ -4917,7 +4919,7 @@ namespace SM_ASM_GUI
             }
             //write firstContents to a new ASM file using firstFile's header.
             //so to do that, read firstFile and then delete/replace the contents of all the sections
-            List<string> smasmSpace = Parse_SMASM_ASM(firstFile, out int startline, out int endline, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(firstFile, out int startline, out int endline);
 
             string finalSMASM = RoomList2string(smasmSpace, firstContents);
 
@@ -5012,7 +5014,7 @@ namespace SM_ASM_GUI
         {
             string namePattern = @"\.R\d{2}A\d";
             System.Text.RegularExpressions.Regex nameFormat = new System.Text.RegularExpressions.Regex(namePattern);
-            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int startline, out int endline, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int startline, out int endline);
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             List<string> roomNames = new List<string>();
             foreach (string line in smasm8F)
@@ -5148,7 +5150,8 @@ namespace SM_ASM_GUI
                 mdbRooms.Add(room);
             }
 
-            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline);
+            bool roomExists = RoomExists(smasmSpace, thisroom);
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             //everything is the same up to this point, for each thread.
 
@@ -5260,7 +5263,8 @@ namespace SM_ASM_GUI
                 mdbRooms.Add(room);
             }
 
-            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(savePath, out int startline, out int endline);
+            bool roomExists = RoomExists(smasmSpace, thisroom);
             GetSMASMsections(smasmSpace, out List<string> smasm8F, out List<string> smasm83d, out List<string> smasm83f, out List<string> smasmA1, out List<string> smasmB4, out List<string> smasmLV, out List<string> smasmTilesets, out List<string> smasmTilesetTable);
             //everything is the same up to this point, for each thread.
 
@@ -5792,7 +5796,7 @@ namespace SM_ASM_GUI
         {
             if (!RoomLoaded()) { return; }
             string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
-            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine, out bool roomExists);
+            List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine);
             if (smasmSpace == null) { return; }
             DeleteRoomFromASM(smasmSpace, smasmStartLine, smasmEndLine, asmPath, thisroom);
             return;
@@ -5900,6 +5904,64 @@ namespace SM_ASM_GUI
             LoadRoomToGUI(thisroom);
             A.Close();
         }
+
+        private void exportLinkedRoomsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportLinkedRooms();
+            return;
+        }
+
+        public void ExportLinkedRooms()
+        {
+            //loop door list & export rooms. Also exports current room.
+            //could this backup of thisroom run into similar pointer problems that i had with states because it is a struct still?
+            List<DoorData> doors = new List<DoorData>(thisroom.Doors);
+            List<DoorData> exportedOK = new List<DoorData>();
+            List<DoorData> failedExport = new List<DoorData>();
+            List<string> failureReasons = new List<string>();
+
+            DoorData currentRoom = new DoorData()
+            {
+                Destination = (thisroom.Header - 0x70000)
+            };
+            doors.Add(currentRoom);
+
+            roomdata export;
+            if (!RoomLoaded()) { return; }
+            string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            AppendStatus("-------------------\nLinked Room Export " + DateTime.Now.ToLongTimeString());
+            foreach (DoorData door in doors)
+            {
+                //elevator platforms can be silently ignored
+                //Looks like we don't need to check for room existence but will keep the code commented out...
+                bool isElevatorPlatform = (door.Destination == 0x0000);
+                bool pointerInvalid = (door.Destination < 0x8000);
+                if (isElevatorPlatform) { continue; }
+                if (pointerInvalid) { failedExport.Add(door); failureReasons.Add("Invalid door pointer."); continue; }
+
+                export = new roomdata(sm, 0x70000 + door.Destination);
+                if (export.States == null) { failedExport.Add(door); failureReasons.Add("Invalid level header."); continue; }
+                export.DupChek();
+                List<string> smasmSpace = Parse_SMASM_ASM(asmPath, out int smasmStartLine, out int smasmEndLine);
+                if (smasmSpace == null) { return; }
+                //if (!RoomExists(smasmSpace, export)) { failedExport.Add(door); failureReasons.Add("Room does not yet exist in ASM."); continue; }
+                Export_Room(smasmSpace, smasmStartLine, smasmEndLine, asmPath, false, export);
+                exportedOK.Add(door);
+            }
+
+            foreach (DoorData door in exportedOK)
+            {
+                AppendStatus("Exported $7" + asmFCN.WWord(door.Destination) + " OK");
+            }
+
+            //failure printout has an extra newline because it makes it easier to read.
+            for(int i = 0; i < failedExport.Count; i++)
+            {
+                AppendStatus("Failed to export $7" + asmFCN.WWord(failedExport[i].Destination) + ": " + failureReasons[i] + "\n");
+            }
+            AppendStatus("-------------------");
+        }
+
     }
 
     class ThreadedRoomExporter
