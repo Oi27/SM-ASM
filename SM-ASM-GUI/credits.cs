@@ -15,6 +15,12 @@ namespace SM_ASM_GUI
         public credits()
         {
             InitializeComponent();
+            VersionLabel.Text = "Version " + Application.ProductVersion;
+        }
+
+        private void credits_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
