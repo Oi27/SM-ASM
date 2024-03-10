@@ -103,7 +103,7 @@ namespace SM_ASM_GUI
                 " : dw ROOMFX_" + r.LabelM + "_default, " +
                 "ENEMYSET_" + r.LabelM + "_default, " +
                 "ENEMYGFX_" + r.LabelM + "_default, " +
-                "$" + WWord((r.States[r.StateCount].BGxScroll * 0x100) + r.States[r.StateCount].BGyScroll) + commaCash +
+                "$" + WWord((r.States[r.StateCount].BGyScroll * 0x100) + r.States[r.StateCount].BGxScroll) + commaCash +
                 WWord(r.States[r.StateCount].pScrolls) + commaCash +
                 WWord(r.States[r.StateCount].pUnused) + commaCash +
                 WWord(r.States[r.StateCount].pMainASM) + ", " +
@@ -123,7 +123,7 @@ namespace SM_ASM_GUI
                 " : dw ROOMFX_" + r.LabelM + "_default, " +
                 "ENEMYSET_" + r.LabelM + "_default, " +
                 "ENEMYGFX_" + r.LabelM + "_default, " +
-                "$" + WWord((r.States[r.StateCount].BGxScroll * 0x100) + r.States[r.StateCount].BGyScroll) + ", " +
+                "$" + WWord((r.States[r.StateCount].BGyScroll * 0x100) + r.States[r.StateCount].BGxScroll) + ", " +
                 "..scrolls_default" + commaCash +
                 WWord(r.States[r.StateCount].pUnused) + commaCash +
                 WWord(r.States[r.StateCount].pMainASM) + ", " +
