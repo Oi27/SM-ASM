@@ -159,7 +159,7 @@ namespace SM_ASM_GUI
                              " : dw ROOMFX_" + r.LabelM + "_" + r.States[i].pmFX + ", " +
                              "ENEMYSET_" + r.LabelM + "_" + r.States[i].pmEnemySet + ", " +
                              "ENEMYGFX_" + r.LabelM + "_" + r.States[i].pmEnemyGFX + ", " +
-                             "$" + WWord((r.States[i].BGxScroll * 0x100) + r.States[i].BGyScroll) + commaCash +
+                             "$" + WWord((r.States[i].BGyScroll * 0x100) + r.States[i].BGxScroll) + commaCash +
                              WWord(r.States[i].pScrolls) + commaCash +
                              WWord(r.States[i].pUnused) + commaCash +
                              WWord(r.States[i].pMainASM) + ", " +
@@ -180,7 +180,7 @@ namespace SM_ASM_GUI
                             " : dw ROOMFX_" + r.LabelM + "_" + r.States[i].pmFX + ", " +
                             "ENEMYSET_" + r.LabelM + "_" + r.States[i].pmEnemySet + ", " +
                             "ENEMYGFX_" + r.LabelM + "_" + r.States[i].pmEnemyGFX + ", " +
-                            "$" + WWord((r.States[i].BGxScroll * 0x100) + r.States[i].BGyScroll) + ", " +
+                            "$" + WWord((r.States[i].BGyScroll * 0x100) + r.States[i].BGxScroll) + ", " +
                             "..scrolls" + "_" + r.States[i].pmScrolls + commaCash +
                             WWord(r.States[i].pUnused) + commaCash +
                             WWord(r.States[i].pMainASM) + ", " +
