@@ -79,6 +79,7 @@
     <Compile Include="credits.Designer.cs">
       <DependentUpon>credits.cs</DependentUpon>
     </Compile>
+    <Compile Include="FolderPicker.cs" />
     <Compile Include="LevelDataFromBmp.cs">
       <SubType>Form</SubType>
     </Compile>

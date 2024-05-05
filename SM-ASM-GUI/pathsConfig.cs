@@ -63,10 +63,10 @@ namespace SM_ASM_GUI
         private void folderpicker(object sender, EventArgs e, TextBox dest)
         {
             Button foo = (Button)sender;
-            FolderBrowserDialog aa = new FolderBrowserDialog();
-            if (aa.ShowDialog() == DialogResult.OK)
+            FolderPicker aa = new FolderPicker();
+            if (aa.ShowDialog(new IntPtr()) == true)
             {
-                foo.Tag = aa.SelectedPath;
+                foo.Tag = aa.ResultPath;
                 dest.Text = foo.Tag.ToString();
                 dest.SelectionStart = dest.Text.Length;
             }
