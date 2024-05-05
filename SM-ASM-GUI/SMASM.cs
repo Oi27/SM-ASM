@@ -6148,19 +6148,19 @@ namespace SM_ASM_GUI
             return LunarRecompress(source, dest, source_size, 0x10000, 4, 0); 
         }
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         public static extern uint LunarVersion();
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
 
         public static extern uint LunarPCtoSNES(uint pc, uint romtype, uint header);
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         public static extern uint LunarSNEStoPC(uint snes, uint romtype, uint header);
         //typedef unsigned int (WINAPI *LCPROC7)(unsigned int Pointer, unsigned int ROMType, unsigned int Header);
 
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", SetLastError = true)]
+        [DllImport("Lunar Compress.dll", SetLastError = true)]
         private static unsafe extern bool LunarOpenFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename, uint filemode);
         //typedef BOOL(WINAPI* LCPROC3)(char* FileName, unsigned int FileMode);
         //extern LCPROC3 LunarOpenFile;
@@ -6200,16 +6200,16 @@ file flags
 **************************************************************************/
 
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         private static extern bool LunarCloseFile();
         //typedef BOOL(WINAPI* LCPROC2)();
         //extern LCPROC2 LunarCloseFile;
 
 
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         private static unsafe extern uint LunarDecompress(void* array, uint pointer, uint maxsize, uint format, uint format2, uint* LastROMposition);
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         //LunarDecompress(dest, pc, 0x5000, 4, 0, null)
         private static unsafe extern uint LunarRecompress(void* source, void* destination, uint datasize, uint maxDatasize, uint format, uint format2);
         //LunarRecompress(*byte[] .GFX_File, *byte[] Compressed_Array, GFX_File.Length, 0x10000, 4, 0)
@@ -6283,11 +6283,11 @@ file flags
         //extern "C" unsigned int WINAPI _export LunarRecompress(void* Source, void* Destination,unsigned int DataSize, unsigned int MaxDataSize, unsigned int Format, unsigned int Format2)
 
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
 
         public static unsafe extern uint LunarSNEStoPCRGB(uint SNESColor);
 
-        [DllImport("C:\\Users\\oi23\\source\\repos\\SM-ASM-GUI\\SM-ASM-GUI\\LCompress\\Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Lunar Compress.dll", CharSet = CharSet.Unicode, SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         public static unsafe extern uint LunarPCtoSNESRGB(uint PCColor);
         /**************************************************************************
 
