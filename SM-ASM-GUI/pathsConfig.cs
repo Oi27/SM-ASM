@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace SM_ASM_GUI
 {
@@ -63,10 +57,10 @@ namespace SM_ASM_GUI
         private void folderpicker(object sender, EventArgs e, TextBox dest)
         {
             Button foo = (Button)sender;
-            FolderBrowserDialog aa = new FolderBrowserDialog();
-            if (aa.ShowDialog() == DialogResult.OK)
+            CommonOpenFileDialog aa = new CommonOpenFileDialog() { IsFolderPicker = true };
+            if (aa.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                foo.Tag = aa.SelectedPath;
+                foo.Tag = aa.FileName;
                 dest.Text = foo.Tag.ToString();
                 dest.SelectionStart = dest.Text.Length;
             }
