@@ -1543,11 +1543,33 @@ namespace SM_ASM_GUI
         }
         private void DataListMenu_Opening(object sender, CancelEventArgs e)
         {
+            //the location-dependent options are invisible by default
             StateMenuStrip_Opening(sender, e);
             ListBox A = (ListBox)((sender as ContextMenuStrip).SourceControl);
             string firstletter = A.Name.Substring(0, 1);
-            if (firstletter == "P") { ScrollPLMedit.Visible = true; }
-            else { ScrollPLMedit.Visible = false; }
+            AddToGFXList.Visible   = false;
+            ScrollPLMedit.Visible  = false;
+            AddToEnemyList.Visible = false;
+            AddToGFXList  .Enabled = true;
+            ScrollPLMedit .Enabled = true;
+            AddToEnemyList.Enabled = true;
+            switch (firstletter)
+            {
+                case "P":
+                    ScrollPLMedit.Visible = true;
+                    break;
+                case "E":
+                    AddToGFXList.Visible = true;
+                    if(thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Count >= MaxGFX) 
+                    { AddToGFXList.Enabled = false; }
+                    break;
+                case "G":
+                    AddToEnemyList.Visible = true;
+                    if (thisroom.States[StateBox.SelectedIndex].Enemies.Count >= MaxEnemies)
+                    { AddToEnemyList.Enabled = false; }
+                    break;
+            }
+            
         }
 
         private void BlockDelete_Click(object sender, EventArgs e)
@@ -1557,28 +1579,28 @@ namespace SM_ASM_GUI
             int count = A.Items.Count;
             //determine data type based on first letter of control name
             //Enemies, GFX, PLM, FX, Doors, State
-            if (A.Name.Substring(0, 1) == "E" && A.Items.Count < MaxEnemies)
+            if (A.Name.Substring(0, 1) == "E")
             {
                 for (int i = A.SelectedIndices.Count - 1; i >= 0; i--)
                 {
                     thisroom.States[StateBox.SelectedIndex].Enemies.RemoveAt((int)A.SelectedIndices[i]);
                 }
             }
-            else if (A.Name.Substring(0, 1) == "G" && A.Items.Count < MaxGFX)
+            else if (A.Name.Substring(0, 1) == "G")
             {
                 for (int i = A.SelectedIndices.Count - 1; i >= 0; i--)
                 {
                     thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.RemoveAt((int)A.SelectedIndices[i]);
                 }
             }
-            else if (A.Name.Substring(0, 1) == "P" && A.Items.Count < MaxPLMs)
+            else if (A.Name.Substring(0, 1) == "P")
             {
                 for (int i = A.SelectedIndices.Count - 1; i >= 0; i--)
                 {
                     thisroom.States[StateBox.SelectedIndex].PLMs.RemoveAt((int)A.SelectedIndices[i]);
                 }
             }
-            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count < MaxFX && A.Items.Count >= 1)
+            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count <= MaxFX && A.Items.Count >= 1)
             {
                 for (int i = A.SelectedIndices.Count - 1; i >= 0; i--)
                 {
@@ -1594,7 +1616,7 @@ namespace SM_ASM_GUI
                     thisroom.States[StateBox.SelectedIndex].FX.RemoveAt((int)A.SelectedIndices[i]);
                 }
             }
-            else if (A.Name.Substring(0, 1) == "D" && A.Items.Count < MaxDoors && A.Items.Count > 1)
+            else if (A.Name.Substring(0, 1) == "D" && A.Items.Count <= MaxDoors && A.Items.Count > 1)
             {
                 for (int i = A.SelectedIndices.Count - 1; i >= 0; i--)
                 {
@@ -1604,7 +1626,7 @@ namespace SM_ASM_GUI
 
                 }
             }
-            else if (A.Name.Substring(0, 1) == "S" && A.Items.Count < MaxStates && A.Items.Count > 1)
+            else if (A.Name.Substring(0, 1) == "S" && A.Items.Count <= MaxStates && A.Items.Count > 1)
             {
                 //redraw state list since the function at the end of this one does not handle that.
                 //Also forces the last thing in the list to be default state.
@@ -5962,6 +5984,47 @@ namespace SM_ASM_GUI
             AppendStatus("-------------------");
         }
 
+        private void SMASM_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.F5) { Dropdown_LoadRoom(null,null) ; }
+
+        }
+
+        private void AddToGFXList_Click(object sender, EventArgs e)
+        {
+            ListBox A = EnemyBox;
+            if(A.SelectedIndex == -1) { return; }
+            uint nextIndex = 1;
+            foreach (EnemyGFX item in thisroom.States[StateBox.SelectedIndex].EnemiesAllowed)
+            {
+                if(item.Palette == nextIndex)
+                {
+                    nextIndex++;
+                }
+            }
+            if (nextIndex > 3) { nextIndex = 7; }
+            EnemyGFX addThis = new EnemyGFX()
+            {
+                ID = thisroom.States[StateBox.SelectedIndex].Enemies[A.SelectedIndex].ID,
+                Palette = nextIndex
+            };
+            thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Add(addThis);
+            StateBox_SelectedIndexChanged(null, null);
+        }
+
+        private void AddToEnemyList_Click(object sender, EventArgs e)
+        {
+            ListBox A = GFXbox;
+            if (A.SelectedIndex == -1) { return; }
+            EnemyData addThis = new EnemyData()
+            {
+                ID = thisroom.States[StateBox.SelectedIndex].EnemiesAllowed[A.SelectedIndex].ID,
+                PosX = 0x80,
+                PosY = 0x80,
+            };
+            thisroom.States[StateBox.SelectedIndex].Enemies.Add(addThis);
+            StateBox_SelectedIndexChanged(null, null);
+        }
     }
 
     class ThreadedRoomExporter
