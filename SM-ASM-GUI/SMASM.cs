@@ -1547,6 +1547,7 @@ namespace SM_ASM_GUI
             StateMenuStrip_Opening(sender, e);
             ListBox A = (ListBox)((sender as ContextMenuStrip).SourceControl);
             string firstletter = A.Name.Substring(0, 1);
+            OpenRoomViaDoor.Visible = false;
             AddToGFXList.Visible   = false;
             ScrollPLMedit.Visible  = false;
             AddToEnemyList.Visible = false;
@@ -1567,6 +1568,9 @@ namespace SM_ASM_GUI
                     AddToEnemyList.Visible = true;
                     if (thisroom.States[StateBox.SelectedIndex].Enemies.Count >= MaxEnemies)
                     { AddToEnemyList.Enabled = false; }
+                    break;
+                case "D":
+                    OpenRoomViaDoor.Visible = true;
                     break;
             }
             
@@ -1816,7 +1820,7 @@ namespace SM_ASM_GUI
                         BGxScroll = 0,
                         BGyScroll = 0,
                         Bytes8F = 0,
-                        PlayInd = 5,
+                        PlayInd = 0,
                         SongSet = 0,
                         StateArg = 0,
                         Type = 0xE5E6,
@@ -6021,9 +6025,94 @@ namespace SM_ASM_GUI
                 ID = thisroom.States[StateBox.SelectedIndex].EnemiesAllowed[A.SelectedIndex].ID,
                 PosX = 0x80,
                 PosY = 0x80,
+                Special = 0x2000,
             };
             thisroom.States[StateBox.SelectedIndex].Enemies.Add(addThis);
             StateBox_SelectedIndexChanged(null, null);
+        }
+
+        private void sendToTopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListBox A = (ListBox)((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl;
+
+            if (A.Name.Substring(0, 1) == "E")
+            {
+                thisroom.States[StateBox.SelectedIndex].Enemies.Insert(0, thisroom.States[StateBox.SelectedIndex].Enemies[EnemyBox.SelectedIndex]);
+            }
+            else if (A.Name.Substring(0, 1) == "G")
+            {
+
+            }
+            else if (A.Name.Substring(0, 1) == "P")
+            {
+
+            }
+            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count <= MaxFX && A.Items.Count >= 1)
+            {
+
+            }
+            else if (A.Name.Substring(0, 1) == "D" && A.Items.Count <= MaxDoors && A.Items.Count > 1)
+            {
+
+            }
+            StateBox_SelectedIndexChanged(null, null);
+
+            //MoveIndices(A, 0, GetListBoxSelection(A));
+            return;
+        }
+
+        private List<int> GetListBoxSelection(ListBox list)
+        {
+            //copy the selection to another list so it doesn't get messed up when moving things around.
+            List<int> toMove = new List<int>();
+            foreach (int item in list.SelectedIndices)
+            {
+                toMove.Add(item);
+            }
+            return toMove;
+        }
+
+        private void MoveIndices(ListBox list, int destIndex, List<int> indicesToMove)
+        {
+            //Unfinished 8/20/24
+            //Note that the listboxes themselves do not do anything...
+            //They are refreshed by the whole GUI being refreshed after things being removed or added.
+
+            //group all the selected indices together (separate list)
+            //for each in that list
+
+            int count = list.Items.Count;
+            //determine data type based on first letter of control name
+            //Enemies, GFX, PLM, FX, Doors, State
+            if (list.Name.Substring(0, 1) == "E")
+            {
+                
+            }
+            else if (list.Name.Substring(0, 1) == "G")
+            {
+                
+            }
+            else if (list.Name.Substring(0, 1) == "P")
+            {
+                
+            }
+            else if (list.Name.Substring(0, 1) == "F" && list.Items.Count <= MaxFX && list.Items.Count >= 1)
+            {
+                
+            }
+            else if (list.Name.Substring(0, 1) == "D" && list.Items.Count <= MaxDoors && list.Items.Count > 1)
+            {
+                
+            }
+            StateBox_SelectedIndexChanged(null, null);
+        }
+
+        private void openRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uint headerAddr = thisroom.Doors[DoorBox.SelectedIndex].Destination;
+            headerAddr += 0x70000;
+            HeaderDropdown.Text = headerAddr.ToString("X4"); //this might not be the right way to do this... 8/21/24
+            LoadRoomToGUI(headerAddr);
         }
     }
 

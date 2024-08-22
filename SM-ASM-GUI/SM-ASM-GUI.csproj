@@ -166,6 +166,12 @@
     <Compile Include="Tilesets_Settings.Designer.cs">
       <DependentUpon>Tilesets_Settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DataListBox.Designer.cs">
+      <DependentUpon>DataListBox.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddStateDialog.resx">
       <DependentUpon>AddStateDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -218,6 +224,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tilesets_Settings.resx">
       <DependentUpon>Tilesets_Settings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataListBox.resx">
+      <DependentUpon>DataListBox.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
