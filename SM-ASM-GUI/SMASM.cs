@@ -1554,6 +1554,7 @@ namespace SM_ASM_GUI
             AddToGFXList  .Enabled = true;
             ScrollPLMedit .Enabled = true;
             AddToEnemyList.Enabled = true;
+            MoveIndex     .Enabled = false; //feature is not implemented
             switch (firstletter)
             {
                 case "P":

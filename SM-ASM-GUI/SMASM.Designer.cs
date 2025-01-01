@@ -83,17 +83,17 @@ namespace SM_ASM_GUI
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.AddStateButton = new System.Windows.Forms.ToolStripMenuItem();
             this.DataListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.OpenRoomViaDoor = new System.Windows.Forms.ToolStripMenuItem();
             this.DeleteButton = new System.Windows.Forms.ToolStripMenuItem();
             this.BlockCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.NewItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ScrollPLMedit = new System.Windows.Forms.ToolStripMenuItem();
             this.AddToGFXList = new System.Windows.Forms.ToolStripMenuItem();
             this.AddToEnemyList = new System.Windows.Forms.ToolStripMenuItem();
-            this.moveIndexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MoveIndex = new System.Windows.Forms.ToolStripMenuItem();
             this.sendToTopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendToBottomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.specifiyIndexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenRoomViaDoor = new System.Windows.Forms.ToolStripMenuItem();
             this.label8 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.EnemyBox = new System.Windows.Forms.ListBox();
@@ -610,36 +610,43 @@ namespace SM_ASM_GUI
             this.ScrollPLMedit,
             this.AddToGFXList,
             this.AddToEnemyList,
-            this.moveIndexToolStripMenuItem});
+            this.MoveIndex});
             this.DataListMenu.Name = "contextMenuStrip1";
-            this.DataListMenu.Size = new System.Drawing.Size(171, 180);
+            this.DataListMenu.Size = new System.Drawing.Size(181, 202);
             this.DataListMenu.Opening += new System.ComponentModel.CancelEventHandler(this.DataListMenu_Opening);
+            // 
+            // OpenRoomViaDoor
+            // 
+            this.OpenRoomViaDoor.Name = "OpenRoomViaDoor";
+            this.OpenRoomViaDoor.Size = new System.Drawing.Size(180, 22);
+            this.OpenRoomViaDoor.Text = "Open Room";
+            this.OpenRoomViaDoor.Click += new System.EventHandler(this.openRoomToolStripMenuItem_Click);
             // 
             // DeleteButton
             // 
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(170, 22);
+            this.DeleteButton.Size = new System.Drawing.Size(180, 22);
             this.DeleteButton.Text = "Delete Item";
             this.DeleteButton.Click += new System.EventHandler(this.BlockDelete_Click);
             // 
             // BlockCopy
             // 
             this.BlockCopy.Name = "BlockCopy";
-            this.BlockCopy.Size = new System.Drawing.Size(170, 22);
+            this.BlockCopy.Size = new System.Drawing.Size(180, 22);
             this.BlockCopy.Text = "Duplicate";
             this.BlockCopy.Click += new System.EventHandler(this.BlockCopy_Click);
             // 
             // NewItem
             // 
             this.NewItem.Name = "NewItem";
-            this.NewItem.Size = new System.Drawing.Size(170, 22);
+            this.NewItem.Size = new System.Drawing.Size(180, 22);
             this.NewItem.Text = "New Item";
             this.NewItem.Click += new System.EventHandler(this.NewItem_Click);
             // 
             // ScrollPLMedit
             // 
             this.ScrollPLMedit.Name = "ScrollPLMedit";
-            this.ScrollPLMedit.Size = new System.Drawing.Size(170, 22);
+            this.ScrollPLMedit.Size = new System.Drawing.Size(180, 22);
             this.ScrollPLMedit.Text = "Edit Scroll PLMs";
             this.ScrollPLMedit.Visible = false;
             this.ScrollPLMedit.Click += new System.EventHandler(this.ScrollPLMedit_Click);
@@ -647,7 +654,7 @@ namespace SM_ASM_GUI
             // AddToGFXList
             // 
             this.AddToGFXList.Name = "AddToGFXList";
-            this.AddToGFXList.Size = new System.Drawing.Size(170, 22);
+            this.AddToGFXList.Size = new System.Drawing.Size(180, 22);
             this.AddToGFXList.Text = "Add to GFX List";
             this.AddToGFXList.Visible = false;
             this.AddToGFXList.Click += new System.EventHandler(this.AddToGFXList_Click);
@@ -655,21 +662,21 @@ namespace SM_ASM_GUI
             // AddToEnemyList
             // 
             this.AddToEnemyList.Name = "AddToEnemyList";
-            this.AddToEnemyList.Size = new System.Drawing.Size(170, 22);
+            this.AddToEnemyList.Size = new System.Drawing.Size(180, 22);
             this.AddToEnemyList.Text = "Add to Enemy List";
             this.AddToEnemyList.Visible = false;
             this.AddToEnemyList.Click += new System.EventHandler(this.AddToEnemyList_Click);
             // 
-            // moveIndexToolStripMenuItem
+            // MoveIndex
             // 
-            this.moveIndexToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MoveIndex.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sendToTopToolStripMenuItem,
             this.sendToBottomToolStripMenuItem,
             this.specifiyIndexToolStripMenuItem});
-            this.moveIndexToolStripMenuItem.Enabled = false;
-            this.moveIndexToolStripMenuItem.Name = "moveIndexToolStripMenuItem";
-            this.moveIndexToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.moveIndexToolStripMenuItem.Text = "Move Index";
+            this.MoveIndex.Enabled = false;
+            this.MoveIndex.Name = "MoveIndex";
+            this.MoveIndex.Size = new System.Drawing.Size(180, 22);
+            this.MoveIndex.Text = "Move Index";
             // 
             // sendToTopToolStripMenuItem
             // 
@@ -689,13 +696,6 @@ namespace SM_ASM_GUI
             this.specifiyIndexToolStripMenuItem.Name = "specifiyIndexToolStripMenuItem";
             this.specifiyIndexToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.specifiyIndexToolStripMenuItem.Text = "Specifiy Index";
-            // 
-            // OpenRoomViaDoor
-            // 
-            this.OpenRoomViaDoor.Name = "OpenRoomViaDoor";
-            this.OpenRoomViaDoor.Size = new System.Drawing.Size(170, 22);
-            this.OpenRoomViaDoor.Text = "Open Room";
-            this.OpenRoomViaDoor.Click += new System.EventHandler(this.openRoomToolStripMenuItem_Click);
             // 
             // label8
             // 
@@ -1234,7 +1234,7 @@ namespace SM_ASM_GUI
         private System.Windows.Forms.ToolStripMenuItem refreshRoomFromROMF5ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AddToGFXList;
         private System.Windows.Forms.ToolStripMenuItem AddToEnemyList;
-        private System.Windows.Forms.ToolStripMenuItem moveIndexToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem MoveIndex;
         private System.Windows.Forms.ToolStripMenuItem sendToTopToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sendToBottomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem specifiyIndexToolStripMenuItem;
