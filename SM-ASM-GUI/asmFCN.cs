@@ -79,7 +79,7 @@ namespace SM_ASM_GUI
                     }
                     else if(r.States[i].Type == 0xE5EB)
                     {
-                        statetext += commaCash + WWord(r.States[i].StateArg) + "..state" + i;
+                        statetext += commaCash + WWord(r.States[i].StateArg) + " : dw ..state" + i;
                     }
                     else
                     {
