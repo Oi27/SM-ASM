@@ -3769,6 +3769,7 @@ namespace SM_ASM_GUI
                 if (sceExp) { ExportTileset(item.SCE, currentDirectory, ".gfx", folderIndex); }
                 if (palExp) { ExportTileset(item.Palette, currentDirectory, ".pal", folderIndex); }
                 if (ttbExp) { ExportTileset(item.TileTable, currentDirectory, ".ttb", folderIndex); }
+                CompressTilesetFolder(folderIndex); //can do this even if not everything was exported; its fine.
                 folderIndex++;
             }
             LUNAR.CloseFile();
