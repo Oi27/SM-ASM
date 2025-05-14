@@ -4048,7 +4048,7 @@ namespace SM_ASM_GUI
                     //}
 
                     string label = "";
-                    StringBuilder db = new StringBuilder("db ",100000);
+                    StringBuilder db = new StringBuilder("db ",100);
                     byte[] source;
                     byte[] compress = new byte[0x10000];
                     uint dataSize;
@@ -4155,15 +4155,11 @@ namespace SM_ASM_GUI
                     }
 
                     if (skipfile) { continue; }
-                    fixed (void* sourcePtr = source)
-                    fixed (void* destPtr = compress)
-                        compSize = LUNAR.Compress(sourcePtr, destPtr, dataSize);
-                    for (int i = 0; i < compSize; i++)
-                    {
-                        db.Append("$" + asmFCN.WByte(compress[i]) + ",");
-                    }
-                    db = db.Remove(db.Length-1,1);
 
+                    //incbin ".\Tilesets\D-HH\HH.ext.comp"
+                    string fileName = GetTilesetFolderName(uint.Parse(nameParse[1], NumberStyles.HexNumber));
+                    fileName = fileName.Substring(fileName.LastIndexOf("\\")) + "\\" + nameParse[1] + Path.GetExtension(tilesetcomponent);
+                    db.Append("incbin " + "\".\\Tilesets\\" + fileName  + ".comp" + "\"");
                     string padbyte = "fillbyte $FF\n" +
                                     "fill 10\n";
 
@@ -5624,7 +5620,7 @@ namespace SM_ASM_GUI
                 "Apply: Commit ASM file to ROM.\n" +
                 "Use after making changes in SMASM.\n" +
                 "\n" +
-                "Current Tileset to ASM: Imports the current room tileset from the SMASM Tileset Folders into the ASM File.\n" +
+                "Compress Tset Folder: Compress and replace the folder's .comp files that are incbin'd in the ASM.\n" +
                 "Use after making changes in your chosen gfx editor.\n" +
                 "\n" +
                 "ROM to Tset Folder: Exports the current room tileset from ROM to the SMASM tileset folders for editing.\n" +
@@ -6161,32 +6157,130 @@ namespace SM_ASM_GUI
 
         private void sendToTopToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //if each listbox were a class the knew what room element it dealt with, it could act on the lists easier.
+
             ListBox A = (ListBox)((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl;
 
+            int oldindex = A.SelectedIndex;
             if (A.Name.Substring(0, 1) == "E")
             {
-                thisroom.States[StateBox.SelectedIndex].Enemies.Insert(0, thisroom.States[StateBox.SelectedIndex].Enemies[EnemyBox.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].Enemies.Insert(0, thisroom.States[StateBox.SelectedIndex].Enemies[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].Enemies.RemoveAt(oldindex+1);
             }
             else if (A.Name.Substring(0, 1) == "G")
             {
-
+                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Insert(0, thisroom.States[StateBox.SelectedIndex].EnemiesAllowed[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.RemoveAt(oldindex + 1);
             }
             else if (A.Name.Substring(0, 1) == "P")
             {
-
+                thisroom.States[StateBox.SelectedIndex].PLMs.Insert(0, thisroom.States[StateBox.SelectedIndex].PLMs[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].PLMs.RemoveAt(oldindex + 1);
             }
             else if (A.Name.Substring(0, 1) == "F" && A.Items.Count <= MaxFX && A.Items.Count >= 1)
             {
-
+                thisroom.States[StateBox.SelectedIndex].FX.Insert(0, thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(oldindex + 1);
             }
             else if (A.Name.Substring(0, 1) == "D" && A.Items.Count <= MaxDoors && A.Items.Count > 1)
             {
-
+                thisroom.Doors.Insert(0, thisroom.Doors[A.SelectedIndex]);
+                thisroom.Doors.RemoveAt(oldindex + 1);
             }
-            StateBox_SelectedIndexChanged(null, null);
-
-            //MoveIndices(A, 0, GetListBoxSelection(A));
+            StateBox_SelectedIndexChanged(null, null); //update the GUI to match the new room obj
             return;
+        }
+
+        private void sendToBottomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //copypasta of listbox move to top.
+
+            ListBox A = (ListBox)((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl;
+
+            int oldindex = A.SelectedIndex;
+            if (A.Name.Substring(0, 1) == "E")
+            {
+                thisroom.States[StateBox.SelectedIndex].Enemies.Add(thisroom.States[StateBox.SelectedIndex].Enemies[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].Enemies.RemoveAt(oldindex);
+            }
+            else if (A.Name.Substring(0, 1) == "G")
+            {
+                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Add(thisroom.States[StateBox.SelectedIndex].EnemiesAllowed[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.RemoveAt(oldindex);
+            }
+            else if (A.Name.Substring(0, 1) == "P")
+            {
+                thisroom.States[StateBox.SelectedIndex].PLMs.Add(thisroom.States[StateBox.SelectedIndex].PLMs[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].PLMs.RemoveAt(oldindex);
+            }
+            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count <= MaxFX && A.Items.Count >= 1)
+            {
+                thisroom.States[StateBox.SelectedIndex].FX.Add(thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(oldindex);
+            }
+            else if (A.Name.Substring(0, 1) == "D" && A.Items.Count <= MaxDoors && A.Items.Count > 1)
+            {
+                thisroom.Doors.Add(thisroom.Doors[A.SelectedIndex]);
+                thisroom.Doors.RemoveAt(oldindex);
+            }
+            StateBox_SelectedIndexChanged(null, null); //update the GUI to match the new room obj
+            return;
+        }
+
+        private void specifyIndex_leave(object sender, EventArgs e)
+        {
+            //move the single selected index to the specified position.
+            //if new pos > current pos then removing the old entry is easy
+            //+1 index if the new pos < current pos.
+            if (SpecificDestinationIndex.Text == "") { return; }
+            if (!int.TryParse(SpecificDestinationIndex.Text, NumberStyles.HexNumber, null, out int newIndex))
+            {
+                SpecificDestinationIndex.Text = "";
+                return;
+            }
+
+            //copypasta of listbox move to top.
+            //this line might need changed.
+            ListBox A = (ListBox)((sender as ToolStripTextBox).Owner as ContextMenuStrip).SourceControl;
+
+            int oldindex = A.SelectedIndex;
+            int offset = 0;
+            if (newIndex < oldindex)
+            {
+                offset++;
+            }
+            
+
+            if (A.Name.Substring(0, 1) == "E")
+            {
+                thisroom.States[StateBox.SelectedIndex].Enemies.Add(thisroom.States[StateBox.SelectedIndex].Enemies[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].Enemies.RemoveAt(oldindex+offset);
+            }
+            else if (A.Name.Substring(0, 1) == "G")
+            {
+                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.Add(thisroom.States[StateBox.SelectedIndex].EnemiesAllowed[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].EnemiesAllowed.RemoveAt(oldindex + offset);
+            }
+            else if (A.Name.Substring(0, 1) == "P")
+            {
+                thisroom.States[StateBox.SelectedIndex].PLMs.Add(thisroom.States[StateBox.SelectedIndex].PLMs[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].PLMs.RemoveAt(oldindex + offset);
+            }
+            else if (A.Name.Substring(0, 1) == "F" && A.Items.Count <= MaxFX && A.Items.Count >= 1)
+            {
+                thisroom.States[StateBox.SelectedIndex].FX.Add(thisroom.States[StateBox.SelectedIndex].FX[A.SelectedIndex]);
+                thisroom.States[StateBox.SelectedIndex].FX.RemoveAt(oldindex + offset);
+            }
+            else if (A.Name.Substring(0, 1) == "D" && A.Items.Count <= MaxDoors && A.Items.Count > 1)
+            {
+                thisroom.Doors.Add(thisroom.Doors[A.SelectedIndex]);
+                thisroom.Doors.RemoveAt(oldindex + offset);
+            }
+            SpecificDestinationIndex.Text = "";
+            StateBox_SelectedIndexChanged(null, null); //update the GUI to match the new room obj
+            return;
+
+
         }
 
         private List<int> GetListBoxSelection(ListBox list)
