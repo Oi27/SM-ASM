@@ -3730,6 +3730,11 @@ namespace SM_ASM_GUI
             Tilesets2folders(false, false, true);
         }
 
+        public string GetTilesetFolderName(uint tilesetNumber)
+        {
+            return (GetTilesetDir() + "\\" + tilesetNumber + "-" + asmFCN.WByte(tilesetNumber));
+        }
+
         private void Tilesets2folders(bool sceExp, bool palExp, bool ttbExp, int singleset = -1)
         {
             //do nothing if none of the bools are true
@@ -3759,7 +3764,7 @@ namespace SM_ASM_GUI
             {
                 if ((singleset != -1) && ((uint)singleset != folderIndex)) { folderIndex++; continue; }
 
-                string currentDirectory = (tilesDir + "\\" + folderIndex + "-" + asmFCN.WByte(folderIndex));
+                string currentDirectory = GetTilesetFolderName(folderIndex);
                 Directory.CreateDirectory(currentDirectory);
                 if (sceExp) { ExportTileset(item.SCE, currentDirectory, ".gfx", folderIndex); }
                 if (palExp) { ExportTileset(item.Palette, currentDirectory, ".pal", folderIndex); }
@@ -3865,6 +3870,127 @@ namespace SM_ASM_GUI
             File.WriteAllBytes(destpath, dataUC);
 
         }
+
+        public unsafe void CompressTilesetFolder(uint setNumber)
+        {
+            //search tileset folders from matching name
+            //compress all content .gfx, .pal, .ttb files to *name*.*ext*.comp
+            string checkHere = GetTilesetFolderName(setNumber);
+            if (!Directory.Exists(checkHere))
+            {
+                MessageBox.Show("Tileset directory not found at:\r\n" + checkHere, "Not Found", MessageBoxButtons.OK);
+                return;
+            }
+            List<string> filesCompressed = new List<string>();
+            foreach (string tilesetcomponent in Directory.GetFiles(checkHere))
+            {
+                string extension = Path.GetExtension(tilesetcomponent).ToLower();
+                bool isPal = extension == ".pal";
+                bool isGfx = extension == ".gfx";
+                bool isTtb = extension == ".ttb";
+                if (!(isPal || isGfx || isTtb))
+                {
+                    continue;
+                }
+                byte[] source;
+                byte[] compress = new byte[0x10000];
+                uint dataSize;
+                uint compSize;
+                char[] trimChars = { ',', ' ' };
+
+                source = File.ReadAllBytes(tilesetcomponent);
+                dataSize = (uint)source.Length;
+
+                //if .pal then it does some extra preprocessing on the source
+                if (isPal)
+                {
+                    source = Pal24ToPalSnes(source);
+                }
+                fixed (void* sourcePtr = source)
+                fixed (void* destPtr = compress)
+                    compSize = LUNAR.Compress(sourcePtr, destPtr, dataSize);
+                Stream newFile = File.OpenWrite(tilesetcomponent + ".comp");
+                newFile.SetLength(0); //discard current contents
+                BinaryWriter writer = new BinaryWriter(newFile);
+                writer.Write(compress, 0, (int)compSize);
+                writer.Flush();
+                writer.Close();
+                newFile.Close();
+                filesCompressed.Add(tilesetcomponent);
+            }
+            AppendStatus("Compressed Files:");
+            foreach (string file in filesCompressed)
+            {
+                AppendStatus(Path.GetFileName(file));
+            }
+            return;
+        }
+
+        public byte[] Pal24ToPalSnes(byte[] source)
+        {
+            //needs converted back to SNES color, compressed, then to db
+            List<uint> SNES_5bit = new List<uint>();
+            List<uint> PC_24bit = new List<uint>();
+
+            //first i need to turn the 3 bytes RGB into a single number?
+            //this can be done with bit shifting.
+            //or with BitConverter!
+            //Note that 0x300 is the max supported palette size for the SNES
+            byte[] temp = new byte[4];
+            int k = 0;
+
+            for (int j = 0; j < 0x300; j += 3)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    temp[i] = source[i + j];
+                }
+                //if needed this is where we would trim the array down to 3 entries and then reverse it
+                //YES this is needed because toUint32 endianness put it in BGR.
+
+                //toUint32 appears to natively have the correct endianness..... higher indices in the array are higher powers of the number.
+                //so the first 3 indices are what contain our RGB.
+                uint total = BitConverter.ToUInt32(temp, 0);
+                uint r = total & 0x0000FF;
+                uint g = total & 0x00FF00;
+                uint b = total & 0xFF0000;
+                r <<= 16;
+                b >>= 16;
+                total = r + g + b;
+                PC_24bit.Add(total);
+            }
+
+            foreach (uint color in PC_24bit)
+            {
+                SNES_5bit.Add(LUNAR.LunarPCtoSNESRGB(color));
+            }
+
+            //each palette should be 2 bytes uncompressed
+            source = new byte[SNES_5bit.Count];
+            k = 0;
+            for (int i = 0; i < SNES_5bit.Count - 1; i++)
+            {
+                temp = BitConverter.GetBytes(SNES_5bit[i]);
+                for (int j = 0; j < 2; j++)
+                {
+                    try
+                    {
+                        source[k + j] = temp[j];
+                    }
+                    catch
+                    {
+                        //do nothing
+                        //needs this try catch because the +2 indexing will escape the array by 1.
+                        //source is only 256 bytes long.
+                        //I think??? not sure on that.
+                    }
+
+                }
+                k += 2;
+            }
+            return source;
+        }
+
         private string GetTilesetDir()
         {
             string romDir = sm.Path.Substring(0, sm.Path.LastIndexOf('\\'));
@@ -6114,6 +6240,13 @@ namespace SM_ASM_GUI
             headerAddr += 0x70000;
             HeaderDropdown.Text = headerAddr.ToString("X4"); //this might not be the right way to do this... 8/21/24
             LoadRoomToGUI(headerAddr);
+        }
+
+        private void TilesetCompressButton_Click(object sender, EventArgs e)
+        {
+            uint tsetNumber = uint.Parse(TilesetBox.Text, System.Globalization.NumberStyles.HexNumber);
+            CompressTilesetFolder(tsetNumber);
+            return;
         }
     }
 
