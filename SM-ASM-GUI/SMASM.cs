@@ -1554,7 +1554,7 @@ namespace SM_ASM_GUI
             AddToGFXList  .Enabled = true;
             ScrollPLMedit .Enabled = true;
             AddToEnemyList.Enabled = true;
-            MoveIndex     .Enabled = false; //feature is not implemented
+            MoveIndex     .Enabled = true;
             switch (firstletter)
             {
                 case "P":
@@ -2838,37 +2838,18 @@ namespace SM_ASM_GUI
             string strCmdText = string.Format(@"{0}{1}{0} {0}{2}{0}", q, asmPath, rom);
             //try
             {
-                using (Process patch = new Process())
-                {
-                    patch.StartInfo.UseShellExecute = false;
-                    patch.StartInfo.FileName = asr;
-                    patch.StartInfo.Arguments = strCmdText;
-                    patch.StartInfo.CreateNoWindow = true;
-                    patch.StartInfo.RedirectStandardOutput = true;
-                    patch.StartInfo.RedirectStandardError = true;
-                    patch.Start();
-                    // This code assumes the process you are starting will terminate itself.
-                    // Given that it is started without a window so you cannot terminate it
-                    // on the desktop, it must terminate itself or you can do it programmatically
-                    // from this application using the Kill method.
-                    patch.WaitForExit();
-                    StreamReader prints = patch.StandardOutput;
-                    StreamReader errors = patch.StandardError;
-                    //StatusBox.Text = a.ReadToEnd();
-                    string asarOut = prints.ReadToEnd();
-                    string asarErr = errors.ReadToEnd();
-                    prints.Close();
-                    errors.Close();
+                { 
+                    AsarOutput asarOut = PatchRom();
 
                     //do error handling here - ASAR prints it out in an annoying way...
                     //each error gets its own line with the file path and a bunch of other info in it
                     //use regex search for d{n}: error:
                     //print only the remainder of each line after that.
-                    if (asarErr.Contains("error"))
+                    if (asarOut.Errors.Contains("error"))
                     {
                         Regex errPattern = new Regex(@"\d*: error:");
                         List<string> errLines = new List<string>();
-                        string[] rawErr = asarErr.Split('\n');
+                        string[] rawErr = asarOut.Errors.Split('\n');
                         foreach (string line in rawErr)
                         {
                             Match a = errPattern.Match(line);
@@ -2887,7 +2868,7 @@ namespace SM_ASM_GUI
                     this.Enabled = false;
                     List<MdbRoom> newRooms;
                     List<MdbRoom> oldRooms;
-                    newRooms = ASARList(asarOut);
+                    newRooms = ASARList(asarOut.PrintOut);
                     if (newRooms.Count == 0) { MessageBox.Show("MDB Error: ASAR output not detected. Was there an assembler error?\n You can check by using ASAR.exe with the command line to patch the ROM.", "ASAR Error", MessageBoxButtons.OK); return; }
                     //if the MBDpath does not exist then it will just be the ASAR output
                     if (File.Exists(mdbpath))
@@ -3001,14 +2982,7 @@ namespace SM_ASM_GUI
                         MessageBox.Show("Write to ASM failed. Is it open in another program?", "Write Fail", MessageBoxButtons.OK);
                     }
                     //Then apply using ASAR and we're done!
-                    patch.StartInfo.UseShellExecute = false;
-                    patch.StartInfo.FileName = asr;
-                    patch.StartInfo.Arguments = strCmdText;
-                    patch.StartInfo.CreateNoWindow = true;
-                    patch.StartInfo.RedirectStandardOutput = true;
-                    patch.Start();
-                    patch.WaitForExit();
-
+                    PatchRom();
 
 
                     File.WriteAllText(mdbpath, res);
@@ -3030,6 +3004,49 @@ namespace SM_ASM_GUI
             }
             this.Enabled = true;
             return;
+        }
+
+        public AsarOutput PatchRom()
+        {
+            string q = @"" + (char)34;
+            string rom = config.ChildNodes[1].SelectSingleNode("ROM").InnerText;
+            string asmPath = config.ChildNodes[1].SelectSingleNode("ASM").InnerText;
+            string asr = config.ChildNodes[1].SelectSingleNode("ASR").InnerText;
+
+            string strCmdText = string.Format(@"{0}{1}{0} {0}{2}{0}", q, asmPath, rom);
+            AsarOutput output;
+            using (Process patch = new Process())
+            {
+                patch.StartInfo.UseShellExecute = false;
+                patch.StartInfo.FileName = asr;
+                patch.StartInfo.Arguments = strCmdText;
+                patch.StartInfo.CreateNoWindow = true;
+                patch.StartInfo.RedirectStandardOutput = true;
+                patch.StartInfo.RedirectStandardError = true;
+
+                string eOut = null;
+                patch.ErrorDataReceived += new DataReceivedEventHandler((sender, e) =>
+                { eOut += e.Data; });
+
+                patch.Start();
+                patch.BeginErrorReadLine();
+                StreamReader prints = patch.StandardOutput;
+                output.PrintOut = prints.ReadToEnd();
+                // This code assumes the process you are starting will terminate itself.
+                // Given that it is started without a window so you cannot terminate it
+                // on the desktop, it must terminate itself or you can do it programmatically
+                // from this application using the Kill method.
+                patch.WaitForExit();
+                output.Errors = eOut;
+                prints.Close();
+            }
+            return output;
+        }
+
+        public struct AsarOutput
+        {
+            public string PrintOut;
+            public string Errors;
         }
 
         public struct MdbRoom
@@ -3124,6 +3141,8 @@ namespace SM_ASM_GUI
             //Also account for the empty string at the end of ASAR output.
             for (int i = 0; i < mdb.Length - 1; i++)
             {
+                Regex roomName = new Regex(@"R[0-9A-F][0-9A-F]A[0-9A-F]");
+                if (!roomName.IsMatch(mdb[i])) { continue; }
                 if (uint.TryParse(mdb[i].Substring(0, 6), NumberStyles.HexNumber, null, out uint barse))
                 {
                     string name = "";
@@ -6194,7 +6213,7 @@ namespace SM_ASM_GUI
         private void sendToBottomToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //copypasta of listbox move to top.
-
+            //5/14/25 it's broken because it needs to owner to owner of owner
             ListBox A = (ListBox)((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl;
 
             int oldindex = A.SelectedIndex;
