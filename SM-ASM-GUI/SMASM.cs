@@ -2166,11 +2166,13 @@ namespace SM_ASM_GUI
             //for each state, if it had a label, perform the replacements.
             for (int stateNumber = 0; stateNumber < room.StateCount; stateNumber++)
             {                                                                                                                           //this number is the index of the label into the state pointers dw array.
-                if (oldStatePointers[stateNumber].MainIsLabel)  { roomSection = ReplaceLabels(stateNumber, roomSection, oldStatePointers, 6, true) ; }
-                if (oldStatePointers[stateNumber].SetupIsLabel) { roomSection = ReplaceLabels(stateNumber, roomSection, oldStatePointers, 9, false); }
+                if (oldStatePointers[stateNumber].MainIsLabel)  { roomSection = ReplaceLabels(stateNumber, roomSection, 6, oldStatePointers[stateNumber].MainASM); }
+                if (oldStatePointers[stateNumber].BackgroundIsLabel) { roomSection = ReplaceLabels(stateNumber, roomSection, 8, oldStatePointers[stateNumber].Background); }
+                if (oldStatePointers[stateNumber].SetupIsLabel) { roomSection = ReplaceLabels(stateNumber, roomSection, 9, oldStatePointers[stateNumber].SetupASM); }
             }
-            if (oldStatePointers[oldStatePointers.Count-1].MainIsLabel)  { roomSection = ReplaceLabels(-1, roomSection, oldStatePointers, 6, true); }
-            if (oldStatePointers[oldStatePointers.Count-1].SetupIsLabel) { roomSection = ReplaceLabels(-1, roomSection, oldStatePointers, 9, false); }
+            if (oldStatePointers[oldStatePointers.Count-1].MainIsLabel)  { roomSection = ReplaceLabels(-1, roomSection, 6, oldStatePointers[oldStatePointers.Count - 1].MainASM); }
+            if (oldStatePointers[oldStatePointers.Count - 1].BackgroundIsLabel) { roomSection = ReplaceLabels(-1, roomSection, 8, oldStatePointers[oldStatePointers.Count - 1].Background); }
+            if (oldStatePointers[oldStatePointers.Count-1].SetupIsLabel) { roomSection = ReplaceLabels(-1, roomSection, 9, oldStatePointers[oldStatePointers.Count - 1].SetupASM); }
             //roomsection is populated with any label replacements - need to format it back into export[0].
             StringBuilder newExportZero = new StringBuilder(500);
             foreach (string line in roomSection)
@@ -2241,7 +2243,7 @@ namespace SM_ASM_GUI
             return export;
         }
 
-        public List<string> ReplaceLabels(int stateNumber, List<string> roomSection, List<StatePointersASM> oldStatePointers, int destinationIndex, bool isMain)
+        public List<string> ReplaceLabels(int stateNumber, List<string> roomSection, int destinationIndex, string label)
         {
             //replace the given state's numbers with labels.
             //BOOL if not main label then is setup label to be replaced. This is not a good way to do this...
@@ -2249,7 +2251,6 @@ namespace SM_ASM_GUI
             if (stateNumber < 0) 
             { 
                 stateLabel = "..default"; 
-                stateNumber = oldStatePointers.Count-1; 
             }
             else { stateLabel = "..state" + stateNumber; }
 
@@ -2261,8 +2262,7 @@ namespace SM_ASM_GUI
             }
             string[] dLdBdW = roomSection[labelLine].Split(':');
             string[] statePointers = dLdBdW[2].Split(',');
-            if (isMain) { statePointers[destinationIndex] = " " + oldStatePointers[stateNumber].MainASM; }
-            else { statePointers[destinationIndex] = " " + oldStatePointers[stateNumber].SetupASM; }
+            statePointers[destinationIndex] = " " + label;
             //now we need to go back from statepointers[] to the roomSection list...
             StringBuilder LineWithReplacements = new StringBuilder(500);
             StringBuilder replacedDW = new StringBuilder(100);
@@ -2291,6 +2291,7 @@ namespace SM_ASM_GUI
                 DoorLabels = new List<string>();
                 MainIsLabel = false;
                 SetupIsLabel = false;
+                BackgroundIsLabel = false;
                 string stateLabel;
                 if (stateNumber < 0) { stateLabel = "..default"; }
                 else { stateLabel = "..state" + stateNumber; }
@@ -2308,6 +2309,7 @@ namespace SM_ASM_GUI
                     //if label not found, the isLabel bools will remain false
                     MainASM = "";
                     SetupASM = "";
+                    Background = "";
                     return;
                 }
 
@@ -2319,9 +2321,11 @@ namespace SM_ASM_GUI
                 string[] statePointers = roomSection8F[labelLine].Split(':')[2].Split(',');
                 MainASM = statePointers[6].Trim();
                 SetupASM = statePointers[9].Trim();
+                Background = statePointers[8].Trim();
 
-                if(MainASM[0] != '$') { MainIsLabel = true; }
+                if (MainASM[0] != '$') { MainIsLabel = true; }
                 if(SetupASM[0] != '$') { SetupIsLabel = true; }
+                if (Background[0] != '$') { BackgroundIsLabel = true; }
 
                 //example door data
                 //.R00A0
@@ -2343,8 +2347,10 @@ namespace SM_ASM_GUI
             }
             public string MainASM { set; get; }
             public string SetupASM { set; get; }
+            public string Background { set; get; }
             public bool MainIsLabel { set; get; }
             public bool SetupIsLabel { set; get; }
+            public bool BackgroundIsLabel { set; get; }
             public List<string> DoorLabels { set; get; }
         }
         public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite, roomdata room, out string smasmOut)
