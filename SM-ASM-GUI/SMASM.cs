@@ -3827,7 +3827,7 @@ namespace SM_ASM_GUI
             LUNAR.CloseFile();
 
 
-            if (singleset != -1)
+            if (singleset == -1)
             {
                 StatusBox.AppendText(
                 "-------------------\n" +
@@ -3960,6 +3960,7 @@ namespace SM_ASM_GUI
                 if (isPal)
                 {
                     source = Pal24ToPalSnes(source);
+                    dataSize = 0x100;
                 }
                 fixed (void* sourcePtr = source)
                 fixed (void* destPtr = compress)
@@ -4017,10 +4018,12 @@ namespace SM_ASM_GUI
                 uint r = total & 0x0000FF;
                 uint g = total & 0x00FF00;
                 uint b = total & 0xFF0000;
-                r <<= 16;
-                b >>= 16;
+                r <<= 0x10;
+                b >>= 0x10;
                 total = r + g + b;
                 PC_24bit.Add(total);
+                //note bc its a uint32, there is a trailing 0 after each 
+                k = j;
             }
 
             foreach (uint color in PC_24bit)
@@ -4028,8 +4031,9 @@ namespace SM_ASM_GUI
                 SNES_5bit.Add(LUNAR.LunarPCtoSNESRGB(color));
             }
 
-            //each palette should be 2 bytes uncompressed
-            source = new byte[SNES_5bit.Count];
+            //each color should be 2 bytes uncompressed
+            //so, color count * 2
+            source = new byte[SNES_5bit.Count*2];
             k = 0;
             for (int i = 0; i < SNES_5bit.Count - 1; i++)
             {
