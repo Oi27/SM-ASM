@@ -1980,25 +1980,30 @@ namespace SM_ASM_GUI
             {
                 final += item + "\n";
             }
+            final += "EndRoomHeaders:\n";
             final += "org !smasm83\n";
             foreach (var item in asm83d)
             {
                 final += item + "\n";
             }
+            final += "EndDoorData:\n";
             foreach (var item in asm83f)
             {
                 final += item + "\n";
             }
+            final += "EndFxData:\n";
             final += "org !smasmA1\n";
             foreach (var item in asmA1)
             {
                 final += item + "\n";
             }
+            final += "EndEnemyPopulation:\n";
             final += "org !smasmB4\n";
             foreach (var item in asmB4)
             {
                 final += item + "\n";
             }
+            final += "EndEnemySets:\n";
             final += "org !smasmLevels\n";
             final += "check bankcross off\n";
             foreach (var item in asmTilesets)
@@ -2010,6 +2015,7 @@ namespace SM_ASM_GUI
                 final += item + "\n";
             }
             final += "check bankcross on\n";
+            final += "EndLevelData:\n";
             final += "org !smasmTilesetTable\n";
             foreach (var item in asmTilesetTable)
             {
@@ -2017,6 +2023,14 @@ namespace SM_ASM_GUI
             }
             final += ";SMASM-END----------";
             return final;
+        }
+        public int isBlankLineAfter(List<string> dataSection, int lineNumber)
+        {
+            //determine how many additional lines to delete at the end of the data section
+            //if line after paranthesis is blank, return 2 (delete the space so the file does not grow)
+            //if line after paranthesis is not blank, return 1 (keep the line after the bracket & grow the file by a line)
+            if (dataSection[lineNumber] == "") { return 2; }
+            else { return 1; }
         }
         public void Export_Room(List<string> smasmSpace, int startline, int endline, string asmPath, bool checkRoomOverwrite, roomdata room)
         {
@@ -2079,34 +2093,41 @@ namespace SM_ASM_GUI
             else //isolate the room labels in each section, delete, and replace.
             {
                 //these are all +2 to delete the closing bracket and the following empty line.
+                int trailSpacing;
                 FindSection(room.Label, smasm8F, out int st, out int ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
-                smasm8F.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasm8F,ed);
+                smasm8F.RemoveRange(st, ed - st + trailSpacing);
                 smasm8F.Insert(st, export[0]);
 
                 FindSection(room.Label, smasm83d, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
-                smasm83d.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasm83d, ed);
+                smasm83d.RemoveRange(st, ed - st + trailSpacing);
                 smasm83d.Insert(st, export[1]);
 
                 FindSection(room.Label, smasm83f, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
-                smasm83f.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasm83f, ed);
+                smasm83f.RemoveRange(st, ed - st + trailSpacing);
                 smasm83f.Insert(st, export[2]);
 
                 FindSection(room.Label, smasmA1, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
-                smasmA1.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasmA1, ed);
+                smasmA1.RemoveRange(st, ed - st + trailSpacing);
                 smasmA1.Insert(st, export[3]);
 
                 FindSection(room.Label, smasmB4, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
-                smasmB4.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasmB4, ed);
+                smasmB4.RemoveRange(st, ed - st + trailSpacing);
                 smasmB4.Insert(st, export[4]);
 
                 FindSection(room.Label, smasmLV, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
-                smasmLV.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasmLV, ed);
+                smasmLV.RemoveRange(st, ed - st + trailSpacing);
                 smasmLV.Insert(st, export[5]);
             }
 
@@ -2378,35 +2399,41 @@ namespace SM_ASM_GUI
             }
             else //isolate the room labels in each section, delete, and replace.
             {
-                //these are all +2 to delete the closing bracket and the following empty line.
+                int trailSpacing;
                 FindSection(room.Label, smasm8F, out int st, out int ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
-                smasm8F.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasm8F,ed);
+                smasm8F.RemoveRange(st, ed - st + trailSpacing);
                 smasm8F.Insert(st, export[0]);
 
                 FindSection(room.Label, smasm83d, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
-                smasm83d.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasm83d, ed);
+                smasm83d.RemoveRange(st, ed - st + trailSpacing);
                 smasm83d.Insert(st, export[1]);
 
                 FindSection(room.Label, smasm83f, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
-                smasm83f.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasm83f, ed);
+                smasm83f.RemoveRange(st, ed - st + trailSpacing);
                 smasm83f.Insert(st, export[2]);
 
                 FindSection(room.Label, smasmA1, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
-                smasmA1.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasmA1, ed);
+                smasmA1.RemoveRange(st, ed - st + trailSpacing);
                 smasmA1.Insert(st, export[3]);
 
                 FindSection(room.Label, smasmB4, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
-                smasmB4.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasmB4, ed);
+                smasmB4.RemoveRange(st, ed - st + trailSpacing);
                 smasmB4.Insert(st, export[4]);
 
                 FindSection(room.Label, smasmLV, out st, out ed);
                 if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
-                smasmLV.RemoveRange(st, ed - st + 2);
+                trailSpacing = isBlankLineAfter(smasmLV, ed);
+                smasmLV.RemoveRange(st, ed - st + trailSpacing);
                 smasmLV.Insert(st, export[5]);
 
             }
@@ -3794,20 +3821,22 @@ namespace SM_ASM_GUI
             LUNAR.CloseFile();
 
 
-
-            StatusBox.AppendText(
-            "-------------------\n" +
-            tileSetTable.Count + " TILESETS IN ROM:\n" +
-            DateTime.Now.ToLongTimeString() + "\n" +
-            ""
-            );
-            foreach (TilesetEntry item in tileSetTable)
+            if (singleset != -1)
             {
-                StatusBox.AppendText(asmFCN.WWord(item.Pointer) + " - " + asmFCN.WLong(item.TileTable) + ", " + asmFCN.WLong(item.SCE) + ", " + asmFCN.WLong(item.Palette) + "\r\n");
+                StatusBox.AppendText(
+                "-------------------\n" +
+                tileSetTable.Count + " TILESETS IN ROM:\n" +
+                DateTime.Now.ToLongTimeString() + "\n" +
+                ""
+                );
+                foreach (TilesetEntry item in tileSetTable)
+                {
+                    StatusBox.AppendText(asmFCN.WWord(item.Pointer) + " - " + asmFCN.WLong(item.TileTable) + ", " + asmFCN.WLong(item.SCE) + ", " + asmFCN.WLong(item.Palette) + "\r\n");
+                }
+                StatusBox.AppendText(
+                "-------------------\n"
+                );
             }
-            StatusBox.AppendText(
-            "-------------------\n"
-            );
         }
         private unsafe void ExportTileset(uint compDataPointer, string destpath, string fileExtension, uint tilesetIndex)
         {
@@ -3819,7 +3848,7 @@ namespace SM_ASM_GUI
                     dataUC = new byte[0x5000];
                     break;
                 case ".pal":
-                    dataUC = new byte[0x0300];//300... hardware limitation! But we need to make it in 256 color depth...
+                    dataUC = new byte[0x0100];//300... hardware limitation! But we need to make it in 256 color depth...
                     break;
                 case ".ttb":
                     dataUC = new byte[0x2000];//1800.... but Ceres is $2000 because it doesn't have CRE!
@@ -3855,7 +3884,7 @@ namespace SM_ASM_GUI
                     {
                         PC_24bit.Add(LUNAR.LunarSNEStoPCRGB(item));
                     }
-                    byte[] PC_Result = new byte[0x300];
+                    byte[] PC_Result = new byte[0x180];
                     byte[] temp = new byte[3];
                     int j = 0;
                     foreach (uint item in PC_24bit)
@@ -3956,10 +3985,18 @@ namespace SM_ASM_GUI
             //this can be done with bit shifting.
             //or with BitConverter!
             //Note that 0x300 is the max supported palette size for the SNES
+
+            //discovered 6/24/25 that this causes problems somehow
+            //TODO: debug. 0x180 is too small & 0x300 is too big.
+
+            //attempting to come back and fix this 12/12/25
+            //the 24-bit RGB palette should be $180 bytes
+            //the 5-bit SNES palette should be $100 bytes
+
             byte[] temp = new byte[4];
             int k = 0;
 
-            for (int j = 0; j < 0x300; j += 3)
+            for (int j = 0; j < 0x180; j += 3)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -4098,7 +4135,7 @@ namespace SM_ASM_GUI
                         byte[] temp = new byte[4];
                         int k = 0;
 
-                        for (int j = 0; j < 0x300; j += 3)
+                        for (int j = 0; j < 0x180; j += 3)
                         {
                             for (int i = 0; i < 3; i++)
                             {
@@ -6006,36 +6043,43 @@ namespace SM_ASM_GUI
                 return;
             }
 
-                //these are all +2 to delete the closing bracket and the following empty line.
-                FindSection(room.Label, smasm8F, out int st, out int ed);
-                if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
-            else { smasm8F.RemoveRange(st, ed - st + 2); }
-                
+            //these are all +2 to delete the closing bracket and the following empty line.
+            int trailSpacing;
+            FindSection(room.Label, smasm8F, out int st, out int ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("roomlabel not found!"); }
+            trailSpacing = isBlankLineAfter(smasm8F, ed);
+            smasm8F.RemoveRange(st, ed - st + trailSpacing);
 
-                FindSection(room.Label, smasm83d, out st, out ed);
-                if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
-            else { smasm83d.RemoveRange(st, ed - st + 2); }
-                
-
-                FindSection(room.Label, smasm83f, out st, out ed);
-                if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
-            else { smasm83f.RemoveRange(st, ed - st + 2); }
-                
-
-                FindSection(room.Label, smasmA1, out st, out ed);
-                if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
-            else { smasmA1.RemoveRange(st, ed - st + 2); }
-                
-
-                FindSection(room.Label, smasmB4, out st, out ed);
-                if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
-            else { smasmB4.RemoveRange(st, ed - st + 2); }
-                
-
-                FindSection(room.Label, smasmLV, out st, out ed);
-            if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
-            else { smasmLV.RemoveRange(st, ed - st + 2); }
+            FindSection(room.Label, smasm83d, out st, out ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("doorlabel not found!"); }
+            trailSpacing = isBlankLineAfter(smasm83d, ed);
+            smasm83d.RemoveRange(st, ed - st + trailSpacing);
             
+
+            FindSection(room.Label, smasm83f, out st, out ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("fxlabel not found!"); }
+            trailSpacing = isBlankLineAfter(smasm83f, ed);
+            smasm83f.RemoveRange(st, ed - st + trailSpacing);
+            
+
+            FindSection(room.Label, smasmA1, out st, out ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("enemylabel not found!"); }
+            trailSpacing = isBlankLineAfter(smasmA1, ed);
+            smasmA1.RemoveRange(st, ed - st + trailSpacing);
+            
+
+            FindSection(room.Label, smasmB4, out st, out ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("gfxlabel not found!"); }
+            trailSpacing = isBlankLineAfter(smasmB4, ed);
+            smasmB4.RemoveRange(st, ed - st + trailSpacing);
+           
+
+            FindSection(room.Label, smasmLV, out st, out ed);
+            if (st == 0 || ed == 0) { MessageBox.Show("levellabel not found!"); }
+            trailSpacing = isBlankLineAfter(smasmLV, ed);
+            smasmLV.RemoveRange(st, ed - st + trailSpacing);
+            
+
 
             //use loops to compile all these into a single output string for the text file.
             string final = ConcatASMsections(smasm8F, smasm83d, smasm83f, smasmA1, smasmB4, smasmLV, smasmTilesets, smasmTilesetTable);
